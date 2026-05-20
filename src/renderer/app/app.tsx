@@ -46,7 +46,7 @@ export const App = React.memo(({ menuItems }: { menuItems: readonly MainMenuItem
             ) : (
               <item.Component />
             );
-            return <Route key={item.subpath} path={`${item.subpath}/*`} element={element} />;
+            return <Route key={item.subpath} path={`${item.routePattern ?? item.subpath}/*`} element={element} />;
           })}
           {defaultRoute && <Route path="*" element={<Navigate replace={true} to={`${defaultRoute.subpath}`} />} />}
         </Routes>

@@ -1,53 +1,31 @@
 import { useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { create } from "zustand";
+import { useParams } from "react-router-dom";
 
-import type { HomeTab } from "./home_routes";
+import { useTabMemory } from "@/lib/hooks/use_tab_memory";
+import { useTabRouter } from "@/lib/hooks/use_tab_router";
+
 import { HOME_TABS } from "./home_routes";
 
-const isHomeTab = (s: string | undefined): s is HomeTab => HOME_TABS.includes(s as HomeTab);
-
-interface HomePageState {
-  lastTab: HomeTab;
-  subPaths: Record<string, string | null>;
-  setLastTab: (tab: HomeTab) => void;
-  setSubPath: (tab: string, subPath: string | null) => void;
-}
-
-export const useHomePageStore = create<HomePageState>((set) => ({
-  lastTab: "overview",
-  subPaths: {},
-  setLastTab: (tab) => set({ lastTab: tab }),
-  setSubPath: (tab, subPath) => set((s) => ({ subPaths: { ...s.subPaths, [tab]: subPath } })),
-}));
-
 export function useHomePage() {
-  const navigate = useNavigate();
-  const { tab: urlTab, newsId } = useParams<{ tab?: string; newsId?: string }>();
-  const lastTab = useHomePageStore((s) => s.lastTab);
-  const subPaths = useHomePageStore((s) => s.subPaths);
-  const setLastTab = useHomePageStore((s) => s.setLastTab);
-  const setSubPath = useHomePageStore((s) => s.setSubPath);
+  const { newsId: urlNewsId } = useParams<{ tab?: string; newsId?: string }>();
+  const { currentTab, navigateToTab } = useTabRouter({
+    contextKey: "home",
+    tabs: HOME_TABS,
+    defaultTab: "overview",
+    basePath: "/main/home",
+  });
 
-  // Redirect when URL has no valid tab
+  const tabState = useTabMemory((s) => s.tabState[`home:${currentTab}`]);
+  const setTabParam = useTabMemory((s) => s.setTabParam);
+
+  // Sync newsId from URL to memory
   useEffect(() => {
-    if (!isHomeTab(urlTab)) {
-      navigate(`/main/home/${lastTab}`, { replace: true });
+    if (currentTab === "news" && urlNewsId) {
+      setTabParam("home", "news", "newsId", urlNewsId);
     }
-  }, [urlTab, lastTab, navigate]);
+  }, [currentTab, urlNewsId, setTabParam]);
 
-  // Sync URL params into the store (preserve sub-paths per tab)
-  useEffect(() => {
-    if (isHomeTab(urlTab)) {
-      setLastTab(urlTab);
-      if (urlTab === "news" && newsId) {
-        setSubPath("news", newsId);
-      }
-    }
-  }, [urlTab, newsId, setLastTab, setSubPath]);
+  const activeNewsId = currentTab === "news" ? urlNewsId ?? tabState?.newsId ?? null : null;
 
-  const currentTab: HomeTab = isHomeTab(urlTab) ? urlTab : lastTab;
-  const activeNewsId = currentTab === "news" ? newsId ?? subPaths.news ?? null : null;
-
-  return { currentTab, activeNewsId };
+  return { currentTab, activeNewsId, navigateToTab };
 }

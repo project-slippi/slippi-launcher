@@ -3,16 +3,16 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 
 import { Footer } from "@/components/footer/footer";
+import { useTabMemory } from "@/lib/hooks/use_tab_memory";
 
 import { HomePageMessages as Messages } from "./home_page.messages";
-import type { HomeTab } from "./home_routes";
 import { HomeRoutes } from "./home_routes";
 import { useHasUnreadNews } from "./news_feed/news_dual_pane/news_read_store";
 import { NewsFeed } from "./news_feed/news_feed";
 import { HomeOverview } from "./overview/overview";
 import { Tabs } from "./tabs/tabs";
 import { UpcomingTournaments } from "./upcoming_tournaments/upcoming_tournaments";
-import { useHomePage, useHomePageStore } from "./use_home_page";
+import { useHomePage } from "./use_home_page";
 
 const Outer = styled.div`
   display: flex;
@@ -24,8 +24,8 @@ const Outer = styled.div`
 
 export const HomePage = React.memo(function HomePage() {
   const navigate = useNavigate();
-  const { currentTab, activeNewsId } = useHomePage();
-  const setSubPath = useHomePageStore((s) => s.setSubPath);
+  const { currentTab, activeNewsId, navigateToTab } = useHomePage();
+  const setTabParam = useTabMemory((s) => s.setTabParam);
   const hasUnreadNews = useHasUnreadNews();
 
   return (
@@ -34,19 +34,7 @@ export const HomePage = React.memo(function HomePage() {
         <Tabs
           value={currentTab}
           highlightedTabIds={hasUnreadNews ? ["news"] : []}
-          onChange={(tab) => {
-            switch (tab as HomeTab) {
-              case "overview":
-                navigate(HomeRoutes.overview());
-                break;
-              case "news":
-                navigate(HomeRoutes.latestNews());
-                break;
-              case "tournaments":
-                navigate(HomeRoutes.upcomingTournaments());
-                break;
-            }
-          }}
+          onChange={(tab) => navigateToTab(tab as typeof currentTab)}
           tabs={[
             { id: "overview", label: Messages.overview(), content: <HomeOverview /> },
             {
@@ -56,7 +44,7 @@ export const HomePage = React.memo(function HomePage() {
                 <NewsFeed
                   newsId={activeNewsId}
                   onNewsIdChange={(id) => {
-                    setSubPath("news", id);
+                    setTabParam("home", "news", "newsId", id);
                     navigate(HomeRoutes.latestNews(id ?? undefined));
                   }}
                 />

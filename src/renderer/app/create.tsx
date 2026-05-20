@@ -36,7 +36,8 @@ export function createApp({ services }: { services: Services }): {
 
   const menuItems: MainMenuItem[] = [
     {
-      subpath: HOME_ROUTE_PATTERN,
+      subpath: "home",
+      routePattern: HOME_ROUTE_PATTERN,
       title: () => Messages.home(),
       Component: HomePage,
       Icon: HomeOutlinedIcon,
