@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import { useTabMemory } from "./use_tab_memory";
@@ -49,6 +49,10 @@ export function useTabRouter<T extends string>({
     }
   }, [urlTab, contextKey, setLastTab, tabs]);
 
+  // Track last-known extra param values to avoid re-syncing on every render
+  // when extraParams/params change reference but not value
+  const lastExtraValues = useRef<Record<string, string | undefined>>({});
+
   useEffect(() => {
     if (!extraParams || !isIncluded(urlTab, tabs)) {
       return;
@@ -59,8 +63,12 @@ export function useTabRouter<T extends string>({
     }
     for (const paramName of paramNames) {
       const urlValue = params[paramName] as string | undefined;
-      if (urlValue) {
-        setTabParam(contextKey, urlTab, paramName, urlValue);
+      const lastValue = lastExtraValues.current[paramName];
+      if (urlValue !== lastValue) {
+        if (urlValue) {
+          setTabParam(contextKey, urlTab, paramName, urlValue);
+        }
+        lastExtraValues.current[paramName] = urlValue;
       }
     }
   }, [urlTab, extraParams, params, contextKey, setTabParam, tabs]);
