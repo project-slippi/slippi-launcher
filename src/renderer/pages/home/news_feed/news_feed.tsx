@@ -1,5 +1,6 @@
 import Button from "@mui/material/Button";
 import React from "react";
+import { useNavigate, useParams } from "react-router-dom";
 
 import { LoadingScreen } from "@/components/loading_screen/loading_screen";
 import { useNewsFeedQuery } from "@/lib/hooks/use_data_fetch_query";
@@ -34,16 +35,25 @@ const NewsFeedContent = React.memo(function NewsFeedContent({
   return <NewsDualPane posts={allPosts} selectedNewsId={newsId} onSelectedNewsIdChange={onNewsIdChange} />;
 });
 
-export const NewsFeed = React.memo(function NewsFeed({
-  newsId,
-  onNewsIdChange,
-}: {
-  newsId: string | null;
-  onNewsIdChange: (id: string | null) => void;
-}) {
+export const NewsFeed = React.memo(function NewsFeed() {
+  const params = useParams();
+  const navigate = useNavigate();
+  const newsId = (params["*"] as string) || null;
+
+  const handleNewsIdChange = React.useCallback(
+    (id: string | null) => {
+      if (id) {
+        navigate(id, { relative: "route" });
+      } else {
+        navigate("..");
+      }
+    },
+    [navigate],
+  );
+
   return (
     <div style={{ height: "100%" }}>
-      <NewsFeedContent newsId={newsId} onNewsIdChange={onNewsIdChange} />
+      <NewsFeedContent newsId={newsId} onNewsIdChange={handleNewsIdChange} />
     </div>
   );
 });

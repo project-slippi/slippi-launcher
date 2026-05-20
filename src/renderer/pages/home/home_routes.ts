@@ -1,4 +1,4 @@
-export const HOME_ROUTE_PATTERN = "home/:tab?/:newsId?";
+export const HOME_ROUTE_PATTERN = "home/:tab?";
 
 export const HOME_TABS = ["overview", "news", "tournaments"] as const;
 export type HomeTab = (typeof HOME_TABS)[number];
