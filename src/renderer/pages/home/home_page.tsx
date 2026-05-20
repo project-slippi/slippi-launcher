@@ -4,15 +4,15 @@ import { useNavigate } from "react-router-dom";
 
 import { Footer } from "@/components/footer/footer";
 import { useTabMemory } from "@/lib/hooks/use_tab_memory";
+import { useTabRouter } from "@/lib/hooks/use_tab_router";
 
 import { HomePageMessages as Messages } from "./home_page.messages";
-import { HomeRoutes } from "./home_routes";
+import { HOME_TABS, HomeRoutes } from "./home_routes";
 import { useHasUnreadNews } from "./news_feed/news_dual_pane/news_read_store";
 import { NewsFeed } from "./news_feed/news_feed";
 import { HomeOverview } from "./overview/overview";
 import { Tabs } from "./tabs/tabs";
 import { UpcomingTournaments } from "./upcoming_tournaments/upcoming_tournaments";
-import { useHomePage } from "./use_home_page";
 
 const Outer = styled.div`
   display: flex;
@@ -24,9 +24,17 @@ const Outer = styled.div`
 
 export const HomePage = React.memo(function HomePage() {
   const navigate = useNavigate();
-  const { currentTab, activeNewsId, navigateToTab } = useHomePage();
+  const { currentTab, navigateToTab, extraParamValues } = useTabRouter({
+    contextKey: "home",
+    tabs: HOME_TABS,
+    defaultTab: "overview",
+    basePath: "/main/home",
+    extraParams: { news: ["newsId"] },
+  });
   const setTabParam = useTabMemory((s) => s.setTabParam);
   const hasUnreadNews = useHasUnreadNews();
+
+  const activeNewsId = currentTab === "news" ? extraParamValues.newsId : null;
 
   return (
     <Outer>

@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import { useTabMemory } from "./use_tab_memory";
@@ -9,6 +9,7 @@ interface UseTabRouterOptions<T extends string> {
   tabs: readonly T[];
   defaultTab: T;
   basePath: string;
+  extraParams?: Partial<Record<T, string[]>>;
 }
 
 function isIncluded<T extends string>(s: string | undefined, arr: readonly T[]): s is T {
@@ -21,13 +22,19 @@ export function useTabRouter<T extends string>({
   tabs,
   defaultTab,
   basePath,
+  extraParams,
 }: UseTabRouterOptions<T>) {
   const navigate = useNavigate();
   const params = useParams();
-  const lastTab = useTabMemory((s) => s.lastTab[contextKey]);
   const setLastTab = useTabMemory((s) => s.setLastTab);
+  const setTabParam = useTabMemory((s) => s.setTabParam);
+  const lastTab = useTabMemory((s) => s.lastTab[contextKey]);
 
   const urlTab = params[tabParam] as T | undefined;
+
+  const currentTab: T = isIncluded(urlTab, tabs) ? urlTab : isIncluded(lastTab, tabs) ? lastTab : defaultTab;
+
+  const tabState = useTabMemory((s) => (extraParams ? s.tabState[`${contextKey}:${currentTab}`] : undefined));
 
   useEffect(() => {
     if (!isIncluded(urlTab, tabs)) {
@@ -42,7 +49,36 @@ export function useTabRouter<T extends string>({
     }
   }, [urlTab, contextKey, setLastTab, tabs]);
 
-  const currentTab: T = isIncluded(urlTab, tabs) ? urlTab : isIncluded(lastTab, tabs) ? lastTab : defaultTab;
+  useEffect(() => {
+    if (!extraParams || !isIncluded(urlTab, tabs)) {
+      return;
+    }
+    const paramNames = extraParams[urlTab];
+    if (!paramNames) {
+      return;
+    }
+    for (const paramName of paramNames) {
+      const urlValue = params[paramName] as string | undefined;
+      if (urlValue) {
+        setTabParam(contextKey, urlTab, paramName, urlValue);
+      }
+    }
+  }, [urlTab, extraParams, params, contextKey, setTabParam, tabs]);
+
+  const extraParamValues = useMemo(() => {
+    if (!extraParams) {
+      return {};
+    }
+    const paramNames = extraParams[currentTab];
+    if (!paramNames) {
+      return {};
+    }
+    const result: Record<string, string | null> = {};
+    for (const name of paramNames) {
+      result[name] = (params[name] as string | undefined) ?? tabState?.[name] ?? null;
+    }
+    return result;
+  }, [extraParams, currentTab, params, tabState]);
 
   const navigateToTab = useCallback(
     (tab: T) => {
@@ -52,5 +88,5 @@ export function useTabRouter<T extends string>({
     [setLastTab, navigate, contextKey, basePath],
   );
 
-  return { currentTab, navigateToTab };
+  return { currentTab, navigateToTab, extraParamValues };
 }

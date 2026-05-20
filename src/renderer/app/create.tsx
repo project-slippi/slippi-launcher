@@ -7,6 +7,7 @@ import React from "react";
 import { HashRouter as Router, Navigate, Route, Routes } from "react-router-dom";
 
 import { useAppStore } from "@/lib/hooks/use_app_store";
+import { useLastPageTracker } from "@/lib/hooks/use_last_page";
 import { usePageRequestListeners } from "@/lib/hooks/use_page_request_listeners";
 import { usePageNavigationShortcuts } from "@/lib/hooks/use_shortcuts";
 import { lazyLoadConsoleMirrorPage } from "@/pages/console_mirror/load";
@@ -87,6 +88,9 @@ export function createApp({ services }: { services: Services }): {
 
   const AppRoutes = () => {
     const currentLanguage = useAppStore((state) => state.currentLanguage);
+
+    // Track last non-settings URL for modal return navigation
+    useLastPageTracker();
 
     // Then add the page request listeners
     usePageRequestListeners();
