@@ -698,7 +698,7 @@ msgstr "Забыли пароль?"
 #. {2} greaterRegion: string - The greater region/state/prefecture the city is contained in. e.g. Tokyo
 msgid "Found {0, plural, one {# tournament} other {# tournaments}} near {1}, {2}."
 msgstr ""
-"Найден {0, plural, one {# турнир} few {# турнира} other {# турниров}} "
+"{0, plural, one {Найден # турнир} few {Найдено # турнира} other {Найдено # турниров}} "
 "рядом с {1}, {2}."
 
 #: src/renderer/pages/settings/create.messages.ts:3:15
@@ -1471,7 +1471,7 @@ msgstr "Показать продвинутые настройки"
 
 #: src/renderer/pages/home/upcoming_tournaments/tournaments_near_me/tournaments_near_me.messages.ts:13:27
 msgid "Show map of events"
-msgstr "Показать карту событий"
+msgstr "Показать карту турниров"
 
 #: src/renderer/pages/home/news_feed/news_feed.messages.ts:6:19
 msgid "Show more"
@@ -1830,7 +1830,7 @@ msgstr "Вверх"
 
 #: src/renderer/pages/home/upcoming_tournaments/upcoming_tournaments.messages.ts:5:25
 msgid "Upcoming Majors"
-msgstr "Предстоящие Majors"
+msgstr "Предстоящие мейжоры"
 
 #: src/renderer/pages/home/home_page.messages.ts:4:30
 #: src/renderer/pages/home/overview/overview.messages.ts:3:30
