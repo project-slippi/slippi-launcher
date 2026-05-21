@@ -65,19 +65,32 @@ export const IsoSelectionStep = () => {
       }
       return window.electron.common.checkValidIso(tempIsoPath);
     },
+    enabled: Boolean(tempIsoPath),
   });
 
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
   const loading = validIsoPathQuery.isLoading;
   const [, setIsoPath] = useIsoPath();
+  const nativeFilesRef = React.useRef<File[] | null>(null);
 
   const onDrop = (acceptedFiles: File[]) => {
     if (loading || acceptedFiles.length === 0) {
       return;
     }
 
-    const isoFile = acceptedFiles[0];
+    // Use the validated file from react-dropzone
+    const accepted = acceptedFiles[0];
+
+    // Find corresponding native-backed file
+    const isoFile = nativeFilesRef.current?.find(
+      (f) => f.name === accepted.name && f.size === accepted.size && f.lastModified === accepted.lastModified,
+    );
+
+    if (!isoFile) {
+      return;
+    }
+
     const filePath = window.electron.utils.getFilePath(isoFile);
     if (filePath.endsWith(".7z")) {
       showError(Messages.sevenZFilesMustBeUncompressed());
@@ -89,6 +102,7 @@ export const IsoSelectionStep = () => {
 
     setTempIsoPath(filePath);
   };
+
   const validIsoPath = validIsoPathQuery.data?.valid ?? IsoValidity.UNVALIDATED;
 
   const { open, getRootProps, getInputProps, isDragActive, isDragAccept, isDragReject } = useDropzone({
@@ -132,7 +146,21 @@ export const IsoSelectionStep = () => {
         <QuickStartHeader>{Messages.selectMeleeIso()}</QuickStartHeader>
         <div>{Messages.thisApplicationUsesNtsc()}</div>
       </div>
-      <Container {...getRootProps({ isDragActive, isDragAccept, isDragReject })}>
+      <Container
+        {...getRootProps({
+          isDragActive,
+          isDragAccept,
+          isDragReject,
+          onDropCapture: (e) => {
+            // This is a hack to get the native file object from the drag event.
+            // In newer Chromium/Electron versions, the drag data store can become protected
+            // after the drop handling phase, so by the time onDrop fires, event.dataTransfer.files is empty.
+            // The reliable fix is to intercept the native drop event before react-dropzone processes it.
+            // We need to do this to get the full file path.
+            nativeFilesRef.current = Array.from(e.dataTransfer?.files ?? []);
+          },
+        })}
+      >
         <input {...getInputProps()} />
         {!loading && (
           <Button color="primary" variant="contained" onClick={open}>

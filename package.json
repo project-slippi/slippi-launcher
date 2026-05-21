@@ -210,7 +210,7 @@
     "os-name": "^5.1.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-dropzone": "^14.2.10",
+    "react-dropzone": "^15.0.0",
     "react-hook-form": "^7.75.0",
     "react-markdown": "^9.0.1",
     "react-router-dom": "^6.3.0",
