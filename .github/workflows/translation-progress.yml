@@ -6,6 +6,8 @@ on:
     paths:
       - 'locales/**'  # Only run when translation files (.po/.pot) change
       - 'src/renderer/**/*.messages.ts'  # Track message files for unstaged changes
+    paths-ignore:
+      - "**/*.md"
 
 concurrency:
   group: translations-badge-${{ github.ref }}
