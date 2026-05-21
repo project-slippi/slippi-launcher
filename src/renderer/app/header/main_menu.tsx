@@ -10,7 +10,6 @@ import { cssVar } from "@/styles/css_variables";
 
 export type MenuItem = {
   subpath: string;
-  routePattern?: string;
   title: () => string;
   Icon: React.ComponentType;
 };
