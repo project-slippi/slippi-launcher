@@ -1,64 +1,26 @@
 import { useCallback } from "react";
-import { useLocation, useMatch, useNavigate, useResolvedPath } from "react-router-dom";
-import { create } from "zustand";
+import { useNavigate } from "react-router-dom";
 
-type StoreState = {
-  lastModalPage?: string;
-  lastPage: string;
-};
-
-type StoreReducers = {
-  setLastModalPage: (page: string) => void;
-  setLastPage: (page: string) => void;
-};
-
-const initialState: StoreState = {
-  lastPage: "/",
-};
-
-const useModalStore = create<StoreState & StoreReducers>((set) => ({
-  // Set the initial state
-  ...initialState,
-
-  // Reducers
-  setLastModalPage: (page) => {
-    set({ lastModalPage: page });
-  },
-  setLastPage: (page) => {
-    set({ lastPage: page });
-  },
-}));
+import { useLastPage } from "./use_last_page";
 
 export const useSettingsModal = () => {
-  const lastModalPage = useModalStore((store) => store.lastModalPage);
-  const lastPage = useModalStore((store) => store.lastPage);
-  const setLastPage = useModalStore((store) => store.setLastPage);
-  const setLastModalPage = useModalStore((store) => store.setLastModalPage);
+  const lastPage = useLastPage();
   const navigate = useNavigate();
-  const location = useLocation();
-  const resolved = useResolvedPath("/settings/*");
-  const match = useMatch({ path: resolved.pathname });
-  const isOpen = match != null;
 
   const open = useCallback(
     (modalPage?: string) => {
-      if (!isOpen) {
-        setLastPage(location.pathname);
-      }
-      const nextPage = modalPage || lastModalPage || "/settings";
-      navigate(nextPage);
+      const nextPage = modalPage || "/settings";
+      navigate(nextPage, { replace: true });
     },
-    [setLastPage, navigate, isOpen, lastModalPage, location.pathname],
+    [navigate],
   );
 
   const close = useCallback(() => {
-    setLastModalPage(location.pathname);
     const nextPage = lastPage || "/";
     navigate(nextPage);
-  }, [setLastModalPage, navigate, lastPage, location.pathname]);
+  }, [navigate, lastPage]);
 
   return {
-    isOpen,
     open,
     close,
   };

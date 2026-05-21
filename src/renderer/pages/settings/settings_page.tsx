@@ -8,14 +8,15 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import ListSubheader from "@mui/material/ListSubheader";
 import Tooltip from "@mui/material/Tooltip";
-import React from "react";
+import React, { useEffect } from "react";
 import type { LinkProps } from "react-router-dom";
-import { Link, Navigate, Route, Routes, useMatch, useResolvedPath } from "react-router-dom";
+import { Link, Route, Routes, useLocation, useMatch, useNavigate, useResolvedPath } from "react-router-dom";
 
 import { BuildInfo } from "@/components/build_info/build_info";
 import { DualPane } from "@/components/dual_pane";
 import { useMousetrap } from "@/lib/hooks/use_mousetrap";
 import { useSettingsModal } from "@/lib/hooks/use_settings_modal";
+import { useTabMemory } from "@/lib/hooks/use_tab_memory";
 import type { SettingSection } from "@/pages/settings/types";
 import { cssVar } from "@/styles/css_variables";
 import { platformTitleBarStyles } from "@/styles/platform_title_bar_styles";
@@ -57,10 +58,34 @@ const CloseButton = styled(IconButton)`
   z-index: 1;
 `;
 
+const SettingsDefaultRedirect = React.memo(function SettingsDefaultRedirect({ items }: { items: { path: string }[] }) {
+  const navigate = useNavigate();
+  const lastTab = useTabMemory((s) => s.lastTab["settings"]);
+
+  useEffect(() => {
+    const target = items.find((i) => i.path === lastTab) ? lastTab : items[0]?.path;
+    if (target) {
+      navigate(target, { replace: true });
+    }
+  }, [items, lastTab, navigate]);
+
+  return null;
+});
+
 export const SettingsPage = React.memo(({ settings }: { settings: SettingSection[] }) => {
   const settingItems = settings.flatMap((section) => section.items).filter((item) => !item.hidden?.());
   const { close } = useSettingsModal();
+  const setLastTab = useTabMemory((s) => s.setLastTab);
+  const location = useLocation();
   useMousetrap("escape", close);
+
+  // Sync current settings tab to memory
+  useEffect(() => {
+    const tab = location.pathname.split("/").filter(Boolean).pop();
+    if (tab && settingItems.some((item) => item.path === tab)) {
+      setLastTab("settings", tab);
+    }
+  }, [location.pathname, settingItems, setLastTab]);
 
   return (
     <Outer>
@@ -135,7 +160,9 @@ export const SettingsPage = React.memo(({ settings }: { settings: SettingSection
                 {settingItems.map((item) => {
                   return <Route key={item.path} path={item.path} element={item.component} />;
                 })}
-                {settingItems.length > 0 && <Route path="*" element={<Navigate to={settingItems[0].path} />} />}
+                {settingItems.length > 0 && (
+                  <Route path="*" element={<SettingsDefaultRedirect items={settingItems} />} />
+                )}
               </Routes>
             </div>
           </ContentColumn>

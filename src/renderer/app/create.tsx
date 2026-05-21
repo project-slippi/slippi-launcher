@@ -7,11 +7,11 @@ import React from "react";
 import { HashRouter as Router, Navigate, Route, Routes } from "react-router-dom";
 
 import { useAppStore } from "@/lib/hooks/use_app_store";
+import { useLastPageTracker } from "@/lib/hooks/use_last_page";
 import { usePageRequestListeners } from "@/lib/hooks/use_page_request_listeners";
 import { usePageNavigationShortcuts } from "@/lib/hooks/use_shortcuts";
 import { lazyLoadConsoleMirrorPage } from "@/pages/console_mirror/load";
 import { HomePage } from "@/pages/home/home_page";
-import { HOME_ROUTE_PATTERN } from "@/pages/home/home_routes";
 import { NotFoundPage } from "@/pages/not_found/not_found_page";
 import { lazyLoadQuickStartPage } from "@/pages/quick_start/load";
 import { useQuickStartStore } from "@/pages/quick_start/use_quick_start";
@@ -36,7 +36,7 @@ export function createApp({ services }: { services: Services }): {
 
   const menuItems: MainMenuItem[] = [
     {
-      subpath: HOME_ROUTE_PATTERN,
+      subpath: "home",
       title: () => Messages.home(),
       Component: HomePage,
       Icon: HomeOutlinedIcon,
@@ -86,6 +86,9 @@ export function createApp({ services }: { services: Services }): {
 
   const AppRoutes = () => {
     const currentLanguage = useAppStore((state) => state.currentLanguage);
+
+    // Track last non-settings URL for modal return navigation
+    useLastPageTracker();
 
     // Then add the page request listeners
     usePageRequestListeners();
