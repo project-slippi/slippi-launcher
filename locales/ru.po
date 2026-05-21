@@ -70,11 +70,11 @@ msgstr ""
 
 #: src/renderer/components/location_guard/location_guard.messages.ts:6:16
 msgid "Allow"
-msgstr ""
+msgstr "Разрешить"
 
 #: src/renderer/components/location_guard/location_guard.messages.ts:2:16
 msgid "Allow Approximate Location Access"
-msgstr ""
+msgstr "Разрешить доступ к геолокации"
 
 #: src/renderer/pages/settings/advanced_app_settings/advanced_app_settings.messages.ts:6:5
 msgid ""
@@ -82,6 +82,9 @@ msgid ""
 "tournaments. This data will be sent to a third-party service. Slippi does "
 "NOT collect this data."
 msgstr ""
+"Разрешите приложению доступ к вашему примерному местоположению для "
+"показа ближайших турниров. Эти данные будут отправлены стороннему "
+"сервису. Slippi НЕ собирает эти данные."
 
 #: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:15:5
 msgid ""
@@ -534,7 +537,7 @@ msgstr "Email подтвержден"
 
 #: src/renderer/pages/settings/advanced_app_settings/advanced_app_settings.messages.ts:4:31
 msgid "Enable Approximate Location Access"
-msgstr ""
+msgstr "Включить доступ к геолокации"
 
 #: src/renderer/pages/settings/advanced_app_settings/advanced_app_settings.messages.ts:2:28
 msgid "Enable Auto Updates"
@@ -554,7 +557,7 @@ msgstr "Включить музыку"
 
 #: src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:13:31
 msgid "Enable Netplay Replays"
-msgstr ""
+msgstr "Включить реплеи онлайна"
 
 #: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:7:29
 msgid "Enable Real-time Mode"
@@ -631,7 +634,7 @@ msgstr "Не получилось определить доступность po
 #: src/renderer/components/location_guard/location_guard.messages.ts:7:36
 #. {0} errorMessage: string
 msgid "Failed to fetch location information. Error: {0}"
-msgstr ""
+msgstr "Не удалось получить информацию о местоположении. Ошибка: {0}"
 
 #: src/renderer/pages/home/news_feed/news_feed.messages.ts:4:24
 msgid "Failed to fetch news articles."
@@ -639,12 +642,12 @@ msgstr "Ошибка получения новостных сообщений."
 
 #: src/renderer/pages/home/overview/news_preview/news_preview.messages.ts:2:28
 msgid "Failed to fetch news. Try again later."
-msgstr ""
+msgstr "Не удалось загрузить новости. Попробуйте позже."
 
 #: src/renderer/pages/home/upcoming_tournaments/tournaments_near_me/tournaments_near_me.messages.ts:12:36
 #. {0} errorMessage: string
 msgid "Failed to fetch tournaments. Error: {0}"
-msgstr ""
+msgstr "Не удалось загрузить турниры. Ошибка: {0}"
 
 #: src/renderer/app/header/header.messages.ts:5:29
 msgid "Failed to get updates"
@@ -695,6 +698,8 @@ msgstr "Забыли пароль?"
 #. {2} greaterRegion: string - The greater region/state/prefecture the city is contained in. e.g. Tokyo
 msgid "Found {0, plural, one {# tournament} other {# tournaments}} near {1}, {2}."
 msgstr ""
+"Найден {0, plural, one {# турнир} few {# турнира} other {# турниров}} "
+"рядом с {1}, {2}."
 
 #: src/renderer/pages/settings/create.messages.ts:3:15
 msgid "Game"
@@ -772,7 +777,7 @@ msgstr "Если проблема осталась, можете протест�
 #: src/renderer/pages/home/upcoming_tournaments/tournaments_near_me/tournaments_near_me.messages.ts:17:21
 #: src/renderer/pages/home/upcoming_tournaments/upcoming_tournaments.messages.ts:3:21
 msgid "In progress"
-msgstr ""
+msgstr "В процессе"
 
 #: src/renderer/pages/settings/game_settings/game_music_toggle/game_music_toggle.messages.ts:4:33
 msgid "Incompatible with WASAPI."
@@ -939,7 +944,7 @@ msgstr "Самые новые"
 
 #: src/renderer/pages/home/overview/my_ranking/my_ranking.messages.ts:2:20
 msgid "My Ranking"
-msgstr ""
+msgstr "Мой рейтинг"
 
 #: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:12:18
 msgid "NAT Type"
@@ -1039,11 +1044,11 @@ msgstr "Нет сетевого соединения"
 
 #: src/renderer/pages/home/overview/news_preview/news_preview.messages.ts:3:17
 msgid "No news to show"
-msgstr ""
+msgstr "Нет новостей"
 
 #: src/renderer/pages/home/overview/my_ranking/my_ranking.messages.ts:4:20
 msgid "No ranking"
-msgstr ""
+msgstr "Нет рейтинга"
 
 #: src/renderer/pages/console_mirror/saved_connections_list/saved_connections_list.messages.ts:4:29
 msgid "No saved console connections"
@@ -1091,7 +1096,7 @@ msgstr "OBS Websocket Port"
 
 #: src/renderer/app/header/user_menu/user_menu.messages.ts:7:18
 msgid "Offline"
-msgstr ""
+msgstr "Оффлайн"
 
 #: src/renderer/pages/home/overview/ranked_status/ranked_status.messages.ts:10:5
 msgid ""
@@ -1122,11 +1127,11 @@ msgstr "Открыть каталог настроек"
 #: src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:15:60
 #. {0} currentDate: string
 msgid "Organize into monthly subfolders (e.g. {0})."
-msgstr ""
+msgstr "Организовать по папкам по месяцам (например, {0})."
 
 #: src/renderer/pages/home/home_page.messages.ts:2:19
 msgid "Overview"
-msgstr ""
+msgstr "Обзор"
 
 #: src/renderer/components/login_form/login_form.messages.ts:7:19
 msgid "Password"
@@ -1269,7 +1274,7 @@ msgstr ""
 
 #: src/renderer/pages/home/overview/my_ranking/my_ranking.messages.ts:5:22
 msgid "Rank pending"
-msgstr ""
+msgstr "Ожидание ранга"
 
 #: src/renderer/pages/home/overview/overview.messages.ts:4:20
 #: src/renderer/pages/home/overview/ranked_status/ranked_status.messages.ts:2:20
@@ -1292,7 +1297,7 @@ msgstr "Читать дальше"
 
 #: src/renderer/pages/home/overview/news_preview/news_preview.messages.ts:4:19
 msgid "Read post"
-msgstr ""
+msgstr "Читать"
 
 #: src/renderer/pages/console_mirror/saved_connections_list/saved_connection_item.messages.ts:4:23
 msgid "Reconnecting"
@@ -1409,7 +1414,7 @@ msgstr "Сохранить"
 
 #: src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:14:42
 msgid "Save replays for netplay games to the Root SLP Folder."
-msgstr ""
+msgstr "Сохранять реплеи сетевых игр в корневую SLP папку."
 
 #: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:6:34
 msgid "Save replays to subfolders based on console nickname"
@@ -1425,7 +1430,7 @@ msgstr "Поиск"
 
 #: src/renderer/pages/home/upcoming_tournaments/tournaments_near_me/tournaments_near_me.messages.ts:11:18
 msgid "Searching for nearby tournaments..."
-msgstr ""
+msgstr "Поиск ближайших турниров..."
 
 #: src/renderer/components/path_input/path_input.messages.ts:2:17
 #: src/renderer/pages/quick_start/steps/iso_selection_step/iso_selection_step.messages.ts:12:17
@@ -1466,7 +1471,7 @@ msgstr "Показать продвинутые настройки"
 
 #: src/renderer/pages/home/upcoming_tournaments/tournaments_near_me/tournaments_near_me.messages.ts:13:27
 msgid "Show map of events"
-msgstr ""
+msgstr "Показать карту событий"
 
 #: src/renderer/pages/home/news_feed/news_feed.messages.ts:6:19
 msgid "Show more"
@@ -1538,15 +1543,15 @@ msgstr "Что-то пошло не так."
 
 #: src/renderer/pages/home/upcoming_tournaments/tournaments_near_me/tournaments_near_me.messages.ts:15:21
 msgid "Sort by date"
-msgstr ""
+msgstr "Сортировать по дате"
 
 #: src/renderer/pages/home/upcoming_tournaments/tournaments_near_me/tournaments_near_me.messages.ts:14:25
 msgid "Sort by distance"
-msgstr ""
+msgstr "Сортировать по расстоянию"
 
 #: src/renderer/pages/home/upcoming_tournaments/tournaments_near_me/tournaments_near_me.messages.ts:16:25
 msgid "Sort by entrants"
-msgstr ""
+msgstr "Сортировать по участникам"
 
 #: src/renderer/app/create.messages.ts:4:19
 #: src/renderer/pages/settings/create.messages.ts:6:19
@@ -1597,7 +1602,7 @@ msgstr "Скоро будет!"
 #: src/renderer/pages/home/upcoming_tournaments/upcoming_tournaments.messages.ts:4:38
 #. {0} countdown: string
 msgid "Starting in {0}"
-msgstr ""
+msgstr "Начинается через {0}"
 
 #: src/renderer/pages/spectate/spectate_remote_control_block/spectate_remote_control_block.messages.ts:8:19
 msgid "Starting..."
@@ -1758,7 +1763,7 @@ msgstr "Общий размер: {0}"
 #: src/renderer/pages/home/upcoming_tournaments/tournaments_near_me/tournaments_near_me.messages.ts:2:16
 #: src/renderer/pages/home/upcoming_tournaments/upcoming_tournaments.messages.ts:6:28
 msgid "Tournaments Near Me"
-msgstr ""
+msgstr "Турниры рядом со мной"
 
 #: src/renderer/components/activate_online_form/activate_online_form.messages.ts:4:26
 msgid "Trailing numbers will be auto-generated"
@@ -1825,12 +1830,12 @@ msgstr "Вверх"
 
 #: src/renderer/pages/home/upcoming_tournaments/upcoming_tournaments.messages.ts:5:25
 msgid "Upcoming Majors"
-msgstr ""
+msgstr "Предстоящие Majors"
 
 #: src/renderer/pages/home/home_page.messages.ts:4:30
 #: src/renderer/pages/home/overview/overview.messages.ts:3:30
 msgid "Upcoming Tournaments"
-msgstr ""
+msgstr "Предстоящие турниры"
 
 #: src/renderer/app/header/play_button/play_button.messages.ts:3:19
 msgid "Updating"
@@ -1893,7 +1898,7 @@ msgstr "Посмотреть профиль"
 #: src/renderer/pages/home/overview/carousel/carousel.messages.ts:3:21
 #: src/renderer/pages/home/upcoming_tournaments/upcoming_tournaments.messages.ts:2:21
 msgid "View stream"
-msgstr ""
+msgstr "Смотреть стрим"
 
 #: src/renderer/pages/quick_start/steps/verify_email_step/verify_email_step.messages.ts:3:25
 msgid ""
@@ -1905,7 +1910,7 @@ msgstr ""
 
 #: src/renderer/components/location_guard/location_guard.messages.ts:3:22
 msgid "We need access to your approximate location to show you nearby tournaments."
-msgstr ""
+msgstr "Нам нужен доступ к вашему примерному местоположению, чтобы показывать ближайшие турниры."
 
 #: src/renderer/pages/console_mirror/console_mirror.messages.ts:4:26
 msgid "What is Mirroring?"
@@ -1930,7 +1935,7 @@ msgstr "Вы оффлайн."
 
 #: src/renderer/pages/home/overview/ranked_status/ranked_status.messages.ts:12:29
 msgid "You have an active subscription! Enjoy ranked play at any time!"
-msgstr ""
+msgstr "У вас активная подписка! Играйте в ранкед в любое время!"
 
 #: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:34:28
 msgid "You may have trouble connecting to other players."
@@ -1991,6 +1996,8 @@ msgid ""
 "Your location data will be sent to a third-party service. Slippi does NOT "
 "collect this data. You can turn this feature off again in the settings."
 msgstr ""
+"Ваши данные о местоположении будут отправлены стороннему сервису. Slippi "
+"НЕ собирает эти данные. Вы можете отключить эту функцию в настройках."
 
 #: src/renderer/pages/quick_start/steps/iso_selection_step/iso_selection_step.messages.ts:5:28
 msgid "or drag and drop here"
