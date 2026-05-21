@@ -12,7 +12,6 @@ import { usePageRequestListeners } from "@/lib/hooks/use_page_request_listeners"
 import { usePageNavigationShortcuts } from "@/lib/hooks/use_shortcuts";
 import { lazyLoadConsoleMirrorPage } from "@/pages/console_mirror/load";
 import { HomePage } from "@/pages/home/home_page";
-import { HOME_ROUTE_PATTERN } from "@/pages/home/home_routes";
 import { NotFoundPage } from "@/pages/not_found/not_found_page";
 import { lazyLoadQuickStartPage } from "@/pages/quick_start/load";
 import { useQuickStartStore } from "@/pages/quick_start/use_quick_start";
@@ -38,7 +37,6 @@ export function createApp({ services }: { services: Services }): {
   const menuItems: MainMenuItem[] = [
     {
       subpath: "home",
-      routePattern: HOME_ROUTE_PATTERN,
       title: () => Messages.home(),
       Component: HomePage,
       Icon: HomeOutlinedIcon,

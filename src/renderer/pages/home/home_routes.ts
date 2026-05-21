@@ -1,5 +1,3 @@
-export const HOME_ROUTE_PATTERN = "home";
-
 export const HOME_TABS = ["overview", "news", "tournaments"] as const;
 export type HomeTab = (typeof HOME_TABS)[number];
 
