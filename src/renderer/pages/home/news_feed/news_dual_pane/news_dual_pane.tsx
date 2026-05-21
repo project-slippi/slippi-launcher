@@ -41,7 +41,11 @@ export const NewsDualPane = React.memo(function NewsDualPane({
   const markAsRead = useNewsReadStore((store) => store.markAsRead);
   const readStatus = useNewsReadStore((store) => store.readStatus);
 
-  const selectedPost = React.useMemo(() => posts.find((p) => p.id === selectedNewsId) ?? null, [posts, selectedNewsId]);
+  // This will default to the first post if no post is selected
+  const selectedPost = React.useMemo(
+    () => posts.find((p) => p.id === selectedNewsId) ?? posts[0],
+    [posts, selectedNewsId],
+  );
   const visiblePosts = React.useMemo(() => posts.slice(0, visibleCount), [posts, visibleCount]);
   const hasMore = visibleCount < posts.length;
 
@@ -70,7 +74,7 @@ export const NewsDualPane = React.memo(function NewsDualPane({
     <ListItem
       key={post.id}
       item={post}
-      selected={post.id === selectedNewsId}
+      selected={post.id === selectedPost.id}
       isUnread={isNewsUnread(post, readStatus)}
       currentLanguage={currentLanguage}
       onClick={() => handleSelect(post)}
@@ -108,15 +112,11 @@ export const NewsDualPane = React.memo(function NewsDualPane({
   return (
     <div className={styles.container}>
       {listPane}
-      {selectedPost ? (
-        <div ref={scrollRef} className={styles.detailPane}>
-          <div className={styles.detailPaneContent}>
-            <NewsArticleContainer item={selectedPost} />
-          </div>
+      <div ref={scrollRef} className={styles.detailPane}>
+        <div className={styles.detailPaneContent}>
+          <NewsArticleContainer item={selectedPost} />
         </div>
-      ) : (
-        <div className={styles.detailEmpty}>{Messages.selectArticle()}</div>
-      )}
+      </div>
     </div>
   );
 });
