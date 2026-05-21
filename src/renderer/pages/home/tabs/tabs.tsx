@@ -5,7 +5,6 @@ import styles from "./tabs.module.css";
 type Tab = {
   id: string;
   label: string;
-  content: React.ReactNode;
 };
 
 type TabsProps = {
@@ -35,10 +34,5 @@ export const Tabs = ({ defaultTab, value, onChange, tabs, highlightedTabIds }: T
         </BaseTabs.Tab>
       ))}
     </BaseTabs.List>
-    {tabs.map((tab, i) => (
-      <BaseTabs.Panel className={styles.content} value={tab.id} key={i}>
-        {tab.content}
-      </BaseTabs.Panel>
-    ))}
   </BaseTabs.Root>
 );

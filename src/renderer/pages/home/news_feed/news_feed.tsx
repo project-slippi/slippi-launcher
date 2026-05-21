@@ -4,7 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 
 import { LoadingScreen } from "@/components/loading_screen/loading_screen";
 import { useNewsFeedQuery } from "@/lib/hooks/use_data_fetch_query";
-import { useTabMemory } from "@/lib/hooks/use_tab_memory";
+import { useRouteMemory } from "@/lib/hooks/use_route_memory";
 
 import { NewsDualPane } from "./news_dual_pane/news_dual_pane";
 import { NewsFeedMessages as Messages } from "./news_feed.messages";
@@ -40,37 +40,36 @@ export const NewsFeed = React.memo(function NewsFeed() {
   const params = useParams();
   const navigate = useNavigate();
 
-  const activeTab = params.tab;
   const urlNewsId = (params["*"] as string) || null;
 
-  const setTabParam = useTabMemory((s) => s.setTabParam);
-  const memorizedNewsId = useTabMemory((s) => s.tabState["newsFeed:selectedArticle"]?.id ?? null);
+  const memorizedNewsId = useRouteMemory((s) => s.routeMemory["newsFeed"]) ?? null;
+  const setLastRoute = useRouteMemory((s) => s.setLastRoute);
 
   React.useEffect(() => {
     if (urlNewsId) {
-      setTabParam("newsFeed", "selectedArticle", "id", urlNewsId);
-    } else if (activeTab === "news" && memorizedNewsId) {
+      setLastRoute("newsFeed", urlNewsId);
+    } else if (memorizedNewsId) {
       navigate(memorizedNewsId, { relative: "route", replace: true });
     }
-  }, [urlNewsId, activeTab, memorizedNewsId, navigate, setTabParam]);
+  }, [urlNewsId, memorizedNewsId, navigate, setLastRoute]);
 
   const handleNewsIdChange = React.useCallback(
     (id: string | null) => {
       if (id) {
-        setTabParam("newsFeed", "selectedArticle", "id", id);
+        setLastRoute("newsFeed", id);
         navigate(id, { relative: "route" });
       } else {
-        setTabParam("newsFeed", "selectedArticle", "id", null);
+        setLastRoute("newsFeed", "");
         navigate("..");
       }
     },
-    [navigate, setTabParam],
+    [navigate, setLastRoute],
   );
 
   const newsId = urlNewsId ?? memorizedNewsId;
 
   return (
-    <div style={{ height: "100%" }}>
+    <div style={{ height: "100%", overflow: "hidden" }}>
       <NewsFeedContent newsId={newsId} onNewsIdChange={handleNewsIdChange} />
     </div>
   );

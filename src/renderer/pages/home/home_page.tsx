@@ -1,8 +1,9 @@
 import styled from "@emotion/styled";
-import React from "react";
+import React, { useCallback, useEffect } from "react";
+import { Route, Routes, useNavigate, useParams } from "react-router-dom";
 
 import { Footer } from "@/components/footer/footer";
-import { useTabRouter } from "@/lib/hooks/use_tab_router";
+import { useRouteMemory } from "@/lib/hooks/use_route_memory";
 
 import { HomePageMessages as Messages } from "./home_page.messages";
 import { HOME_TABS } from "./home_routes";
@@ -20,14 +21,34 @@ const Outer = styled.div`
   min-width: 0;
 `;
 
+const RestoreHomeScope = React.memo(function RestoreHomeScope() {
+  const navigate = useNavigate();
+  const lastTab = useRouteMemory((s) => s.routeMemory["home"]) || "overview";
+
+  useEffect(() => {
+    navigate(`/main/home/${lastTab}`, { replace: true });
+  }, [lastTab, navigate]);
+
+  return null;
+});
+
 export const HomePage = React.memo(function HomePage() {
-  const { currentTab, navigateToTab } = useTabRouter({
-    contextKey: "home",
-    tabs: HOME_TABS,
-    defaultTab: "overview",
-    basePath: "/main/home",
-  });
+  const params = useParams();
+  const navigate = useNavigate();
+  const setLastRoute = useRouteMemory((s) => s.setLastRoute);
   const hasUnreadNews = useHasUnreadNews();
+
+  const splat = params["*"] || "";
+  const firstSegment = splat.split("/")[0] || "";
+  const currentTab = (HOME_TABS as readonly string[]).includes(firstSegment) ? firstSegment : undefined;
+
+  const handleTabChange = useCallback(
+    (tab: string) => {
+      setLastRoute("home", tab);
+      navigate(`/main/home/${tab}`);
+    },
+    [setLastRoute, navigate],
+  );
 
   return (
     <Outer>
@@ -35,13 +56,19 @@ export const HomePage = React.memo(function HomePage() {
         <Tabs
           value={currentTab}
           highlightedTabIds={hasUnreadNews ? ["news"] : []}
-          onChange={(tab) => navigateToTab(tab as typeof currentTab)}
+          onChange={handleTabChange}
           tabs={[
-            { id: "overview", label: Messages.overview(), content: <HomeOverview /> },
-            { id: "news", label: Messages.latestNews(), content: <NewsFeed /> },
-            { id: "tournaments", label: Messages.upcomingTournaments(), content: <UpcomingTournaments /> },
+            { id: "overview", label: Messages.overview() },
+            { id: "news", label: Messages.latestNews() },
+            { id: "tournaments", label: Messages.upcomingTournaments() },
           ]}
         />
+        <Routes>
+          <Route index={true} element={<RestoreHomeScope />} />
+          <Route path="overview" element={<HomeOverview />} />
+          <Route path="news/*" element={<NewsFeed />} />
+          <Route path="tournaments" element={<UpcomingTournaments />} />
+        </Routes>
       </div>
       <Footer />
     </Outer>
