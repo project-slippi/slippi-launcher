@@ -93,7 +93,7 @@ export const NewsDualPane = React.memo(function NewsDualPane({
   );
 
   if (isMobile) {
-    if (selectedNewsId && selectedPost && mobilePageOpen) {
+    if (mobilePageOpen) {
       return (
         <div className={styles.mobileContainer}>
           <button className={styles.backButton} onClick={handleBack}>
