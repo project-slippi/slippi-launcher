@@ -28,6 +28,7 @@ export const NewsDualPane = React.memo(function NewsDualPane({
 }) {
   const [visibleCount, setVisibleCount] = React.useState(INITIAL_VISIBLE);
   const scrollRef = React.useRef<HTMLDivElement>(null);
+  const [mobilePageOpen, setMobilePageOpen] = React.useState(!!selectedNewsId);
 
   React.useEffect(() => {
     scrollRef.current?.scrollTo(0, 0);
@@ -47,6 +48,7 @@ export const NewsDualPane = React.memo(function NewsDualPane({
   const handleSelect = React.useCallback(
     (post: NewsItem) => {
       onSelectedNewsIdChange(post.id);
+      setMobilePageOpen(true);
 
       // Mark the news as read if it was unread to begin with
       if (isNewsUnread(post, readStatus)) {
@@ -61,8 +63,8 @@ export const NewsDualPane = React.memo(function NewsDualPane({
   }, [posts.length]);
 
   const handleBack = React.useCallback(() => {
-    onSelectedNewsIdChange(null);
-  }, [onSelectedNewsIdChange]);
+    setMobilePageOpen(false);
+  }, [setMobilePageOpen]);
 
   const listContent = visiblePosts.map((post) => (
     <ListItem
@@ -87,7 +89,7 @@ export const NewsDualPane = React.memo(function NewsDualPane({
   );
 
   if (isMobile) {
-    if (selectedNewsId && selectedPost) {
+    if (selectedNewsId && selectedPost && mobilePageOpen) {
       return (
         <div className={styles.mobileContainer}>
           <button className={styles.backButton} onClick={handleBack}>
