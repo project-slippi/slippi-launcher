@@ -50,7 +50,7 @@ msgstr "Agregar"
 
 #: src/renderer/app/header/account_switcher/account_switcher.messages.ts:2:28
 msgid "Add another account"
-msgstr ""
+msgstr "Añadir otra cuenta"
 
 #: src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:10:31
 msgid "Additional SLP Folders"
@@ -63,15 +63,15 @@ msgstr "Avanzado"
 #: src/renderer/pages/replays/replay_browser/file_selection_toolbar/file_selection_toolbar.messages.ts:3:40
 #. {0} count: number
 msgid "All {0, plural, one {# file} other {# files}} selected"
-msgstr ""
+msgstr "Todos los {0, plural, one {# archivo} other {# archivos}} seleccionados"
 
 #: src/renderer/components/location_guard/location_guard.messages.ts:6:16
 msgid "Allow"
-msgstr ""
+msgstr "Permitir"
 
 #: src/renderer/components/location_guard/location_guard.messages.ts:2:16
 msgid "Allow Approximate Location Access"
-msgstr ""
+msgstr "Permitir acceso a la ubicación aproximada"
 
 #: src/renderer/pages/settings/advanced_app_settings/advanced_app_settings.messages.ts:6:5
 msgid ""
@@ -79,6 +79,9 @@ msgid ""
 "tournaments. This data will be sent to a third-party service. Slippi does "
 "NOT collect this data."
 msgstr ""
+"Permite que la aplicación acceda a tu ubicación aproximada para mostrar "
+"torneos cercanos. Estos datos se enviarán a un servicio externo. Slippi NO "
+"recopila estos datos."
 
 #: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:15:5
 msgid ""
@@ -479,7 +482,7 @@ msgstr ""
 
 #: src/renderer/app/header/user_menu/user_menu.messages.ts:17:39
 msgid "Dolphin is currently running. Close Dolphin to switch accounts"
-msgstr ""
+msgstr "Dolphin se está ejecutando. Cierra Dolphin para cambiar de cuenta"
 
 #: src/renderer/pages/replays/replay_browser/replay_file/replay_file.messages.ts:6:28
 #: src/renderer/pages/replays/replay_file_stats/game_profile_header/game_profile_header.messages.ts:6:28
@@ -534,7 +537,7 @@ msgstr "Correo verificado"
 
 #: src/renderer/pages/settings/advanced_app_settings/advanced_app_settings.messages.ts:4:31
 msgid "Enable Approximate Location Access"
-msgstr ""
+msgstr "Activar acceso a la ubicación aproximada"
 
 #: src/renderer/pages/settings/advanced_app_settings/advanced_app_settings.messages.ts:2:28
 msgid "Enable Auto Updates"
@@ -554,7 +557,7 @@ msgstr "Activar música"
 
 #: src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:13:31
 msgid "Enable Netplay Replays"
-msgstr ""
+msgstr "Activar repeticiones de juego en línea"
 
 #: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:7:29
 msgid "Enable Real-time Mode"
@@ -631,7 +634,7 @@ msgstr "No se pudo determinar la disponibilidad de mapeo de puertos"
 #: src/renderer/components/location_guard/location_guard.messages.ts:7:36
 #. {0} errorMessage: string
 msgid "Failed to fetch location information. Error: {0}"
-msgstr ""
+msgstr "Error al obtener información de ubicación. Error: {0}"
 
 #: src/renderer/pages/home/news_feed/news_feed.messages.ts:4:24
 msgid "Failed to fetch news articles."
@@ -639,12 +642,12 @@ msgstr "Error al obtener artículos de noticias."
 
 #: src/renderer/pages/home/overview/news_preview/news_preview.messages.ts:2:28
 msgid "Failed to fetch news. Try again later."
-msgstr ""
+msgstr "Error al obtener noticias. Intenta de nuevo más tarde."
 
 #: src/renderer/pages/home/upcoming_tournaments/tournaments_near_me/tournaments_near_me.messages.ts:12:36
 #. {0} errorMessage: string
 msgid "Failed to fetch tournaments. Error: {0}"
-msgstr ""
+msgstr "Error al obtener torneos. Error: {0}"
 
 #: src/renderer/app/header/header.messages.ts:5:29
 msgid "Failed to get updates"
@@ -666,11 +669,11 @@ msgstr "No se pudieron leer los códigos Gecko"
 
 #: src/renderer/app/header/user_menu/user_menu.messages.ts:12:32
 msgid "Failed to remove account"
-msgstr ""
+msgstr "Error al eliminar cuenta"
 
 #: src/renderer/app/header/user_menu/user_menu.messages.ts:13:32
 msgid "Failed to switch account"
-msgstr ""
+msgstr "Error al cambiar de cuenta"
 
 #: src/renderer/pages/spectate/spectator_id_block/spectator_id_block.messages.ts:6:5
 msgid ""
@@ -694,7 +697,7 @@ msgstr "¿Olvidaste tu contraseña?"
 #. {1} city: string - The approximate city the user is in. e.g. Shimomeguro
 #. {2} greaterRegion: string - The greater region/state/prefecture the city is contained in. e.g. Tokyo
 msgid "Found {0, plural, one {# tournament} other {# tournaments}} near {1}, {2}."
-msgstr ""
+msgstr "Se encontró {0, plural, one {# torneo} other {# torneos}} cerca de {1}, {2}."
 
 #: src/renderer/pages/settings/create.messages.ts:3:15
 msgid "Game"
@@ -772,7 +775,7 @@ msgstr "Si el fallo persiste, puedes probar esto en la terminal. Ver abajo:"
 #: src/renderer/pages/home/upcoming_tournaments/tournaments_near_me/tournaments_near_me.messages.ts:17:21
 #: src/renderer/pages/home/upcoming_tournaments/upcoming_tournaments.messages.ts:3:21
 msgid "In progress"
-msgstr ""
+msgstr "En progreso"
 
 #: src/renderer/pages/settings/game_settings/game_music_toggle/game_music_toggle.messages.ts:4:33
 msgid "Incompatible with WASAPI."
@@ -909,7 +912,7 @@ msgstr "Administrar cuenta"
 #: src/renderer/app/header/user_menu/user_menu.messages.ts:14:40
 #. {0} max: number
 msgid "Maximum {0} accounts reached. Remove an account to add another."
-msgstr ""
+msgstr "Se alcanzó el máximo de {0} cuentas. Elimina una cuenta para añadir otra."
 
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:2:23
 msgid "Melee ISO File"
@@ -939,7 +942,7 @@ msgstr "Más reciente"
 
 #: src/renderer/pages/home/overview/my_ranking/my_ranking.messages.ts:2:20
 msgid "My Ranking"
-msgstr ""
+msgstr "Mi Clasificación"
 
 #: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:12:18
 msgid "NAT Type"
@@ -1039,11 +1042,11 @@ msgstr "Sin conexión de red"
 
 #: src/renderer/pages/home/overview/news_preview/news_preview.messages.ts:3:17
 msgid "No news to show"
-msgstr ""
+msgstr "No hay noticias para mostrar"
 
 #: src/renderer/pages/home/overview/my_ranking/my_ranking.messages.ts:4:20
 msgid "No ranking"
-msgstr ""
+msgstr "Sin clasificación"
 
 #: src/renderer/pages/console_mirror/saved_connections_list/saved_connections_list.messages.ts:4:29
 msgid "No saved console connections"
@@ -1091,7 +1094,7 @@ msgstr "Puerto de Websocket de OBS"
 
 #: src/renderer/app/header/user_menu/user_menu.messages.ts:7:18
 msgid "Offline"
-msgstr ""
+msgstr "Sin conexión"
 
 #: src/renderer/pages/home/overview/ranked_status/ranked_status.messages.ts:10:5
 msgid ""
@@ -1124,11 +1127,11 @@ msgstr "Abrir carpeta de configuración"
 #: src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:15:60
 #. {0} currentDate: string
 msgid "Organize into monthly subfolders (e.g. {0})."
-msgstr ""
+msgstr "Organizar en subcarpetas mensuales (ej. {0})."
 
 #: src/renderer/pages/home/home_page.messages.ts:2:19
 msgid "Overview"
-msgstr ""
+msgstr "Resumen"
 
 #: src/renderer/components/login_form/login_form.messages.ts:7:19
 msgid "Password"
@@ -1272,7 +1275,7 @@ msgstr ""
 
 #: src/renderer/pages/home/overview/my_ranking/my_ranking.messages.ts:5:22
 msgid "Rank pending"
-msgstr ""
+msgstr "Clasificación pendiente"
 
 #: src/renderer/pages/home/overview/overview.messages.ts:4:20
 #: src/renderer/pages/home/overview/ranked_status/ranked_status.messages.ts:2:20
@@ -1289,7 +1292,7 @@ msgstr ""
 
 #: src/renderer/app/header/account_switcher/account_switcher.messages.ts:3:32
 msgid "Re-authenticate account"
-msgstr ""
+msgstr "Reautenticar cuenta"
 
 #: src/renderer/pages/home/news_feed/news_article/news_article.messages.ts:5:19
 msgid "Read more"
@@ -1297,7 +1300,7 @@ msgstr "Leer más"
 
 #: src/renderer/pages/home/overview/news_preview/news_preview.messages.ts:4:19
 msgid "Read post"
-msgstr ""
+msgstr "Leer publicación"
 
 #: src/renderer/pages/console_mirror/saved_connections_list/saved_connection_item.messages.ts:4:23
 msgid "Reconnecting"
@@ -1325,7 +1328,7 @@ msgstr "Eliminar"
 #: src/renderer/app/header/user_menu/user_menu.messages.ts:15:44
 #. {0} accountName: string
 msgid "Removed {0}"
-msgstr ""
+msgstr "{0} eliminado"
 
 #: src/renderer/pages/settings/advanced_app_settings/advanced_app_settings.messages.ts:9:5
 msgid ""
@@ -1415,7 +1418,7 @@ msgstr "Guardar"
 
 #: src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:14:42
 msgid "Save replays for netplay games to the Root SLP Folder."
-msgstr ""
+msgstr "Guardar repeticiones de juegos en línea en la carpeta raíz de SLP."
 
 #: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:6:34
 msgid "Save replays to subfolders based on console nickname"
@@ -1431,7 +1434,7 @@ msgstr "Buscar"
 
 #: src/renderer/pages/home/upcoming_tournaments/tournaments_near_me/tournaments_near_me.messages.ts:11:18
 msgid "Searching for nearby tournaments..."
-msgstr ""
+msgstr "Buscando torneos cercanos..."
 
 #: src/renderer/components/path_input/path_input.messages.ts:2:17
 #: src/renderer/pages/quick_start/steps/iso_selection_step/iso_selection_step.messages.ts:12:17
@@ -1472,7 +1475,7 @@ msgstr "Mostrar opciones avanzadas"
 
 #: src/renderer/pages/home/upcoming_tournaments/tournaments_near_me/tournaments_near_me.messages.ts:13:27
 msgid "Show map of events"
-msgstr ""
+msgstr "Mostrar mapa de eventos"
 
 #: src/renderer/pages/home/news_feed/news_feed.messages.ts:6:19
 msgid "Show more"
@@ -1548,15 +1551,15 @@ msgstr "Algo salió mal."
 
 #: src/renderer/pages/home/upcoming_tournaments/tournaments_near_me/tournaments_near_me.messages.ts:15:21
 msgid "Sort by date"
-msgstr ""
+msgstr "Ordenar por fecha"
 
 #: src/renderer/pages/home/upcoming_tournaments/tournaments_near_me/tournaments_near_me.messages.ts:14:25
 msgid "Sort by distance"
-msgstr ""
+msgstr "Ordenar por distancia"
 
 #: src/renderer/pages/home/upcoming_tournaments/tournaments_near_me/tournaments_near_me.messages.ts:16:25
 msgid "Sort by entrants"
-msgstr ""
+msgstr "Ordenar por participantes"
 
 #: src/renderer/app/create.messages.ts:4:19
 #: src/renderer/pages/settings/create.messages.ts:6:19
@@ -1607,7 +1610,7 @@ msgstr "Comienza pronto"
 #: src/renderer/pages/home/upcoming_tournaments/upcoming_tournaments.messages.ts:4:38
 #. {0} countdown: string
 msgid "Starting in {0}"
-msgstr ""
+msgstr "Comienza en {0}"
 
 #: src/renderer/pages/spectate/spectate_remote_control_block/spectate_remote_control_block.messages.ts:8:19
 msgid "Starting..."
@@ -1654,7 +1657,7 @@ msgstr "Apoyar a Slippi"
 #: src/renderer/app/header/user_menu/user_menu.messages.ts:16:40
 #. {0} accountName: string
 msgid "Switched to {0}"
-msgstr ""
+msgstr "Cambiado a {0}"
 
 #: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:15:23
 msgid "Symmetric NAT"
@@ -1769,7 +1772,7 @@ msgstr "Tamaño total: {0}"
 #: src/renderer/pages/home/upcoming_tournaments/tournaments_near_me/tournaments_near_me.messages.ts:2:16
 #: src/renderer/pages/home/upcoming_tournaments/upcoming_tournaments.messages.ts:6:28
 msgid "Tournaments Near Me"
-msgstr ""
+msgstr "Torneos Cerca de Mí"
 
 #: src/renderer/components/activate_online_form/activate_online_form.messages.ts:4:26
 msgid "Trailing numbers will be auto-generated"
@@ -1837,12 +1840,12 @@ msgstr "Arriba"
 
 #: src/renderer/pages/home/upcoming_tournaments/upcoming_tournaments.messages.ts:5:25
 msgid "Upcoming Majors"
-msgstr ""
+msgstr "Próximos Majors"
 
 #: src/renderer/pages/home/home_page.messages.ts:4:30
 #: src/renderer/pages/home/overview/overview.messages.ts:3:30
 msgid "Upcoming Tournaments"
-msgstr ""
+msgstr "Próximos Torneos"
 
 #: src/renderer/app/header/play_button/play_button.messages.ts:3:19
 msgid "Updating"
@@ -1905,7 +1908,7 @@ msgstr "Ver perfil"
 #: src/renderer/pages/home/overview/carousel/carousel.messages.ts:3:21
 #: src/renderer/pages/home/upcoming_tournaments/upcoming_tournaments.messages.ts:2:21
 msgid "View stream"
-msgstr ""
+msgstr "Ver transmisión"
 
 #: src/renderer/pages/quick_start/steps/verify_email_step/verify_email_step.messages.ts:3:25
 msgid ""
@@ -1917,7 +1920,7 @@ msgstr ""
 
 #: src/renderer/components/location_guard/location_guard.messages.ts:3:22
 msgid "We need access to your approximate location to show you nearby tournaments."
-msgstr ""
+msgstr "Necesitamos acceso a tu ubicación aproximada para mostrarte torneos cercanos."
 
 #: src/renderer/pages/console_mirror/console_mirror.messages.ts:4:26
 msgid "What is Mirroring?"
@@ -1942,7 +1945,7 @@ msgstr "Estás sin conexión."
 
 #: src/renderer/pages/home/overview/ranked_status/ranked_status.messages.ts:12:29
 msgid "You have an active subscription! Enjoy ranked play at any time!"
-msgstr ""
+msgstr "¡Tienes una suscripción activa! Disfruta del juego clasificatorio cuando quieras."
 
 #: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:34:28
 msgid "You may have trouble connecting to other players."
@@ -2003,6 +2006,8 @@ msgid ""
 "Your location data will be sent to a third-party service. Slippi does NOT "
 "collect this data. You can turn this feature off again in the settings."
 msgstr ""
+"Tus datos de ubicación se enviarán a un servicio externo. Slippi NO recopila "
+"estos datos. Puedes desactivar esta función de nuevo en los ajustes."
 
 #: src/renderer/pages/quick_start/steps/iso_selection_step/iso_selection_step.messages.ts:5:28
 msgid "or drag and drop here"
@@ -2012,7 +2017,7 @@ msgstr "o arrastra y suelta aquí"
 #. {0} count: number
 #. {1} total: number
 msgid "{0, number} of {1, plural, one {# replay} other {# replays}} processed."
-msgstr ""
+msgstr "{0, number} de {1, plural, one {# repetición} other {# repeticiones}} procesadas."
 
 #: src/renderer/pages/replays/replay_browser/file_selection_toolbar/file_selection_toolbar.messages.ts:2:37
 #. {0} count: number
