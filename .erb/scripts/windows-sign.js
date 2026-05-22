@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 // Custom Sign hook for use with electron-builder + SSL CodeSignTool
 
-const { execSync } = require("child_process");
+const { execFileSync } = require("child_process");
 
 const ES_CREDENTIAL_ID = process.env.ES_CREDENTIAL_ID;
 const ES_USERNAME = process.env.ES_USERNAME;
@@ -24,8 +24,17 @@ exports.default = async (config) => {
     throw new Error("missing required secrets");
   }
 
-  const output = execSync(
-    `CodeSignTool.bat sign -credential_id="${ES_CREDENTIAL_ID}" -username="${ES_USERNAME}" -password="${ES_PASSWORD}" -totp_secret="${ES_TOTP_SECRET}" -input_file_path="${fileToSign}" -override="true"`,
+  const output = execFileSync(
+    "CodeSignTool.bat",
+    [
+      "sign",
+      `-credential_id=${ES_CREDENTIAL_ID}`,
+      `-username=${ES_USERNAME}`,
+      `-password=${ES_PASSWORD}`,
+      `-totp_secret=${ES_TOTP_SECRET}`,
+      `-input_file_path=${fileToSign}`,
+      `-override=true`,
+    ],
     { cwd: CODESIGNTOOL_PATH },
   )
     .toString()
