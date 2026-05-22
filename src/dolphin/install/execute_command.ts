@@ -24,7 +24,7 @@ export async function executeCommand(command: string, args: string[]): Promise<s
       // Dolphin often outputs version info to stderr, so prioritize stderr if stdout is empty
       const output = stdout.trim() || stderr.trim();
 
-      if (code === 0 || output) {
+      if (code === 0) {
         resolve(output);
       } else {
         reject(new Error(`Command failed with code ${code}: ${stderr}`));
