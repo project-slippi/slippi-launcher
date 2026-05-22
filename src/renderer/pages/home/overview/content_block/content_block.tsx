@@ -8,12 +8,14 @@ export const ContentBlock = ({
   onClick,
   fill,
   endIcon,
+  overflowY = "auto",
 }: {
   fill?: boolean;
   title?: string;
   content: React.ReactNode;
   onClick?: () => void;
   endIcon?: React.ReactNode;
+  overflowY?: "auto" | "hidden";
 }) => {
   return (
     <div className={clsx(styles.outer, { [styles.fill]: fill })}>
@@ -23,7 +25,9 @@ export const ContentBlock = ({
           {endIcon}
         </div>
       )}
-      <div className={styles.content}>{content}</div>
+      <div className={styles.content} style={{ overflowY }}>
+        {content}
+      </div>
     </div>
   );
 };

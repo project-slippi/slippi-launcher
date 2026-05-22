@@ -82,7 +82,7 @@ const InternalRankedStatus = ({
           className={styles.stroke}
           variant="body1"
           color={isFullAccess ? cssVar("greenDark") : cssVar("textDim")}
-          fontSize="20px"
+          fontSize="18px"
           fontWeight="medium"
         >
           {isFullAccess ? Messages.active() : Messages.startingSoon()}

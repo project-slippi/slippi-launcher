@@ -16,6 +16,7 @@ export const MyRanking = React.memo(function MyRanking() {
 
   return (
     <ContentBlock
+      overflowY="hidden"
       content={
         <div className={styles.myRankingContainer}>
           <RankedUserProfile rankedProfile={rankedProfile} />

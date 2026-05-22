@@ -1,5 +1,5 @@
 .container {
-  padding: 16px;
+  padding: 12px 16px;
   text-align: center;
 }
 
@@ -18,7 +18,7 @@
   width: 50%;
   height: 2px;
   background-color: #d9d9d919;
-  margin: 12px 25%;
+  margin: 6px 25%;
 }
 
 .buttonContainer {
