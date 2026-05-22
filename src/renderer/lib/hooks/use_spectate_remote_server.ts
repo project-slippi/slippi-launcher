@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { combine } from "zustand/middleware";
+import { useShallow } from "zustand/react/shallow";
 
 import { useServices } from "@/services";
 
@@ -23,11 +24,13 @@ export const useSpectateRemoteServerStateStore = create(
 );
 
 export const useSpectateRemoteServer = () => {
-  const state = useSpectateRemoteServerStateStore((store) => ({
-    connected: store.connected,
-    started: store.started,
-    port: store.port,
-  }));
+  const state = useSpectateRemoteServerStateStore(
+    useShallow((store) => ({
+      connected: store.connected,
+      started: store.started,
+      port: store.port,
+    })),
+  );
   const { authService, spectateRemoteService } = useServices();
   const startSpectateRemoteServer = async (port: number) => {
     const authToken = await authService.getUserToken();
