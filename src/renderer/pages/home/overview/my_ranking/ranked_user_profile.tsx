@@ -45,7 +45,7 @@ export const RankedUserProfile = ({ rankedProfile }: { rankedProfile: RankedProf
       <div className={styles.content}>
         <div>
           <h3 className={styles.rankNameLabel}>{rankNameLabel}</h3>
-          {!isUnrankedRank && <div style={{ color, fontWeight: "bold" }}>{rating}</div>}
+          {!isUnrankedRank && <div style={{ color, fontWeight: "bold" }}>{rating.toFixed(1)}</div>}
         </div>
         <RefreshRatingButton />
       </div>
