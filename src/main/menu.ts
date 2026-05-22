@@ -202,7 +202,7 @@ export class MenuBuilder {
         {
           label: "Open Slippi Discord Server",
           click() {
-            void shell.openExternal("http://discord.gg/pPfEaW5");
+            void shell.openExternal("https://slippi.gg/discord");
           },
         },
       ],
@@ -279,7 +279,7 @@ export class MenuBuilder {
           {
             label: "Open Slippi Discord Server",
             click() {
-              void shell.openExternal("http://discord.gg/pPfEaW5");
+              void shell.openExternal("https://slippi.gg/discord");
             },
           },
         ],
