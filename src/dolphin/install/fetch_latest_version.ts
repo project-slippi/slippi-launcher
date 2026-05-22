@@ -2,6 +2,7 @@ import { ApolloClient, ApolloLink, gql, HttpLink, InMemoryCache } from "@apollo/
 import { onError } from "@apollo/client/link/error";
 import { RetryLink } from "@apollo/client/link/retry";
 import { appVersion } from "@common/constants";
+import { fetch } from "cross-fetch";
 import electronLog from "electron-log";
 import type { GraphQLFormattedError } from "graphql";
 

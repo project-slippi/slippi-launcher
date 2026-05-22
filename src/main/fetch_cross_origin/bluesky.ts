@@ -1,4 +1,5 @@
 import { TimeExpiryCache } from "@common/time_expiry_cache";
+import { fetch } from "cross-fetch";
 
 const SECOND = 1000;
 const MINUTE = 60 * SECOND;
