@@ -632,7 +632,7 @@ msgstr "ニュースの取得に失敗しました。後でもう一度お試し
 #: src/renderer/pages/home/upcoming_tournaments/tournaments_near_me/tournaments_near_me.messages.ts:12:36
 #. {0} errorMessage: string
 msgid "Failed to fetch tournaments. Error: {0}"
-msgstr "トーナメント情報の取得に失敗しました。エラー: {0}"
+msgstr "大会情報の取得に失敗しました。エラー: {0}"
 
 #: src/renderer/app/header/header.messages.ts:5:29
 msgid "Failed to get updates"
@@ -678,7 +678,7 @@ msgstr "パスワードをお忘れですか？"
 #. {1} city: string - The approximate city the user is in. e.g. Shimomeguro
 #. {2} greaterRegion: string - The greater region/state/prefecture the city is contained in. e.g. Tokyo
 msgid "Found {0, plural, one {# tournament} other {# tournaments}} near {1}, {2}."
-msgstr "{1}、{2}の近くで{0}件のトーナメントが見つかりました。"
+msgstr "{1}、{2}の近くで{0}件の大会が見つかりました。"
 
 #: src/renderer/pages/settings/create.messages.ts:3:15
 msgid "Game"
@@ -1394,7 +1394,7 @@ msgstr "検索"
 
 #: src/renderer/pages/home/upcoming_tournaments/tournaments_near_me/tournaments_near_me.messages.ts:11:18
 msgid "Searching for nearby tournaments..."
-msgstr "近くのトーナメントを検索中..."
+msgstr "近くの大会を検索中..."
 
 #: src/renderer/components/path_input/path_input.messages.ts:2:17
 #: src/renderer/pages/quick_start/steps/iso_selection_step/iso_selection_step.messages.ts:12:17
@@ -1719,7 +1719,7 @@ msgstr "合計サイズ: {0}"
 #: src/renderer/pages/home/upcoming_tournaments/tournaments_near_me/tournaments_near_me.messages.ts:2:16
 #: src/renderer/pages/home/upcoming_tournaments/upcoming_tournaments.messages.ts:6:28
 msgid "Tournaments Near Me"
-msgstr "近くのトーナメント"
+msgstr "近くの大会"
 
 #: src/renderer/components/activate_online_form/activate_online_form.messages.ts:4:26
 msgid "Trailing numbers will be auto-generated"
@@ -1791,7 +1791,7 @@ msgstr "今後のメジャー大会"
 #: src/renderer/pages/home/home_page.messages.ts:4:30
 #: src/renderer/pages/home/overview/overview.messages.ts:3:30
 msgid "Upcoming Tournaments"
-msgstr "今後のトーナメント"
+msgstr "今後の大会"
 
 #: src/renderer/app/header/play_button/play_button.messages.ts:3:19
 msgid "Updating"
@@ -1864,7 +1864,7 @@ msgstr "メールを開き、確認メール内のリンクをクリックして
 
 #: src/renderer/components/location_guard/location_guard.messages.ts:3:22
 msgid "We need access to your approximate location to show you nearby tournaments."
-msgstr "近くのトーナメントを表示するには、おおよその位置情報へのアクセスが必要です。"
+msgstr "近くの大会を表示するには、おおよその位置情報へのアクセスが必要です。"
 
 #: src/renderer/pages/console_mirror/console_mirror.messages.ts:4:26
 msgid "What is Mirroring?"
