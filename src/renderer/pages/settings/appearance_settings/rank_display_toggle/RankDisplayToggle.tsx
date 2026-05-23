@@ -1,12 +1,12 @@
 import React from "react";
 
 import { Toggle } from "@/components/form/toggle";
-import { useEnableRankDisplay } from "@/lib/hooks/use_settings";
+import { useEnableRankDisplayCard } from "@/lib/hooks/use_settings";
 
 import { SettingItem } from "../../setting_item_section";
 import { RankDisplayToggleMessages as Messages } from "./rank_display_toggle.messages";
 export const RankDisplayToggle = React.memo(() => {
-  const [enableRankDisplay, setEnableRankDisplay] = useEnableRankDisplay();
+  const [enableRankDisplay, setEnableRankDisplay] = useEnableRankDisplayCard();
 
   return (
     <SettingItem name="">
