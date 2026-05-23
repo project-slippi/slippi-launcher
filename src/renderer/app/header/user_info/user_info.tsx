@@ -26,10 +26,7 @@ export const UserInfo = React.memo(function UserInfo({
         display: flex;
         align-items: center;
         color: white;
-
-        @media (min-width: 800px) {
-          min-width: 250px;
-        }
+        padding: 4px 10px;
       `}
     >
       {loading ? <CircularProgress color="inherit" /> : <UserIcon imageUrl={displayPicture} size={38} />}
