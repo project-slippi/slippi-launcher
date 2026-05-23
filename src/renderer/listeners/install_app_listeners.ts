@@ -72,6 +72,10 @@ export function installAppListeners(services: Services) {
     useAppStore.getState().setUpdateVersion(version);
   });
 
+  window.electron.common.onAppUpdateNotAvailable(() => {
+    notificationService.showInfo("No update available");
+  });
+
   // Track online/offline status
   window.addEventListener("online", () => {
     useAppStore.getState().setIsOnline(true);
