@@ -7,7 +7,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "x-generator: i18next-auto-keys CLI\n"
 "Language: pt-BR\n"
-"PO-Revision-Date: 2026-05-21T12:21:37.008Z\n"
+"PO-Revision-Date: 2026-05-23T11:10:00.367Z\n"
 
 #: src/renderer/components/activate_online_form/activate_online_form.messages.ts:3:30
 msgid "2-4 uppercase English characters"
@@ -570,6 +570,10 @@ msgstr "Ativar Controle Remoto de Espectador"
 msgid "Enable in-game music."
 msgstr "Ativar música durante o jogo."
 
+#: src/renderer/pages/settings/appearance_settings/rank_display_toggle/rank_display_toggle.messages.ts:3:33
+msgid "Enable the current rank display on the home page."
+msgstr ""
+
 #: src/renderer/pages/home/overview/ranked_status/ranked_status.messages.ts:5:19
 msgid "Ending In"
 msgstr "Encerrando Em"
@@ -696,7 +700,9 @@ msgstr "Esqueceu sua senha?"
 #. {1} city: string - The approximate city the user is in. e.g. Shimomeguro
 #. {2} greaterRegion: string - The greater region/state/prefecture the city is contained in. e.g. Tokyo
 msgid "Found {0, plural, one {# tournament} other {# tournaments}} near {1}, {2}."
-msgstr "Encontrado(s) {0, plural, one {# torneio} other {# torneios}} perto de {1}, {2}."
+msgstr ""
+"Encontrado(s) {0, plural, one {# torneio} other {# torneios}} perto de {1}, "
+"{2}."
 
 #: src/renderer/pages/settings/create.messages.ts:3:15
 msgid "Game"
@@ -1273,6 +1279,10 @@ msgid ""
 msgstr ""
 "Nomes e códigos racistas, homofóbicos, transfóbicos ou intolerantes não são "
 "permitidos. Assédio direcionado em nomes e códigos também não épermitido."
+
+#: src/renderer/pages/settings/appearance_settings/rank_display_toggle/rank_display_toggle.messages.ts:2:22
+msgid "Rank display"
+msgstr ""
 
 #: src/renderer/pages/home/overview/my_ranking/my_ranking.messages.ts:5:22
 msgid "Rank pending"
@@ -1920,7 +1930,9 @@ msgstr ""
 
 #: src/renderer/components/location_guard/location_guard.messages.ts:3:22
 msgid "We need access to your approximate location to show you nearby tournaments."
-msgstr "Precisamos de acesso à sua localização aproximada para mostrar torneios próximos a você."
+msgstr ""
+"Precisamos de acesso à sua localização aproximada para mostrar torneios "
+"próximos a você."
 
 #: src/renderer/pages/console_mirror/console_mirror.messages.ts:4:26
 msgid "What is Mirroring?"
@@ -1945,7 +1957,9 @@ msgstr "Você está offline."
 
 #: src/renderer/pages/home/overview/ranked_status/ranked_status.messages.ts:12:29
 msgid "You have an active subscription! Enjoy ranked play at any time!"
-msgstr "Você tem uma assinatura ativa! Aproveite o jogo ranqueado a qualquer momento!"
+msgstr ""
+"Você tem uma assinatura ativa! Aproveite o jogo ranqueado a qualquer "
+"momento!"
 
 #: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:34:28
 msgid "You may have trouble connecting to other players."
@@ -2006,9 +2020,9 @@ msgid ""
 "Your location data will be sent to a third-party service. Slippi does NOT "
 "collect this data. You can turn this feature off again in the settings."
 msgstr ""
-"Seus dados de localização serão enviados a um serviço de terceiros. O Slippi "
-"NÃO coleta estes dados. Você pode desativar este recurso novamente nas "
-"configurações."
+"Seus dados de localização serão enviados a um serviço de terceiros. O "
+"Slippi NÃO coleta estes dados. Você pode desativar este recurso novamente "
+"nas configurações."
 
 #: src/renderer/pages/quick_start/steps/iso_selection_step/iso_selection_step.messages.ts:5:28
 msgid "or drag and drop here"
