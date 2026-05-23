@@ -38,6 +38,7 @@ export const defaultAppSettings: AppSettings = {
     usePlaybackBeta: false,
     enableSpectateRemoteControl: false,
     spectateRemoteControlPort: 49809,
+    showRankDisplayCard: true,
   },
   netplayPromotedToStable: false,
   playbackPromotedToStable: false,
