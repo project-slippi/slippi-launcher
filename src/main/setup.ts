@@ -23,6 +23,7 @@ import {
   ipc_installUpdate,
   ipc_launcherUpdateDownloadingEvent,
   ipc_launcherUpdateFoundEvent,
+  ipc_launcherUpdateNotAvailableEvent,
   ipc_launcherUpdateReadyEvent,
   ipc_openInNewBrowserWindow,
   ipc_runNetworkDiagnostics,
@@ -138,8 +139,17 @@ export default function setupMainIpc({
     ipc_launcherUpdateReadyEvent.main!.trigger({}).catch(log.warn);
   });
 
+  autoUpdater.on("update-not-available", () => {
+    ipc_launcherUpdateNotAvailableEvent.main!.trigger({}).catch(log.warn);
+  });
+
   ipc_installUpdate.main!.handle(async () => {
-    autoUpdater.quitAndInstall(false, true);
+    log.info("Installing update via quitAndInstall");
+    try {
+      autoUpdater.quitAndInstall(false, true);
+    } catch (err) {
+      log.error("Failed to install update:", err);
+    }
     return { success: true };
   });
 

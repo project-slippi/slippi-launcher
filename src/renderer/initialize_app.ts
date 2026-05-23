@@ -56,8 +56,8 @@ export async function initializeApp(services: Services) {
     });
   });
 
-  // Check if there is an update to the launcher
-  promises.push(window.electron.common.checkForAppUpdates());
+  // Check if there is an update to the launcher (silent — no toast on "no update")
+  promises.push(window.electron.common.checkForAppUpdates(true));
 
   // Ensure the fonts are loaded to prevent FOUT (Flash of Unstyled Text)
   promises.push(document.fonts.ready);
