@@ -10,14 +10,14 @@ import { useAppStore } from "@/lib/hooks/use_app_store";
 import { useLastPageTracker } from "@/lib/hooks/use_last_page";
 import { usePageRequestListeners } from "@/lib/hooks/use_page_request_listeners";
 import { usePageNavigationShortcuts } from "@/lib/hooks/use_shortcuts";
-import { lazyLoadConsoleMirrorPage } from "@/pages/console_mirror/load";
+import { createConsoleMirrorPage } from "@/pages/console_mirror/create";
 import { HomePage } from "@/pages/home/home_page";
 import { NotFoundPage } from "@/pages/not_found/not_found_page";
-import { lazyLoadQuickStartPage } from "@/pages/quick_start/load";
+import { createQuickStartPage } from "@/pages/quick_start/create";
 import { useQuickStartStore } from "@/pages/quick_start/use_quick_start";
-import { lazyLoadReplaysPage } from "@/pages/replays/load";
-import { lazyLoadSettingsPage } from "@/pages/settings/load";
-import { lazyLoadSpectatePage } from "@/pages/spectate/load";
+import { createReplaysPage } from "@/pages/replays/create";
+import { createSettingsPage } from "@/pages/settings/create";
+import { createSpectatePage } from "@/pages/spectate/create";
 import { createServiceProvider } from "@/services";
 import type { Services } from "@/services/types";
 
@@ -28,11 +28,11 @@ import { CreateAppMessages as Messages } from "./create.messages";
 export function createApp({ services }: { services: Services }): {
   App: React.ComponentType;
 } {
-  const { Page: SettingsPage } = lazyLoadSettingsPage();
-  const { Page: QuickStartPage } = lazyLoadQuickStartPage();
-  const { Page: ReplaysPage } = lazyLoadReplaysPage();
-  const { Page: SpectatePage } = lazyLoadSpectatePage({ broadcastService: services.broadcastService });
-  const { Page: ConsoleMirrorPage } = lazyLoadConsoleMirrorPage();
+  const { Page: SettingsPage } = createSettingsPage();
+  const { Page: QuickStartPage } = createQuickStartPage();
+  const { Page: ReplaysPage } = createReplaysPage();
+  const { Page: SpectatePage } = createSpectatePage({ broadcastService: services.broadcastService });
+  const { Page: ConsoleMirrorPage } = createConsoleMirrorPage();
 
   const menuItems: MainMenuItem[] = [
     {
