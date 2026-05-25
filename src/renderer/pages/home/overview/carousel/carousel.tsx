@@ -142,7 +142,18 @@ export const Carousel = React.memo(function Carousel({ items, durationMs = 5000 
                         size="large"
                         startIcon={<PlayArrowIcon />}
                         style={{ fontSize: 14 }}
-                        onClick={() => window.electron.common.openInNewBrowserWindow(item.streamUrl!)}
+                        onClick={(event) => {
+                          event.preventDefault();
+                          event.stopPropagation();
+                          const isModifiedClick = window.electron.bootstrap.isMac
+                            ? event.metaKey // Cmd on macOS
+                            : event.ctrlKey; // Ctrl elsewhere
+                          if (isModifiedClick) {
+                            void window.electron.shell.openExternal(item.streamUrl!);
+                          } else {
+                            void window.electron.common.openInNewBrowserWindow(item.streamUrl!);
+                          }
+                        }}
                       >
                         {Messages.viewStream()}
                       </Button>
