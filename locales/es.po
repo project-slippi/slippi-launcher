@@ -7,7 +7,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "x-generator: i18next-auto-keys CLI\n"
 "Language: es\n"
-"PO-Revision-Date: 2026-05-23T11:10:00.379Z\n"
+"PO-Revision-Date: 2026-05-21T12:21:37.017Z\n"
 
 #: src/renderer/components/activate_online_form/activate_online_form.messages.ts:3:30
 msgid "2-4 uppercase English characters"
@@ -570,10 +570,6 @@ msgstr "Activar control remoto de espectador"
 #: src/renderer/pages/settings/game_settings/game_music_toggle/game_music_toggle.messages.ts:3:33
 msgid "Enable in-game music."
 msgstr "Activa la música dentro del juego."
-
-#: src/renderer/pages/settings/appearance_settings/rank_display_toggle/rank_display_toggle.messages.ts:3:33
-msgid "Enable the current rank display on the home page."
-msgstr ""
 
 #: src/renderer/pages/home/overview/ranked_status/ranked_status.messages.ts:5:19
 msgid "Ending In"
@@ -1277,10 +1273,6 @@ msgstr ""
 "cualquier otra forma intolerantes. Tampoco se permite el acoso dirigido en "
 "nombres y códigos."
 
-#: src/renderer/pages/settings/appearance_settings/rank_display_toggle/rank_display_toggle.messages.ts:2:22
-msgid "Rank display"
-msgstr ""
-
 #: src/renderer/pages/home/overview/my_ranking/my_ranking.messages.ts:5:22
 msgid "Rank pending"
 msgstr "Clasificación pendiente"
@@ -1928,9 +1920,7 @@ msgstr ""
 
 #: src/renderer/components/location_guard/location_guard.messages.ts:3:22
 msgid "We need access to your approximate location to show you nearby tournaments."
-msgstr ""
-"Necesitamos acceso a tu ubicación aproximada para mostrarte torneos "
-"cercanos."
+msgstr "Necesitamos acceso a tu ubicación aproximada para mostrarte torneos cercanos."
 
 #: src/renderer/pages/console_mirror/console_mirror.messages.ts:4:26
 msgid "What is Mirroring?"
@@ -1955,9 +1945,7 @@ msgstr "Estás sin conexión."
 
 #: src/renderer/pages/home/overview/ranked_status/ranked_status.messages.ts:12:29
 msgid "You have an active subscription! Enjoy ranked play at any time!"
-msgstr ""
-"¡Tienes una suscripción activa! Disfruta del juego clasificatorio cuando "
-"quieras."
+msgstr "¡Tienes una suscripción activa! Disfruta del juego clasificatorio cuando quieras."
 
 #: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:34:28
 msgid "You may have trouble connecting to other players."
@@ -2018,9 +2006,8 @@ msgid ""
 "Your location data will be sent to a third-party service. Slippi does NOT "
 "collect this data. You can turn this feature off again in the settings."
 msgstr ""
-"Tus datos de ubicación se enviarán a un servicio externo. Slippi NO "
-"recopila estos datos. Puedes desactivar esta función de nuevo en los "
-"ajustes."
+"Tus datos de ubicación se enviarán a un servicio externo. Slippi NO recopila "
+"estos datos. Puedes desactivar esta función de nuevo en los ajustes."
 
 #: src/renderer/pages/quick_start/steps/iso_selection_step/iso_selection_step.messages.ts:5:28
 msgid "or drag and drop here"
@@ -2030,9 +2017,7 @@ msgstr "o arrastra y suelta aquí"
 #. {0} count: number
 #. {1} total: number
 msgid "{0, number} of {1, plural, one {# replay} other {# replays}} processed."
-msgstr ""
-"{0, number} de {1, plural, one {# repetición} other {# repeticiones}} "
-"procesadas."
+msgstr "{0, number} de {1, plural, one {# repetición} other {# repeticiones}} procesadas."
 
 #: src/renderer/pages/replays/replay_browser/file_selection_toolbar/file_selection_toolbar.messages.ts:2:37
 #. {0} count: number

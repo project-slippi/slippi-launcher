@@ -7,7 +7,7 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0\n"
 "x-generator: i18next-auto-keys CLI\n"
 "Language: ja-JP\n"
-"PO-Revision-Date: 2026-05-23T11:10:00.374Z\n"
+"PO-Revision-Date: 2026-05-21T12:21:37.013Z\n"
 
 #: src/renderer/components/activate_online_form/activate_online_form.messages.ts:3:30
 msgid "2-4 uppercase English characters"
@@ -79,8 +79,8 @@ msgid ""
 "tournaments. This data will be sent to a third-party service. Slippi does "
 "NOT collect this data."
 msgstr ""
-"おおよその位置情報へのアクセスを許可すると、近くの大会が表示されるようになります。このデータはサードパーティサービスに送信されます。Slippiはこのデ"
-"ータを収集しません。"
+"おおよその位置情報へのアクセスを許可すると、近くの大会が表示されるようになります。"
+"このデータはサードパーティサービスに送信されます。Slippiはこのデータを収集しません。"
 
 #: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:15:5
 msgid ""
@@ -557,10 +557,6 @@ msgstr "観戦リモートコントロールを有効化"
 #: src/renderer/pages/settings/game_settings/game_music_toggle/game_music_toggle.messages.ts:3:33
 msgid "Enable in-game music."
 msgstr "ゲーム内音楽を有効化します。"
-
-#: src/renderer/pages/settings/appearance_settings/rank_display_toggle/rank_display_toggle.messages.ts:3:33
-msgid "Enable the current rank display on the home page."
-msgstr ""
 
 #: src/renderer/pages/home/overview/ranked_status/ranked_status.messages.ts:5:19
 msgid "Ending In"
@@ -1244,10 +1240,6 @@ msgid ""
 msgstr ""
 "人種差別的、同性愛嫌悪的、トランスフォビア的、またはその他の偏見に満ちた名前やコードは禁止されています。名前やコードでの標的型嫌がらせも禁止されています"
 "。"
-
-#: src/renderer/pages/settings/appearance_settings/rank_display_toggle/rank_display_toggle.messages.ts:2:22
-msgid "Rank display"
-msgstr ""
 
 #: src/renderer/pages/home/overview/my_ranking/my_ranking.messages.ts:5:22
 msgid "Rank pending"
@@ -1949,7 +1941,9 @@ msgstr "接続コードはプレイヤーがあなたと直接接続するため
 msgid ""
 "Your location data will be sent to a third-party service. Slippi does NOT "
 "collect this data. You can turn this feature off again in the settings."
-msgstr "あなたの位置情報はサードパーティサービスに送信されます。Slippiはこのデータを収集しません。この機能は設定で再度オフにできます。"
+msgstr ""
+"あなたの位置情報はサードパーティサービスに送信されます。Slippiはこのデータを収集しません。"
+"この機能は設定で再度オフにできます。"
 
 #: src/renderer/pages/quick_start/steps/iso_selection_step/iso_selection_step.messages.ts:5:28
 msgid "or drag and drop here"

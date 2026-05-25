@@ -549,10 +549,6 @@ msgstr ""
 msgid "Enable in-game music."
 msgstr ""
 
-#: src/renderer/pages/settings/appearance_settings/rank_display_toggle/rank_display_toggle.messages.ts:3:33
-msgid "Enable the current rank display on the home page."
-msgstr ""
-
 #: src/renderer/pages/home/overview/ranked_status/ranked_status.messages.ts:5:19
 msgid "Ending In"
 msgstr ""
@@ -1230,10 +1226,6 @@ msgstr ""
 msgid ""
 "Racist, homophobic, transphobic, or otherwise bigoted names and codes are "
 "not allowed. Targeted harassment in names and codes is also not allowed."
-msgstr ""
-
-#: src/renderer/pages/settings/appearance_settings/rank_display_toggle/rank_display_toggle.messages.ts:2:22
-msgid "Rank display"
 msgstr ""
 
 #: src/renderer/pages/home/overview/my_ranking/my_ranking.messages.ts:5:22
