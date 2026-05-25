@@ -24,7 +24,6 @@ import {
   ipc_installUpdate,
   ipc_launcherUpdateDownloadingEvent,
   ipc_launcherUpdateFoundEvent,
-  ipc_launcherUpdateNotAvailableEvent,
   ipc_launcherUpdateReadyEvent,
   ipc_openInNewBrowserWindow,
   ipc_runNetworkDiagnostics,
@@ -143,10 +142,6 @@ export default function setupMainIpc({
     ipc_launcherUpdateReadyEvent.main!.trigger({}).catch(log.warn);
   });
 
-  autoUpdater.on("update-not-available", () => {
-    ipc_launcherUpdateNotAvailableEvent.main!.trigger({}).catch(log.warn);
-  });
-
   ipc_installUpdate.main!.handle(async () => {
     log.info("Installing update via quitAndInstall");
     try {
@@ -158,8 +153,8 @@ export default function setupMainIpc({
   });
 
   ipc_checkForUpdate.main!.handle(async () => {
-    autoUpdater.checkForUpdatesAndNotify().catch(log.error);
-    return { success: true };
+    const result = await autoUpdater.checkForUpdatesAndNotify();
+    return { updateAvailable: result != null };
   });
 
   ipc_getLatestGitHubReleaseVersion.main!.handle(async ({ owner, repo }) => {

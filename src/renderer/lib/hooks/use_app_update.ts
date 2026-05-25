@@ -7,7 +7,8 @@ export const useAppUpdate = () => {
 
   const checkForAppUpdates = React.useCallback(async () => {
     try {
-      await window.electron.common.checkForAppUpdates();
+      const result = await window.electron.common.checkForAppUpdates();
+      return result;
     } catch (err) {
       showError(err);
     }

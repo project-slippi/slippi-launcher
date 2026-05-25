@@ -10,7 +10,6 @@ import {
   ipc_installUpdate,
   ipc_launcherUpdateDownloadingEvent,
   ipc_launcherUpdateFoundEvent,
-  ipc_launcherUpdateNotAvailableEvent,
   ipc_launcherUpdateReadyEvent,
   ipc_openInNewBrowserWindow,
   ipc_runNetworkDiagnostics,
@@ -32,8 +31,9 @@ export default {
   async copyLogsToClipboard(): Promise<void> {
     await ipc_copyLogsToClipboard.renderer!.trigger({});
   },
-  async checkForAppUpdates(silent = false): Promise<void> {
-    await ipc_checkForUpdate.renderer!.trigger({ silent });
+  async checkForAppUpdates(): Promise<{ updateAvailable: boolean }> {
+    const { result } = await ipc_checkForUpdate.renderer!.trigger({});
+    return result;
   },
   async installAppUpdate(): Promise<void> {
     await ipc_installUpdate.renderer!.trigger({});
@@ -71,12 +71,6 @@ export default {
   },
   onAppUpdateReady(handle: () => void) {
     const { destroy } = ipc_launcherUpdateReadyEvent.renderer!.handle(async () => {
-      handle();
-    });
-    return destroy;
-  },
-  onAppUpdateNotAvailable(handle: () => void) {
-    const { destroy } = ipc_launcherUpdateNotAvailableEvent.renderer!.handle(async () => {
       handle();
     });
     return destroy;
