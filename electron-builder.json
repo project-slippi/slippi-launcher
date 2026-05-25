@@ -4,8 +4,7 @@
   "asar": true,
   "asarUnpack": [
     "**\\*.{node,dll}",
-    "./dist/main/*.js",
-    "./node_modules/**/*.{js,json}"
+    "./dist/main/**/*.worker.js"
   ],
   "files": [
     "dist",
