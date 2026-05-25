@@ -9,7 +9,7 @@ export const RankDisplayToggle = React.memo(() => {
   const [enableRankDisplay, setEnableRankDisplay] = useEnableRankDisplay();
 
   return (
-    <SettingItem name="">
+    <SettingItem>
       <Toggle
         value={enableRankDisplay}
         onChange={(checked) => setEnableRankDisplay(checked)}
