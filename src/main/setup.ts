@@ -147,10 +147,18 @@ export default function setupMainIpc({
 
   ipc_installUpdate.main!.handle(async () => {
     log.info("Installing update via quitAndInstall");
+
+    const pendingVersion = settingsManager.get().pendingUpdateVersion;
+    if (!pendingVersion) {
+      log.error("No pending update version found — update may not have been downloaded");
+      return { success: false, error: "No update has been downloaded." };
+    }
+
     try {
       autoUpdater.quitAndInstall(false, true);
     } catch (err) {
       log.error("Failed to install update:", err);
+      return { success: false, error: String(err) };
     }
     return { success: true };
   });
