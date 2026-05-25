@@ -39,8 +39,6 @@ const log = electronLog.scope("main/listeners");
 const isDevelopment = process.env.NODE_ENV !== "production";
 const isMac = process.platform === "darwin";
 
-autoUpdater.logger = log;
-
 const LINES_TO_READ = 200;
 
 export default function setupMainIpc({
