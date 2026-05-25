@@ -207,6 +207,14 @@ export default function setupMainIpc({
       },
     });
 
+    if (isDevelopment) {
+      // Devtools automatically opens when a new browser window is created in development mode.
+      // We don't really care about devtools in this situation so just close it immediately.
+      win.webContents.on("devtools-opened", () => {
+        win.webContents.closeDevTools();
+      });
+    }
+
     win.loadURL(url).catch(log.error);
 
     win.on("closed", () => {
