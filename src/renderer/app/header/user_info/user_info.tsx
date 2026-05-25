@@ -1,4 +1,5 @@
 import { css } from "@emotion/react";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import CircularProgress from "@mui/material/CircularProgress";
 import React from "react";
 
@@ -26,10 +27,10 @@ export const UserInfo = React.memo(function UserInfo({
         display: flex;
         align-items: center;
         color: white;
-        padding: 4px 10px;
+        padding: 8px 10px;
       `}
     >
-      {loading ? <CircularProgress color="inherit" /> : <UserIcon imageUrl={displayPicture} size={38} />}
+      {loading ? <CircularProgress color="inherit" /> : <UserIcon imageUrl={displayPicture} size={42} />}
       <div
         css={css`
           display: flex;
@@ -60,6 +61,14 @@ export const UserInfo = React.memo(function UserInfo({
             {subtext}
           </div>
         )}
+      </div>
+      <div
+        css={css`
+          color: var(--purple-lighter);
+          margin-left: 16px;
+        `}
+      >
+        <ExpandMoreIcon />
       </div>
     </div>
   );
