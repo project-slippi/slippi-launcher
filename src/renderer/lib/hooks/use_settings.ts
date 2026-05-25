@@ -95,7 +95,7 @@ export const useAutoUpdateLauncher = () => useSetting("autoUpdateLauncher");
 
 export const useEnableLocationAccess = () => useSetting("enableLocationAccess");
 
-export const useEnableRankDisplayCard = () => useSetting("enableRankDisplayCard");
+export const useEnableRankDisplay = () => useSetting("enableRankDisplay");
 
 export const useDolphinBeta = (dolphinType: DolphinLaunchType) => {
   const netplayBeta = useSettingsStore((state) => state.settings.useNetplayBeta);

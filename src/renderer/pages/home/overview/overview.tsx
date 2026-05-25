@@ -12,7 +12,7 @@ import styles from "./overview.module.css";
 import { RankedStatus } from "./ranked_status/ranked_status";
 
 export const HomeOverview = React.memo(function HomeOverview() {
-  const enableRankDisplay = useSettingsStore((state) => state.settings.enableRankDisplayCard);
+  const enableRankDisplay = useSettingsStore((state) => state.settings.enableRankDisplay);
 
   return (
     <div className={styles.container}>

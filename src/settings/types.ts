@@ -67,7 +67,7 @@ export interface SettingsSchema {
   spectateRemoteControlPort: number;
 
   // Appearence settings
-  enableRankDisplayCard: boolean;
+  enableRankDisplay: boolean;
 }
 
 /**
