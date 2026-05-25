@@ -31,7 +31,6 @@
       "role": "Viewer"
     },
     "type": "distribution",
-    "mergeASARs": false,
     "hardenedRuntime": true,
     "entitlements": "assets/entitlements.mac.plist",
     "entitlementsInherit": "assets/entitlements.mac.plist",
