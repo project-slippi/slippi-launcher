@@ -19,6 +19,7 @@ export class BrowserWindowManager {
       return;
     }
 
+    const { hostname } = new URL(url);
     const win = new BrowserWindow({
       width: 960,
       height: 540,
@@ -29,6 +30,8 @@ export class BrowserWindowManager {
       autoHideMenuBar: true,
       webPreferences: {
         sandbox: true,
+        // We partition by hostname to isolate cookies and other data
+        partition: `temp:${hostname}`,
       },
     });
 
