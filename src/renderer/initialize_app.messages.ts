@@ -8,5 +8,5 @@ export const InitializeAppMessages = {
   playbackDolphin: () => "Playback Dolphin",
   updatedToVersion: (version: string) => `Successfully updated to version {0}!`,
   updateFailed: (version: string) =>
-    `Auto-update to {0} failed. Try manually downloading the latest version from slippi.gg.`,
+    `Auto-update to version {0} failed. Try manually downloading the latest version from slippi.gg.`,
 };
