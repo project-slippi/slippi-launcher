@@ -163,9 +163,8 @@ export type MeleeMajorsTournament = Omit<Tournament, "startTimestamp" | "endTime
 function mapMeleeMajorsTournament(tournament: Tournament): MeleeMajorsTournament {
   return {
     ...tournament,
-    startTimestamp: new Date(),
+    startTimestamp: new Date(tournament.startTimestamp),
     endTimestamp: new Date(tournament.endTimestamp),
     players: tournament.players.filter(exists),
-    streamUrl: "https://www.twitch.tv/x_pilot",
   };
 }
