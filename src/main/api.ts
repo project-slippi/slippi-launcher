@@ -1,6 +1,7 @@
 import { ipcRenderer } from "electron";
 
 import {
+  type OpenInNewBrowserWindowOptions,
   ipc_checkForUpdate,
   ipc_checkValidIso,
   ipc_clearTempFolder,
@@ -11,6 +12,7 @@ import {
   ipc_launcherUpdateDownloadingEvent,
   ipc_launcherUpdateFoundEvent,
   ipc_launcherUpdateReadyEvent,
+  ipc_openInNewBrowserWindow,
   ipc_runNetworkDiagnostics,
   ipc_showOpenDialog,
 } from "./ipc";
@@ -51,6 +53,9 @@ export default {
   async runNetworkDiagnostics() {
     const { result } = await ipc_runNetworkDiagnostics.renderer!.trigger({});
     return result;
+  },
+  async openInNewBrowserWindow(url: string, options?: OpenInNewBrowserWindowOptions): Promise<void> {
+    await ipc_openInNewBrowserWindow.renderer!.trigger({ url, options });
   },
   onAppUpdateFound(handle: (version: string) => void) {
     const { destroy } = ipc_launcherUpdateFoundEvent.renderer!.handle(async ({ version }) => {

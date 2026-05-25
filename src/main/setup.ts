@@ -2,7 +2,7 @@ import { exists } from "@common/exists";
 import { IsoValidity } from "@common/types";
 import type { DolphinManager } from "@dolphin/manager";
 import { DolphinLaunchType } from "@dolphin/types";
-import { app, clipboard, dialog, ipcMain, nativeImage } from "electron";
+import { app, BrowserWindow, clipboard, dialog, ipcMain, nativeImage } from "electron";
 import electronLog from "electron-log";
 import type { ProgressInfo, UpdateInfo } from "electron-updater";
 import { autoUpdater } from "electron-updater";
@@ -13,6 +13,7 @@ import { getAppBootstrap } from "./bootstrap";
 import { getLatestRelease } from "./fetch_cross_origin/github";
 import type { ConfigFlags } from "./flags/flags";
 import {
+  type OpenInNewBrowserWindowOptions,
   ipc_checkForUpdate,
   ipc_checkValidIso,
   ipc_clearTempFolder,
@@ -23,6 +24,7 @@ import {
   ipc_launcherUpdateDownloadingEvent,
   ipc_launcherUpdateFoundEvent,
   ipc_launcherUpdateReadyEvent,
+  ipc_openInNewBrowserWindow,
   ipc_runNetworkDiagnostics,
   ipc_showOpenDialog,
 } from "./ipc";
@@ -30,6 +32,8 @@ import { getNetworkDiagnostics } from "./network_diagnostics";
 import { fetchNewsFeedData } from "./news_feed";
 import { clearTempFolder, getAssetPath, readLastLines } from "./util";
 import { verifyIso } from "./verify_iso";
+
+const BACKGROUND_COLOR = "#1B0B28";
 
 const log = electronLog.scope("main/listeners");
 const isDevelopment = process.env.NODE_ENV !== "production";
@@ -168,5 +172,53 @@ export default function setupMainIpc({
 
   ipc_runNetworkDiagnostics.main!.handle(async () => {
     return getNetworkDiagnostics();
+  });
+
+  const externalWindowsByUrl = new Map<string, BrowserWindow>();
+
+  ipc_openInNewBrowserWindow.main!.handle(async ({ url, options }) => {
+    const existing = externalWindowsByUrl.get(url);
+    if (existing && !existing.isDestroyed()) {
+      if (existing.isMinimized()) {
+        existing.restore();
+      }
+      existing.show();
+      existing.focus();
+      return { success: true };
+    }
+
+    const defaultOptions: Required<OpenInNewBrowserWindowOptions> = {
+      width: 960,
+      height: 540,
+      alwaysOnTop: false,
+    };
+    const resolved = { ...defaultOptions, ...options };
+
+    const win = new BrowserWindow({
+      width: resolved.width,
+      height: resolved.height,
+      alwaysOnTop: resolved.alwaysOnTop,
+      show: false,
+      backgroundColor: BACKGROUND_COLOR,
+      titleBarStyle: "hiddenInset",
+      autoHideMenuBar: true,
+      webPreferences: {
+        sandbox: true,
+      },
+    });
+
+    win.loadURL(url).catch(log.error);
+
+    win.on("closed", () => {
+      externalWindowsByUrl.delete(url);
+    });
+
+    win.on("ready-to-show", () => {
+      win.show();
+    });
+
+    externalWindowsByUrl.set(url, win);
+
+    return { success: true };
   });
 }
