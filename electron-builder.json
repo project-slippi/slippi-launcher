@@ -72,6 +72,7 @@
   "nsis": {
     "artifactName": "Slippi-Launcher-Setup-${version}.${ext}",
     "include": ".erb/scripts/installer.nsh",
+    "differentialPackage": false,
     "warningsAsErrors": false,
     "allowElevation": true,
     "oneClick": false,
