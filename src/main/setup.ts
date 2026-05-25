@@ -2,6 +2,7 @@ import { exists } from "@common/exists";
 import { IsoValidity } from "@common/types";
 import type { DolphinManager } from "@dolphin/manager";
 import { DolphinLaunchType } from "@dolphin/types";
+import type { SettingsManager } from "@settings/settings_manager";
 import { app, clipboard, dialog, ipcMain, nativeImage } from "electron";
 import electronLog from "electron-log";
 import type { ProgressInfo, UpdateInfo } from "electron-updater";
@@ -44,10 +45,12 @@ const LINES_TO_READ = 200;
 
 export default function setupMainIpc({
   dolphinManager,
+  settingsManager,
   flags,
   browserWindowManager,
 }: {
   dolphinManager: DolphinManager;
+  settingsManager: SettingsManager;
   flags: ConfigFlags;
   browserWindowManager: BrowserWindowManager;
 }) {
@@ -135,7 +138,8 @@ export default function setupMainIpc({
     }
   });
 
-  autoUpdater.on("update-downloaded", () => {
+  autoUpdater.on("update-downloaded", (info: UpdateInfo) => {
+    settingsManager.updateSetting("pendingUpdateVersion", info.version).catch(log.error);
     ipc_launcherUpdateReadyEvent.main!.trigger({}).catch(log.warn);
   });
 
