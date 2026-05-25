@@ -198,6 +198,7 @@ export default function setupMainIpc({
       width: resolved.width,
       height: resolved.height,
       alwaysOnTop: resolved.alwaysOnTop,
+      fullscreenable: false, // When a website requests fullscreen, fill only the browser window
       show: false,
       backgroundColor: BACKGROUND_COLOR,
       titleBarStyle: "hiddenInset",
