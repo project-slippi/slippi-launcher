@@ -25,7 +25,6 @@ import url from "url";
 import { download } from "utils/download";
 import { fileExists } from "utils/file_exists";
 
-import { AppUpdater } from "./app_updater";
 import { getConfigFlags } from "./flags/flags";
 import { installModules } from "./install_modules";
 import { MenuBuilder } from "./menu";
@@ -59,7 +58,7 @@ if (!lockObtained) {
 }
 
 const flags = getConfigFlags();
-const { dolphinManager, settingsManager, browserWindowManager } = installModules(flags);
+const { dolphinManager, appUpdater, browserWindowManager } = installModules(flags);
 
 if (process.env.NODE_ENV === "production") {
   const sourceMapSupport = require("source-map-support");
@@ -162,8 +161,6 @@ const createWindow = async () => {
     void shell.openExternal(edata.url);
     return { action: "deny" };
   });
-
-  new AppUpdater(settingsManager.get().settings.autoUpdateLauncher);
 };
 
 /**
@@ -328,34 +325,14 @@ const playReplayAndShowStats = async (filePath: string, startFrame?: number) => 
   }
 };
 
-const verifyPendingUpdate = async () => {
-  const currentVersion = app.getVersion();
-  const pendingVersion = settingsManager.get().pendingUpdateVersion;
-
-  if (!pendingVersion) {
-    return;
-  }
-
-  if (currentVersion === pendingVersion) {
-    log.info(`Auto-update succeeded: version ${currentVersion}`);
-  } else {
-    log.error(
-      `Auto-update FAILED: expected ${pendingVersion}, running ${currentVersion}. ` +
-        "Update file may have been missing, corrupted, or the installer was interrupted.",
-    );
-  }
-
-  await settingsManager.updateSetting("pendingUpdateVersion", undefined);
-};
-
 app
   .whenReady()
-  .then(() => {
+  .then(async () => {
     if (!lockObtained) {
       return;
     }
 
-    void verifyPendingUpdate();
+    await appUpdater.verifyPendingUpdate();
     void createWindow();
 
     // Handle Slippi URI if provided

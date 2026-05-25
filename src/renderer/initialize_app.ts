@@ -69,4 +69,13 @@ export async function initializeApp(services: Services) {
     .forEach((result) => {
       log.error(result.reason);
     });
+
+  const updateState = window.electron.bootstrap.updateState;
+  if (updateState) {
+    if (updateState.status === "succeeded") {
+      notificationService.showSuccess(Messages.updatedToVersion(updateState.version));
+    } else {
+      showError(Messages.updateFailed(updateState.version));
+    }
+  }
 }
