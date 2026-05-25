@@ -190,7 +190,7 @@ export default function setupMainIpc({
       width: 960,
       height: 540,
       alwaysOnTop: true,
-      fullscreenable: false,
+      fullscreenable: false, // When a website requests fullscreen, fill only the browser window
       show: false,
       backgroundColor: BACKGROUND_COLOR,
       autoHideMenuBar: true,
