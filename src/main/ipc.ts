@@ -12,7 +12,7 @@ export const ipc_checkValidIso = makeEndpoint.main(
 
 export const ipc_copyLogsToClipboard = makeEndpoint.main("copyLogsToClipboard", <EmptyPayload>_, <SuccessPayload>_);
 
-export const ipc_checkForUpdate = makeEndpoint.main("checkForUpdate", <{ silent?: boolean }>_, <SuccessPayload>_);
+export const ipc_checkForUpdate = makeEndpoint.main("checkForUpdate", <EmptyPayload>_, <{ updateAvailable: boolean }>_);
 
 export const ipc_installUpdate = makeEndpoint.main("installUpdate", <EmptyPayload>_, <SuccessPayload>_);
 
@@ -52,8 +52,3 @@ export const ipc_launcherUpdateDownloadingEvent = makeEndpoint.renderer(
 );
 
 export const ipc_launcherUpdateReadyEvent = makeEndpoint.renderer("launcherupdate_ready", <EmptyPayload>_);
-
-export const ipc_launcherUpdateNotAvailableEvent = makeEndpoint.renderer(
-  "launcherupdate_not_available",
-  <EmptyPayload>_,
-);

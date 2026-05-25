@@ -182,8 +182,10 @@ const CheckForUpdatesButton = () => {
     const checkForUpdates = async () => {
       setCheckingForUpdates(true);
       try {
-        showInfo(Messages.checkingForUpdates());
-        await checkForAppUpdates();
+        const updateResult = await checkForAppUpdates();
+        if (updateResult && !updateResult.updateAvailable) {
+          showInfo(Messages.noUpdateAvailable());
+        }
         await updateDolphin();
       } catch (err) {
         log.error(err);
@@ -196,7 +198,7 @@ const CheckForUpdatesButton = () => {
   }, [checkForAppUpdates, updateDolphin, showInfo, showError]);
 
   return (
-    <Tooltip title={Messages.checkForUpdates()}>
+    <Tooltip title={checkingForUpdates ? Messages.checkingForUpdates() : Messages.checkForUpdates()}>
       <Button
         style={isMac ? { marginTop: 10 } : undefined}
         onClick={checkForUpdatesHandler}
