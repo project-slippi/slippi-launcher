@@ -3,11 +3,12 @@ import Typography from "@mui/material/Typography";
 import React from "react";
 
 type SettingItemProps = {
-  name: React.ReactNode | string;
+  name?: React.ReactNode | string;
   description?: React.ReactNode | string;
+  children?: React.ReactNode;
 };
 
-export const SettingItem = (props: React.PropsWithChildren<SettingItemProps>) => {
+export const SettingItem = ({ name, description, children }: SettingItemProps) => {
   return (
     <div
       css={css`
@@ -19,17 +20,19 @@ export const SettingItem = (props: React.PropsWithChildren<SettingItemProps>) =>
           padding-bottom: 10px;
         `}
       >
-        <Typography
-          variant="subtitle1"
-          css={css`
-            text-transform: capitalize;
-          `}
-        >
-          {props.name}
-        </Typography>
-        {props.description && <Typography variant="caption">{props.description}</Typography>}
+        {name && (
+          <Typography
+            variant="subtitle1"
+            css={css`
+              text-transform: capitalize;
+            `}
+          >
+            {name}
+          </Typography>
+        )}
+        {description && <Typography variant="caption">{description}</Typography>}
       </div>
-      {props.children}
+      {children}
     </div>
   );
 };

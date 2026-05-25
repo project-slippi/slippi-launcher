@@ -14,7 +14,7 @@ export const AdvancedAppSettings = React.memo(() => {
 
   return (
     <div>
-      <SettingItem name="">
+      <SettingItem>
         <Toggle
           value={autoUpdateLauncher}
           onChange={(checked) => setAutoUpdateLauncher(checked)}
@@ -22,7 +22,7 @@ export const AdvancedAppSettings = React.memo(() => {
           description={Messages.enableAutoUpdatesDescription()}
         />
       </SettingItem>
-      <SettingItem name="">
+      <SettingItem>
         <Toggle
           value={enableLocationAccess}
           onChange={(checked) => setEnableLocationAccess(checked)}

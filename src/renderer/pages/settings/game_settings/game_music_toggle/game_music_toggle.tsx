@@ -22,7 +22,7 @@ export const GameMusicToggle = () => {
   }, []);
 
   return (
-    <SettingItem name="">
+    <SettingItem>
       <Toggle
         value={enableJukebox}
         onChange={(checked) => setEnableJukebox(checked)}

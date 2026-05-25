@@ -12,7 +12,7 @@ export const SpectateSettings = React.memo(() => {
   const [spectateRemoteControlPort, setSpectateRemoteControlPort] = useSpectateRemoteControlPort();
   return (
     <div>
-      <SettingItem name="">
+      <SettingItem>
         <Toggle
           value={enableSpectateRemoteControl}
           onChange={(checked) => setEnableSpectateRemoteControl(checked)}

@@ -28,7 +28,7 @@ export const NetplayReplayToggles = () => {
   };
 
   return (
-    <SettingItem name="">
+    <SettingItem>
       <Toggle
         value={enableNetplayReplays}
         onChange={(checked) => onEnableNetplayReplaysToggle(checked)}
