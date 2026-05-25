@@ -66,7 +66,7 @@ export interface SettingsSchema {
   enableSpectateRemoteControl: boolean;
   spectateRemoteControlPort: number;
 
-  // Appearence settings
+  // Appearance settings
   enableRankDisplay: boolean;
 }
 
