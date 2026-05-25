@@ -11,6 +11,7 @@ export const useAppUpdate = () => {
       return result;
     } catch (err) {
       showError(err);
+      return null;
     }
   }, [showError]);
 
