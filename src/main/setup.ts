@@ -10,6 +10,7 @@ import { autoUpdater } from "electron-updater";
 import path from "path";
 import { fileExists } from "utils/file_exists";
 
+import type { AppUpdater } from "./app_updater";
 import { getAppBootstrap } from "./bootstrap";
 import type { BrowserWindowManager } from "./browser_window_manager";
 import { getLatestRelease } from "./fetch_cross_origin/github";
@@ -47,11 +48,13 @@ export default function setupMainIpc({
   settingsManager,
   flags,
   browserWindowManager,
+  appUpdater,
 }: {
   dolphinManager: DolphinManager;
   settingsManager: SettingsManager;
   flags: ConfigFlags;
   browserWindowManager: BrowserWindowManager;
+  appUpdater: AppUpdater;
 }) {
   ipcMain.on("onDragStart", (event, files: string[]) => {
     // The Electron.Item type declaration is missing the files attribute
@@ -63,7 +66,7 @@ export default function setupMainIpc({
   });
 
   ipcMain.on("getAppBootstrapSync", (event) => {
-    event.returnValue = getAppBootstrap(flags);
+    event.returnValue = getAppBootstrap(flags, appUpdater.getUpdateState());
   });
 
   ipc_fetchNewsFeed.main!.handle(async () => {
