@@ -145,40 +145,15 @@ export default function setupMainIpc({
     ipc_launcherUpdateReadyEvent.main!.trigger({}).catch(log.warn);
   });
 
-  const installUpdate = async () => {
-    log.info("Installing update via quitAndInstall");
-
-    const pendingVersion = settingsManager.get().pendingUpdateVersion;
-    if (!pendingVersion) {
-      log.error("No pending update version found — update may not have been downloaded");
-      return { success: false, error: "No update has been downloaded." };
-    }
-
+  ipc_installUpdate.main!.handle(async () => {
     try {
-      autoUpdater.quitAndInstall(false, true);
+      log.info("Installing update via quitAndInstall");
+      await appUpdater.quitAndInstall();
       return { success: true };
     } catch (err) {
       log.error("Failed to install update:", err);
-      return { success: false, error: String(err) };
+      return { success: false, error: err instanceof Error ? err.message : String(err) };
     }
-  };
-
-  const installUpdateTimeoutMs = 15000; // 15 seconds
-
-  ipc_installUpdate.main!.handle(async () => {
-    const timeout = new Promise<void>((_resolve, reject) => {
-      // If we still haven't restarted the app within the timeout, something probably went wrong.
-      setTimeout(() => {
-        reject(new Error(`Timed out after ${installUpdateTimeoutMs / 1000}s trying to install update.`));
-      }, installUpdateTimeoutMs);
-    });
-
-    const res = await Promise.race([timeout, installUpdate()]);
-    if (!res?.success) {
-      throw new Error(res?.error ?? "Failed to install update");
-    }
-
-    return res;
   });
 
   ipc_checkForUpdate.main!.handle(async () => {
