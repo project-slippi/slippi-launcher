@@ -307,6 +307,14 @@ app.on("second-instance", (_, argv) => {
   handleSlippiURI(lastItem);
 });
 
+app.on("activate", () => {
+  // On macOS it's common to re-create a window in the app when the
+  // dock icon is clicked and there are no other windows open.
+  if (mainWindow === null) {
+    void createWindow();
+  }
+});
+
 const playReplayAndShowStats = async (filePath: string, startFrame?: number) => {
   // Ensure playback dolphin is actually installed
   await dolphinManager.installDolphin(DolphinLaunchType.PLAYBACK);
@@ -325,31 +333,21 @@ const playReplayAndShowStats = async (filePath: string, startFrame?: number) => 
   }
 };
 
-app
-  .whenReady()
-  .then(async () => {
-    if (!lockObtained) {
-      return;
-    }
+const main = async () => {
+  await app.whenReady();
+  if (!lockObtained) {
+    return;
+  }
 
-    await appUpdater.verifyPendingUpdate();
-    void createWindow();
+  await appUpdater.verifyPendingUpdate();
+  await createWindow();
 
-    // Handle Slippi URI if provided
-    const argURI = get(process.argv, 1);
-    if (argURI) {
-      handleSlippiURI(argURI);
-    }
-
-    app.on("activate", () => {
-      // On macOS it's common to re-create a window in the app when the
-      // dock icon is clicked and there are no other windows open.
-      if (mainWindow === null) {
-        void createWindow();
-      }
-    });
-  })
-  .catch(log.error);
+  // Handle Slippi URI if provided
+  const argURI = get(process.argv, 1);
+  if (argURI) {
+    handleSlippiURI(argURI);
+  }
+};
 
 const openPreferences = async () => {
   if (!mainWindow) {
@@ -357,3 +355,5 @@ const openPreferences = async () => {
   }
   await ipc_openSettingsModalEvent.main!.trigger({});
 };
+
+main().catch(log.error);
