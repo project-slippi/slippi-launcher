@@ -7,6 +7,7 @@ import setupReplaysIpc from "@replays/setup";
 import { SettingsManager } from "@settings/settings_manager";
 import setupSettingsIpc from "@settings/setup";
 
+import { BrowserWindowManager } from "./browser_window_manager";
 import type { ConfigFlags } from "./flags/flags";
 import setupMainIpc from "./setup";
 
@@ -19,6 +20,7 @@ export function installModules(flags: ConfigFlags) {
   setupSettingsIpc({ settingsManager, dolphinManager });
   setupConsoleIpc({ dolphinManager });
   setupRemoteIpc({ dolphinManager, settingsManager, getSpectateController });
-  setupMainIpc({ dolphinManager, flags });
+  const browserWindowManager = new BrowserWindowManager();
+  setupMainIpc({ dolphinManager, flags, browserWindowManager });
   return { dolphinManager, settingsManager };
 }

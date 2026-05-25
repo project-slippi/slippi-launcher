@@ -2,7 +2,7 @@ import { exists } from "@common/exists";
 import { IsoValidity } from "@common/types";
 import type { DolphinManager } from "@dolphin/manager";
 import { DolphinLaunchType } from "@dolphin/types";
-import { app, BrowserWindow, clipboard, dialog, ipcMain, nativeImage } from "electron";
+import { app, clipboard, dialog, ipcMain, nativeImage } from "electron";
 import electronLog from "electron-log";
 import type { ProgressInfo, UpdateInfo } from "electron-updater";
 import { autoUpdater } from "electron-updater";
@@ -10,6 +10,7 @@ import path from "path";
 import { fileExists } from "utils/file_exists";
 
 import { getAppBootstrap } from "./bootstrap";
+import type { BrowserWindowManager } from "./browser_window_manager";
 import { getLatestRelease } from "./fetch_cross_origin/github";
 import type { ConfigFlags } from "./flags/flags";
 import {
@@ -32,8 +33,6 @@ import { fetchNewsFeedData } from "./news_feed";
 import { clearTempFolder, getAssetPath, readLastLines } from "./util";
 import { verifyIso } from "./verify_iso";
 
-const BACKGROUND_COLOR = "#1B0B28";
-
 const log = electronLog.scope("main/listeners");
 const isDevelopment = process.env.NODE_ENV !== "production";
 const isMac = process.platform === "darwin";
@@ -45,9 +44,11 @@ const LINES_TO_READ = 200;
 export default function setupMainIpc({
   dolphinManager,
   flags,
+  browserWindowManager,
 }: {
   dolphinManager: DolphinManager;
   flags: ConfigFlags;
+  browserWindowManager: BrowserWindowManager;
 }) {
   ipcMain.on("onDragStart", (event, files: string[]) => {
     // The Electron.Item type declaration is missing the files attribute
@@ -173,52 +174,8 @@ export default function setupMainIpc({
     return getNetworkDiagnostics();
   });
 
-  const externalWindowsByUrl = new Map<string, BrowserWindow>();
-
-  ipc_openInNewBrowserWindow.main!.handle(async ({ url }) => {
-    const existing = externalWindowsByUrl.get(url);
-    if (existing && !existing.isDestroyed()) {
-      if (existing.isMinimized()) {
-        existing.restore();
-      }
-      existing.show();
-      existing.focus();
-      return { success: true };
-    }
-
-    const win = new BrowserWindow({
-      width: 960,
-      height: 540,
-      alwaysOnTop: true,
-      fullscreenable: false, // When a website requests fullscreen, fill only the browser window
-      show: false,
-      backgroundColor: BACKGROUND_COLOR,
-      autoHideMenuBar: true,
-      webPreferences: {
-        sandbox: true,
-      },
-    });
-
-    if (isDevelopment) {
-      // Devtools automatically opens when a new browser window is created in development mode.
-      // We don't really care about devtools in this situation so just close it immediately.
-      win.webContents.on("devtools-opened", () => {
-        win.webContents.closeDevTools();
-      });
-    }
-
-    win.loadURL(url).catch(log.error);
-
-    win.on("closed", () => {
-      externalWindowsByUrl.delete(url);
-    });
-
-    win.on("ready-to-show", () => {
-      win.show();
-    });
-
-    externalWindowsByUrl.set(url, win);
-
+  ipc_openInNewBrowserWindow.main!.handle(async ({ url }: { url: string }) => {
+    browserWindowManager.openInNewBrowserWindow(url);
     return { success: true };
   });
 }
