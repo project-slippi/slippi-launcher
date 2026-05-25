@@ -77,6 +77,7 @@ export interface RootSettingsSchema {
   connections: StoredConnection[];
   accounts: AccountData;
   previousVersion?: string;
+  pendingUpdateVersion?: string;
   netplayPromotedToStable: boolean;
   playbackPromotedToStable: boolean;
 }

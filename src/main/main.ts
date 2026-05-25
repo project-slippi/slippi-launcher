@@ -337,6 +337,26 @@ const playReplayAndShowStats = async (filePath: string, startFrame?: number) => 
   }
 };
 
+const verifyPendingUpdate = async () => {
+  const currentVersion = app.getVersion();
+  const pendingVersion = settingsManager.get().pendingUpdateVersion;
+
+  if (!pendingVersion) {
+    return;
+  }
+
+  if (currentVersion === pendingVersion) {
+    log.info(`Auto-update succeeded: version ${currentVersion}`);
+  } else {
+    log.error(
+      `Auto-update FAILED: expected ${pendingVersion}, running ${currentVersion}. ` +
+        "Update file may have been missing, corrupted, or the installer was interrupted.",
+    );
+  }
+
+  await settingsManager.updateSetting("pendingUpdateVersion", undefined);
+};
+
 app
   .whenReady()
   .then(() => {
@@ -344,6 +364,7 @@ app
       return;
     }
 
+    void verifyPendingUpdate();
     void createWindow();
 
     // Handle Slippi URI if provided

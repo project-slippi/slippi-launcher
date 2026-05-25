@@ -21,6 +21,6 @@ export function installModules(flags: ConfigFlags) {
   setupConsoleIpc({ dolphinManager });
   setupRemoteIpc({ dolphinManager, settingsManager, getSpectateController });
   const browserWindowManager = new BrowserWindowManager();
-  setupMainIpc({ dolphinManager, flags, browserWindowManager });
+  setupMainIpc({ dolphinManager, settingsManager, flags, browserWindowManager });
   return { dolphinManager, settingsManager, browserWindowManager };
 }
