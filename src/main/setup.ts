@@ -145,7 +145,7 @@ export default function setupMainIpc({
     ipc_launcherUpdateReadyEvent.main!.trigger({}).catch(log.warn);
   });
 
-  ipc_installUpdate.main!.handle(async () => {
+  const installUpdate = async () => {
     log.info("Installing update via quitAndInstall");
 
     const pendingVersion = settingsManager.get().pendingUpdateVersion;
@@ -156,11 +156,29 @@ export default function setupMainIpc({
 
     try {
       autoUpdater.quitAndInstall(false, true);
+      return { success: true };
     } catch (err) {
       log.error("Failed to install update:", err);
       return { success: false, error: String(err) };
     }
-    return { success: true };
+  };
+
+  const installUpdateTimeoutMs = 15000; // 15 seconds
+
+  ipc_installUpdate.main!.handle(async () => {
+    const timeout = new Promise<void>((_resolve, reject) => {
+      // If we still haven't restarted the app within the timeout, something probably went wrong.
+      setTimeout(() => {
+        reject(new Error(`Timed out after ${installUpdateTimeoutMs / 1000}s trying to install update.`));
+      }, installUpdateTimeoutMs);
+    });
+
+    const res = await Promise.race([timeout, installUpdate()]);
+    if (!res?.success) {
+      throw new Error(res?.error ?? "Failed to install update");
+    }
+
+    return res;
   });
 
   ipc_checkForUpdate.main!.handle(async () => {
