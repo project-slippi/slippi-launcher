@@ -1,4 +1,4 @@
-import { BrowserWindow } from "electron";
+import { BrowserWindow, shell } from "electron";
 import log from "electron-log";
 
 const isDevelopment = process.env.NODE_ENV !== "production";
@@ -48,6 +48,11 @@ export class BrowserWindowManager {
 
     win.on("ready-to-show", () => {
       win.show();
+    });
+
+    win.webContents.setWindowOpenHandler((edata) => {
+      void shell.openExternal(edata.url);
+      return { action: "deny" };
     });
 
     this.externalWindowsByUrl.set(url, win);
