@@ -35,8 +35,9 @@ export default {
     const { result } = await ipc_checkForUpdate.renderer!.trigger({});
     return result;
   },
-  async installAppUpdate(): Promise<void> {
-    await ipc_installUpdate.renderer!.trigger({});
+  async installAppUpdate(): Promise<{ success: boolean; error?: string }> {
+    const { result } = await ipc_installUpdate.renderer!.trigger({});
+    return result;
   },
   async getLatestGithubReleaseVersion(owner: string, repo: string): Promise<string> {
     const { result } = await ipc_getLatestGitHubReleaseVersion.renderer!.trigger({ owner, repo });

@@ -15,11 +15,12 @@ export const useAppUpdate = () => {
     }
   }, [showError]);
 
-  const installAppUpdate = React.useCallback(async () => {
+  const installAppUpdate = React.useCallback(async (): Promise<{ success: boolean; error?: string }> => {
     try {
-      await window.electron.common.installAppUpdate();
+      return await window.electron.common.installAppUpdate();
     } catch (err) {
       showError(err);
+      return { success: false, error: String(err) };
     }
   }, [showError]);
 
