@@ -1,7 +1,6 @@
 import { ipcRenderer } from "electron";
 
 import {
-  type OpenInNewBrowserWindowOptions,
   ipc_checkForUpdate,
   ipc_checkValidIso,
   ipc_clearTempFolder,
@@ -54,8 +53,8 @@ export default {
     const { result } = await ipc_runNetworkDiagnostics.renderer!.trigger({});
     return result;
   },
-  async openInNewBrowserWindow(url: string, options?: OpenInNewBrowserWindowOptions): Promise<void> {
-    await ipc_openInNewBrowserWindow.renderer!.trigger({ url, options });
+  async openInNewBrowserWindow(url: string): Promise<void> {
+    await ipc_openInNewBrowserWindow.renderer!.trigger({ url });
   },
   onAppUpdateFound(handle: (version: string) => void) {
     const { destroy } = ipc_launcherUpdateFoundEvent.renderer!.handle(async ({ version }) => {

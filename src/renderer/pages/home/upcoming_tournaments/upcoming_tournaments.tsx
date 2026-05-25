@@ -60,11 +60,7 @@ const FeaturedMajor = ({
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                void window.electron.common.openInNewBrowserWindow(major.streamUrl!, {
-                  alwaysOnTop: true,
-                  width: 960,
-                  height: 540,
-                });
+                void window.electron.common.openInNewBrowserWindow(major.streamUrl!);
               }}
             >
               {Messages.viewStream()}

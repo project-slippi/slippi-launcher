@@ -142,13 +142,7 @@ export const Carousel = React.memo(function Carousel({ items, durationMs = 5000 
                         size="large"
                         startIcon={<PlayArrowIcon />}
                         style={{ fontSize: 14 }}
-                        onClick={() =>
-                          window.electron.common.openInNewBrowserWindow(item.streamUrl!, {
-                            alwaysOnTop: true,
-                            width: 960,
-                            height: 540,
-                          })
-                        }
+                        onClick={() => window.electron.common.openInNewBrowserWindow(item.streamUrl!)}
                       >
                         {Messages.viewStream()}
                       </Button>

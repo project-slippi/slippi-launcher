@@ -38,15 +38,9 @@ export const ipc_runNetworkDiagnostics = makeEndpoint.main(
 
 // Events
 
-export type OpenInNewBrowserWindowOptions = {
-  width?: number;
-  height?: number;
-  alwaysOnTop?: boolean;
-};
-
 export const ipc_openInNewBrowserWindow = makeEndpoint.main(
   "openInNewBrowserWindow",
-  <{ url: string; options?: OpenInNewBrowserWindowOptions }>_,
+  <{ url: string }>_,
   <SuccessPayload>_,
 );
 

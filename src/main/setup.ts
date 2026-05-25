@@ -13,7 +13,6 @@ import { getAppBootstrap } from "./bootstrap";
 import { getLatestRelease } from "./fetch_cross_origin/github";
 import type { ConfigFlags } from "./flags/flags";
 import {
-  type OpenInNewBrowserWindowOptions,
   ipc_checkForUpdate,
   ipc_checkValidIso,
   ipc_clearTempFolder,
@@ -176,7 +175,7 @@ export default function setupMainIpc({
 
   const externalWindowsByUrl = new Map<string, BrowserWindow>();
 
-  ipc_openInNewBrowserWindow.main!.handle(async ({ url, options }) => {
+  ipc_openInNewBrowserWindow.main!.handle(async ({ url }) => {
     const existing = externalWindowsByUrl.get(url);
     if (existing && !existing.isDestroyed()) {
       if (existing.isMinimized()) {
@@ -187,18 +186,11 @@ export default function setupMainIpc({
       return { success: true };
     }
 
-    const defaultOptions: Required<OpenInNewBrowserWindowOptions> = {
+    const win = new BrowserWindow({
       width: 960,
       height: 540,
-      alwaysOnTop: false,
-    };
-    const resolved = { ...defaultOptions, ...options };
-
-    const win = new BrowserWindow({
-      width: resolved.width,
-      height: resolved.height,
-      alwaysOnTop: resolved.alwaysOnTop,
-      fullscreenable: false, // When a website requests fullscreen, fill only the browser window
+      alwaysOnTop: true,
+      fullscreenable: false,
       show: false,
       backgroundColor: BACKGROUND_COLOR,
       autoHideMenuBar: true,
