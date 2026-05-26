@@ -1,4 +1,4 @@
-import { BrowserWindow, shell } from "electron";
+import { BrowserWindow, Menu, shell } from "electron";
 import log from "electron-log";
 
 const isDevelopment = process.env.NODE_ENV !== "production";
@@ -27,17 +27,33 @@ export class BrowserWindowManager {
     const win = new BrowserWindow({
       width: 960,
       height: 540,
-      alwaysOnTop: true,
+      alwaysOnTop: false,
       fullscreenable: false, // When a website requests fullscreen, fill only the browser window
       show: false,
       backgroundColor: BACKGROUND_COLOR,
-      autoHideMenuBar: true,
       webPreferences: {
         sandbox: true,
         // We partition by hostname to isolate cookies and other data
         partition: `temp:${hostname}`,
       },
     });
+
+    const menu = Menu.buildFromTemplate([
+      {
+        label: "Window",
+        submenu: [
+          {
+            type: "checkbox",
+            label: "Always on Top",
+            checked: false,
+            click: (menuItem) => {
+              win.setAlwaysOnTop(menuItem.checked);
+            },
+          },
+        ],
+      },
+    ]);
+    win.setMenu(menu);
 
     if (isDevelopment) {
       // Devtools automatically opens when a new browser window is created in development mode.
