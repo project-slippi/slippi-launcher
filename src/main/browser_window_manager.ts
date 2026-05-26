@@ -5,10 +5,14 @@ const isDevelopment = process.env.NODE_ENV !== "production";
 
 const BACKGROUND_COLOR = "#1B0B28";
 
+/**
+ * Manages browser windows that are opened from the main app. Used for external URLs.
+ * This is primarily used for opening tournament streams in a separate always-on-top window.
+ */
 export class BrowserWindowManager {
   private externalWindowsByUrl = new Map<string, BrowserWindow>();
 
-  public openInNewBrowserWindow(url: string) {
+  public async openInNewBrowserWindow(url: string) {
     const existing = this.externalWindowsByUrl.get(url);
     if (existing && !existing.isDestroyed()) {
       if (existing.isMinimized()) {
@@ -43,8 +47,6 @@ export class BrowserWindowManager {
       });
     }
 
-    win.loadURL(url).catch(log.error);
-
     win.on("closed", () => {
       this.externalWindowsByUrl.delete(url);
     });
@@ -58,6 +60,12 @@ export class BrowserWindowManager {
       return { action: "deny" };
     });
 
-    this.externalWindowsByUrl.set(url, win);
+    try {
+      await win.loadURL(url);
+      this.externalWindowsByUrl.set(url, win);
+    } catch (err) {
+      log.error(err);
+      throw err;
+    }
   }
 }

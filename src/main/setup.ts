@@ -175,7 +175,7 @@ export default function setupMainIpc({
   });
 
   ipc_openInNewBrowserWindow.main!.handle(async ({ url }: { url: string }) => {
-    browserWindowManager.openInNewBrowserWindow(url);
+    await browserWindowManager.openInNewBrowserWindow(url);
     return { success: true };
   });
 }
