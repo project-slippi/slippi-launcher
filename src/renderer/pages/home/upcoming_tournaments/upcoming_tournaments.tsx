@@ -57,10 +57,17 @@ const FeaturedMajor = ({
               size="large"
               startIcon={<PlayArrowIcon />}
               style={{ fontSize: 16 }}
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                void window.electron.shell.openExternal(major.streamUrl!);
+              onClick={(event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                const isModifiedClick = window.electron.bootstrap.isMac
+                  ? event.metaKey // Cmd on macOS
+                  : event.ctrlKey; // Ctrl elsewhere
+                if (isModifiedClick) {
+                  void window.electron.shell.openExternal(major.streamUrl!);
+                } else {
+                  void window.electron.common.openInNewBrowserWindow(major.streamUrl!);
+                }
               }}
             >
               {Messages.viewStream()}

@@ -10,6 +10,7 @@ import path from "path";
 import { fileExists } from "utils/file_exists";
 
 import { getAppBootstrap } from "./bootstrap";
+import type { BrowserWindowManager } from "./browser_window_manager";
 import { getLatestRelease } from "./fetch_cross_origin/github";
 import type { ConfigFlags } from "./flags/flags";
 import {
@@ -23,6 +24,7 @@ import {
   ipc_launcherUpdateDownloadingEvent,
   ipc_launcherUpdateFoundEvent,
   ipc_launcherUpdateReadyEvent,
+  ipc_openInNewBrowserWindow,
   ipc_runNetworkDiagnostics,
   ipc_showOpenDialog,
 } from "./ipc";
@@ -42,9 +44,11 @@ const LINES_TO_READ = 200;
 export default function setupMainIpc({
   dolphinManager,
   flags,
+  browserWindowManager,
 }: {
   dolphinManager: DolphinManager;
   flags: ConfigFlags;
+  browserWindowManager: BrowserWindowManager;
 }) {
   ipcMain.on("onDragStart", (event, files: string[]) => {
     // The Electron.Item type declaration is missing the files attribute
@@ -168,5 +172,10 @@ export default function setupMainIpc({
 
   ipc_runNetworkDiagnostics.main!.handle(async () => {
     return getNetworkDiagnostics();
+  });
+
+  ipc_openInNewBrowserWindow.main!.handle(async ({ url }: { url: string }) => {
+    browserWindowManager.openInNewBrowserWindow(url);
+    return { success: true };
   });
 }

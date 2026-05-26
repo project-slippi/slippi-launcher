@@ -38,6 +38,12 @@ export const ipc_runNetworkDiagnostics = makeEndpoint.main(
 
 // Events
 
+export const ipc_openInNewBrowserWindow = makeEndpoint.main(
+  "openInNewBrowserWindow",
+  <{ url: string }>_,
+  <SuccessPayload>_,
+);
+
 export const ipc_launcherUpdateFoundEvent = makeEndpoint.renderer("launcherupdate_found", <{ version: string }>_);
 
 export const ipc_launcherUpdateDownloadingEvent = makeEndpoint.renderer(
