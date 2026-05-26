@@ -174,15 +174,6 @@ export class MenuBuilder {
             this.mainWindow.setFullScreen(!this.mainWindow.isFullScreen());
           },
         },
-        { type: "separator" },
-        {
-          type: "checkbox",
-          label: "Always on Top for Streams",
-          checked: this.browserWindowManager.isAlwaysOnTop(),
-          click: (menuItem) => {
-            this.browserWindowManager.setAlwaysOnTop(menuItem.checked);
-          },
-        },
       ],
     };
     const subMenuWindow: DarwinMenuItemConstructorOptions = {
@@ -196,6 +187,15 @@ export class MenuBuilder {
         { label: "Close", accelerator: "Command+W", selector: "performClose:" },
         { type: "separator" },
         { label: "Bring All to Front", selector: "arrangeInFront:" },
+        { type: "separator" },
+        {
+          type: "checkbox",
+          label: "Always on Top for Streams",
+          checked: this.browserWindowManager.isAlwaysOnTop(),
+          click: (menuItem) => {
+            this.browserWindowManager.setAlwaysOnTop(menuItem.checked);
+          },
+        },
         {
           id: "macos-window-toggle",
           label: "Slippi Launcher",

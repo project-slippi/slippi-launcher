@@ -52,6 +52,7 @@ export class BrowserWindowManager {
       },
     });
 
+    // This menu will only exist on Windows and Linux
     const menu = Menu.buildFromTemplate([
       {
         label: "Window",
@@ -67,6 +68,8 @@ export class BrowserWindowManager {
         ],
       },
     ]);
+    // This win.setMenu is a no-op on MacOS.
+    // So for MacOS, we have a global handler in the menu template, since it doesn't support per-window menus.
     win.setMenu(menu);
 
     if (isDevelopment) {
