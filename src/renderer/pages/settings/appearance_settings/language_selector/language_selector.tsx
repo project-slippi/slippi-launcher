@@ -10,6 +10,8 @@ import { LanguageSelectorMessages as Messages } from "./language_selector.messag
 
 const sortedSupportedLanguages = [...SUPPORTED_LANGUAGES].sort((a, b) => a.label.localeCompare(b.label));
 
+const configFlags = window.electron.bootstrap.flags;
+
 export const LanguageSelector = React.memo(() => {
   const { i18nService } = useServices();
   const currentLanguage = useAppStore((state) => state.currentLanguage);
@@ -20,6 +22,10 @@ export const LanguageSelector = React.memo(() => {
     },
     [i18nService],
   );
+
+  if (!configFlags.enableI18n) {
+    return null;
+  }
 
   return (
     <SettingItem name={Messages.appLanguage()} description={Messages.appLanguageDescription()}>
