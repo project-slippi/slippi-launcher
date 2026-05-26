@@ -11,6 +11,20 @@ const BACKGROUND_COLOR = "#1B0B28";
  */
 export class BrowserWindowManager {
   private externalWindowsByUrl = new Map<string, BrowserWindow>();
+  private alwaysOnTop = false;
+
+  public setAlwaysOnTop(enabled: boolean): void {
+    this.alwaysOnTop = enabled;
+    for (const win of this.externalWindowsByUrl.values()) {
+      if (!win.isDestroyed()) {
+        win.setAlwaysOnTop(enabled);
+      }
+    }
+  }
+
+  public isAlwaysOnTop(): boolean {
+    return this.alwaysOnTop;
+  }
 
   public async openInNewBrowserWindow(url: string) {
     const existing = this.externalWindowsByUrl.get(url);
@@ -27,7 +41,7 @@ export class BrowserWindowManager {
     const win = new BrowserWindow({
       width: 960,
       height: 540,
-      alwaysOnTop: false,
+      alwaysOnTop: this.alwaysOnTop,
       fullscreenable: false, // When a website requests fullscreen, fill only the browser window
       show: false,
       backgroundColor: BACKGROUND_COLOR,
@@ -45,7 +59,7 @@ export class BrowserWindowManager {
           {
             type: "checkbox",
             label: "Always on Top",
-            checked: false,
+            checked: this.alwaysOnTop,
             click: (menuItem) => {
               win.setAlwaysOnTop(menuItem.checked);
             },

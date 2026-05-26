@@ -59,7 +59,7 @@ if (!lockObtained) {
 }
 
 const flags = getConfigFlags();
-const { dolphinManager, settingsManager } = installModules(flags);
+const { dolphinManager, settingsManager, browserWindowManager } = installModules(flags);
 
 class AppUpdater {
   constructor() {
@@ -150,6 +150,7 @@ const createWindow = async () => {
 
   const menuBuilder = new MenuBuilder({
     mainWindow,
+    browserWindowManager,
     onOpenPreferences: () => {
       void openPreferences().catch(log.error);
     },

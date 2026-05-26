@@ -2,6 +2,8 @@
 import type { BrowserWindow, MenuItemConstructorOptions } from "electron";
 import { app, dialog, Menu, shell } from "electron";
 
+import type { BrowserWindowManager } from "./browser_window_manager";
+
 interface DarwinMenuItemConstructorOptions extends MenuItemConstructorOptions {
   selector?: string;
   submenu?: DarwinMenuItemConstructorOptions[] | Menu;
@@ -9,6 +11,7 @@ interface DarwinMenuItemConstructorOptions extends MenuItemConstructorOptions {
 
 export class MenuBuilder {
   private mainWindow: BrowserWindow;
+  private browserWindowManager: BrowserWindowManager;
   private onOpenPreferences: () => void;
   private onOpenReplayFile: (filePath: string) => void;
   private onOpenAppSupportFolder: () => void;
@@ -17,6 +20,7 @@ export class MenuBuilder {
 
   constructor(options: {
     mainWindow: BrowserWindow;
+    browserWindowManager: BrowserWindowManager;
     onOpenPreferences: () => void;
     onOpenReplayFile: (filePath: string) => void;
     onOpenAppSupportFolder: () => void;
@@ -24,6 +28,7 @@ export class MenuBuilder {
     enableDevTools?: boolean;
   }) {
     this.mainWindow = options.mainWindow;
+    this.browserWindowManager = options.browserWindowManager;
     this.enableDevTools = options.enableDevTools;
     this.onOpenPreferences = options.onOpenPreferences;
     this.onOpenReplayFile = options.onOpenReplayFile;
@@ -167,6 +172,15 @@ export class MenuBuilder {
           accelerator: "Ctrl+Command+F",
           click: () => {
             this.mainWindow.setFullScreen(!this.mainWindow.isFullScreen());
+          },
+        },
+        { type: "separator" },
+        {
+          type: "checkbox",
+          label: "Always on Top for Streams",
+          checked: this.browserWindowManager.isAlwaysOnTop(),
+          click: (menuItem) => {
+            this.browserWindowManager.setAlwaysOnTop(menuItem.checked);
           },
         },
       ],
