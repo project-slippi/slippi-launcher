@@ -226,7 +226,7 @@ export class MenuBuilder {
   }
 
   private buildDefaultTemplate() {
-    const templateDefault = [
+    const templateDefault: MenuItemConstructorOptions[] = [
       {
         label: "&File",
         submenu: [
@@ -286,6 +286,19 @@ export class MenuBuilder {
                   },
                 },
               ],
+      },
+      {
+        label: "&Window",
+        submenu: [
+          {
+            type: "checkbox",
+            label: "Always on Top for Streams",
+            checked: this.browserWindowManager.isAlwaysOnTop(),
+            click: (menuItem) => {
+              this.browserWindowManager.setAlwaysOnTop(menuItem.checked);
+            },
+          },
+        ],
       },
       {
         label: "Help",

@@ -45,6 +45,7 @@ export class BrowserWindowManager {
       fullscreenable: false, // When a website requests fullscreen, fill only the browser window
       show: false,
       backgroundColor: BACKGROUND_COLOR,
+      autoHideMenuBar: true,
       webPreferences: {
         sandbox: true,
         // We partition by hostname to isolate cookies and other data
