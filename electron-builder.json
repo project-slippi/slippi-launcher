@@ -101,6 +101,7 @@
   },
   "extraResources": [
     "./assets/include/**",
+    "./assets/icon.png",
     {
       "from": "./release/app/dist/migrations",
       "to": "./migrations",
