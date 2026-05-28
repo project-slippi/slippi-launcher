@@ -81,7 +81,8 @@
   },
   "linux": {
     "target": ["AppImage"],
-    "category": "Development"
+    "category": "Development",
+    "icon": "assets/icons/"
   },
   "appImage": {
     "artifactName": "Slippi-Launcher-${version}-x86_64.${ext}"

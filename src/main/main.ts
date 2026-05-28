@@ -28,7 +28,7 @@ import { fileExists } from "utils/file_exists";
 import { getConfigFlags } from "./flags/flags";
 import { installModules } from "./install_modules";
 import { MenuBuilder } from "./menu";
-import { clearTempFolder, resolveHtmlPath } from "./util";
+import { clearTempFolder, getAssetPath, resolveHtmlPath } from "./util";
 
 const BACKGROUND_COLOR = "#1B0B28";
 
@@ -105,6 +105,7 @@ const createWindow = async () => {
     minHeight: isDevelopment ? undefined : 450,
     minWidth: isDevelopment ? undefined : 900,
     backgroundColor: BACKGROUND_COLOR,
+    icon: getAssetPath("icon.png"),
 
     // This setting only takes effect on macOS, and simply opts it into the modern
     // Big-Sur frame UI for the window style.
