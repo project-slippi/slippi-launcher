@@ -55,6 +55,29 @@ const configuration: webpack.Configuration = {
   },
 
   optimization: {
+    /**
+     * Extract shared dependencies into a common chunk to avoid duplication
+     * across entry points (main + 4 workers). Without this, @slippi/slippi-js
+     * and its transitive deps (e.g. enet) are bundled independently into each
+     * entry point that imports them, wasting ~1-2MB total.
+     *
+     * Externalizing these in webpack.config.base.ts isn't viable because they
+     * are root package.json deps — they don't exist in release/app/node_modules/
+     * at runtime. splitChunks resolves the duplication at build time instead,
+     * producing tree-shaken, minified shared chunks in dist/main/.
+     */
+    splitChunks: {
+      chunks: "all",
+      minSize: 50000,
+      minChunks: 2,
+      cacheGroups: {
+        defaultVendors: {
+          test: /[\\/]node_modules[\\/]/,
+          priority: -10,
+          reuseExistingChunk: true,
+        },
+      },
+    },
     minimizer: [
       new EsbuildPlugin({
         target: "es2022",
