@@ -25,6 +25,7 @@ import url from "url";
 import { download } from "utils/download";
 import { fileExists } from "utils/file_exists";
 
+import pkg from "../../release/app/package.json";
 import { getConfigFlags } from "./flags/flags";
 import { installModules } from "./install_modules";
 import { MenuBuilder } from "./menu";
@@ -43,6 +44,8 @@ let didFinishLoad = false;
 log.initialize();
 log.errorHandler.startCatching();
 log.transports.file.level = isDevelopment ? "info" : "warn";
+
+app.setName(pkg.productName);
 
 // Disable IPC hooks in development to prevent duplicate console logs
 // In dev mode, both main and renderer import electron-log, which causes duplication

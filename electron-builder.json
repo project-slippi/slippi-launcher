@@ -81,8 +81,13 @@
   },
   "linux": {
     "target": ["AppImage"],
-    "category": "Development",
-    "icon": "assets/icons/"
+    "category": "Game",
+    "icon": "assets/icons/",
+    "desktop": {
+      "entry": {
+        "StartupWMClass": "Slippi Launcher"
+      }
+    }
   },
   "appImage": {
     "artifactName": "Slippi-Launcher-${version}-x86_64.${ext}"
