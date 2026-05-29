@@ -7,7 +7,13 @@
     "./dist/main/*.js",
     "./node_modules/**/*.{js,json}"
   ],
-  "files": ["dist", "node_modules", "package.json"],
+  "files": [
+    "dist",
+    "node_modules",
+    "package.json",
+    "!**/*.map",
+    "!**/*.md"
+  ],
   "afterSign": ".erb/scripts/notarize.js",
   "fileAssociations": {
     "ext": "slp",
