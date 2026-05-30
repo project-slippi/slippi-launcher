@@ -31,7 +31,7 @@ export const PersistentNotification = React.memo(() => {
     }
   }, [installAppUpdate]);
 
-  const handleDownloadManually = useCallback(() => {
+  const handleManualDownload = useCallback(() => {
     window.electron.shell.openExternal("https://slippi.gg/downloads").catch(log.error);
   }, []);
 
@@ -46,7 +46,7 @@ export const PersistentNotification = React.memo(() => {
     return (
       <Outer>
         <span>{Messages.installFailed()}</span>
-        <RestartButton onClick={handleDownloadManually}>{Messages.downloadManually()}</RestartButton>
+        <RestartButton onClick={handleManualDownload}>{Messages.downloadManually()}</RestartButton>
       </Outer>
     );
   }
