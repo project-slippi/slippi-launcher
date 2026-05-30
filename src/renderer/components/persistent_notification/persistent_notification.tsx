@@ -35,6 +35,13 @@ export const PersistentNotification = React.memo(() => {
     window.electron.shell.openExternal("https://slippi.gg/downloads").catch(log.error);
   }, []);
 
+  // The handleInstall callback should provide immediate feedback i.e. it should immediately restart the
+  // launcher so I don't think it's worth showing an 'Installing...' message that would need to be localised.
+  // Instead we'll just show nothing as the feedback.
+  if (isInstalling) {
+    return null;
+  }
+
   if (installError) {
     return (
       <Outer>
@@ -42,10 +49,6 @@ export const PersistentNotification = React.memo(() => {
         <RestartButton onClick={handleDownloadManually}>{Messages.downloadManually()}</RestartButton>
       </Outer>
     );
-  }
-
-  if (isInstalling) {
-    return <Outer>{Messages.installingUpdate()}</Outer>;
   }
 
   if (!updateReady && updateDownloadProgress) {
