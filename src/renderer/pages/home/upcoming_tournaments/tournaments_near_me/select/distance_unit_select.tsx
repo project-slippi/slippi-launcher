@@ -50,7 +50,10 @@ export function DistanceUnitSelect({ distance, unit, onDistanceChange, onUnitCha
                 <button
                   key={opt.value}
                   className={`${styles.option} ${distance === opt.value ? styles.selected : ""}`}
-                  onClick={() => onDistanceChange(opt.value)}
+                  onClick={() => {
+                    onDistanceChange(opt.value);
+                    setPopupOpen(false);
+                  }}
                 >
                   <span className={styles.optionLabel}>{opt.label}</span>
                   {distance === opt.value && (
@@ -69,7 +72,10 @@ export function DistanceUnitSelect({ distance, unit, onDistanceChange, onUnitCha
                 <button
                   key={opt.value}
                   className={`${styles.option} ${unit === opt.value ? styles.selected : ""}`}
-                  onClick={() => onUnitChange(opt.value)}
+                  onClick={() => {
+                    onUnitChange(opt.value);
+                    setPopupOpen(false);
+                  }}
                 >
                   <span className={styles.optionLabel}>{opt.label}</span>
                   {unit === opt.value && (
