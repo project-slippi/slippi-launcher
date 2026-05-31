@@ -7,17 +7,20 @@ export const useAppUpdate = () => {
 
   const checkForAppUpdates = React.useCallback(async () => {
     try {
-      await window.electron.common.checkForAppUpdates();
+      const result = await window.electron.common.checkForAppUpdates();
+      return result;
     } catch (err) {
       showError(err);
+      return null;
     }
   }, [showError]);
 
-  const installAppUpdate = React.useCallback(async () => {
+  const installAppUpdate = React.useCallback(async (): Promise<{ success: boolean; error?: string }> => {
     try {
-      await window.electron.common.installAppUpdate();
+      return await window.electron.common.installAppUpdate();
     } catch (err) {
       showError(err);
+      return { success: false, error: String(err) };
     }
   }, [showError]);
 

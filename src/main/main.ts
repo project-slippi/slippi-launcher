@@ -17,7 +17,6 @@ import { ipc_openSettingsModalEvent } from "@settings/ipc";
 import type CrossProcessExports from "electron";
 import { app, BrowserWindow, shell } from "electron";
 import log from "electron-log";
-import { autoUpdater } from "electron-updater";
 import * as fs from "fs-extra";
 import get from "lodash/get";
 import last from "lodash/last";
@@ -59,14 +58,7 @@ if (!lockObtained) {
 }
 
 const flags = getConfigFlags();
-const { dolphinManager, settingsManager, browserWindowManager } = installModules(flags);
-
-class AppUpdater {
-  constructor() {
-    autoUpdater.logger = log;
-    autoUpdater.autoInstallOnAppQuit = settingsManager.get().settings.autoUpdateLauncher;
-  }
-}
+const { dolphinManager, appUpdater, browserWindowManager } = installModules(flags);
 
 if (process.env.NODE_ENV === "production") {
   const sourceMapSupport = require("source-map-support");
@@ -169,10 +161,6 @@ const createWindow = async () => {
     void shell.openExternal(edata.url);
     return { action: "deny" };
   });
-
-  // Remove this if your app does not use auto updates
-  // eslint-disable-next-line
-  new AppUpdater();
 };
 
 /**
@@ -319,6 +307,14 @@ app.on("second-instance", (_, argv) => {
   handleSlippiURI(lastItem);
 });
 
+app.on("activate", () => {
+  // On macOS it's common to re-create a window in the app when the
+  // dock icon is clicked and there are no other windows open.
+  if (mainWindow === null) {
+    void createWindow();
+  }
+});
+
 const playReplayAndShowStats = async (filePath: string, startFrame?: number) => {
   // Ensure playback dolphin is actually installed
   await dolphinManager.installDolphin(DolphinLaunchType.PLAYBACK);
@@ -337,30 +333,21 @@ const playReplayAndShowStats = async (filePath: string, startFrame?: number) => 
   }
 };
 
-app
-  .whenReady()
-  .then(() => {
-    if (!lockObtained) {
-      return;
-    }
+const main = async () => {
+  await app.whenReady();
+  if (!lockObtained) {
+    return;
+  }
 
-    void createWindow();
+  await appUpdater.verifyPendingUpdate();
+  await createWindow();
 
-    // Handle Slippi URI if provided
-    const argURI = get(process.argv, 1);
-    if (argURI) {
-      handleSlippiURI(argURI);
-    }
-
-    app.on("activate", () => {
-      // On macOS it's common to re-create a window in the app when the
-      // dock icon is clicked and there are no other windows open.
-      if (mainWindow === null) {
-        void createWindow();
-      }
-    });
-  })
-  .catch(log.error);
+  // Handle Slippi URI if provided
+  const argURI = get(process.argv, 1);
+  if (argURI) {
+    handleSlippiURI(argURI);
+  }
+};
 
 const openPreferences = async () => {
   if (!mainWindow) {
@@ -368,3 +355,5 @@ const openPreferences = async () => {
   }
   await ipc_openSettingsModalEvent.main!.trigger({});
 };
+
+main().catch(log.error);

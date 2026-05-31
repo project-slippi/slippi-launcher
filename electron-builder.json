@@ -4,8 +4,7 @@
   "asar": true,
   "asarUnpack": [
     "**\\*.{node,dll}",
-    "./dist/main/*.js",
-    "./node_modules/**/*.{js,json}"
+    "./dist/main/**/*.worker.js"
   ],
   "files": [
     "dist",
@@ -21,18 +20,19 @@
     "description": "Slippi File Format",
     "icon": "./assets/file.ico"
   },
-  "artifactName": "Slippi-Launcher-${version}-${os}.${ext}",
+  "artifactName": "Slippi-Launcher-${version}-${arch}-${os}.${ext}",
   "mac": {
-    "target": {
-      "target": "default",
-      "arch": "universal"
-    },
+    "target": [
+      {
+        "target": "default",
+        "arch": ["x64", "arm64"]
+      }
+    ],
     "fileAssociations": {
       "ext": "slp",
       "role": "Viewer"
     },
     "type": "distribution",
-    "mergeASARs": false,
     "hardenedRuntime": true,
     "entitlements": "assets/entitlements.mac.plist",
     "entitlementsInherit": "assets/entitlements.mac.plist",
@@ -46,7 +46,7 @@
     "minimumSystemVersion": "10.13.6"
   },
   "dmg": {
-    "artifactName": "Slippi-Launcher-${version}.${ext}",
+    "artifactName": "Slippi-Launcher-${version}-${arch}.${ext}",
     "icon": "assets/icon.icns",
     "contents": [
       {
@@ -72,6 +72,7 @@
   "nsis": {
     "artifactName": "Slippi-Launcher-Setup-${version}.${ext}",
     "include": ".erb/scripts/installer.nsh",
+    "differentialPackage": false,
     "warningsAsErrors": false,
     "allowElevation": true,
     "oneClick": false,

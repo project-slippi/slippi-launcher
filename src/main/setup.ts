@@ -2,6 +2,7 @@ import { exists } from "@common/exists";
 import { IsoValidity } from "@common/types";
 import type { DolphinManager } from "@dolphin/manager";
 import { DolphinLaunchType } from "@dolphin/types";
+import type { SettingsManager } from "@settings/settings_manager";
 import { app, clipboard, dialog, ipcMain, nativeImage } from "electron";
 import electronLog from "electron-log";
 import type { ProgressInfo, UpdateInfo } from "electron-updater";
@@ -9,6 +10,7 @@ import { autoUpdater } from "electron-updater";
 import path from "path";
 import { fileExists } from "utils/file_exists";
 
+import type { AppUpdater } from "./app_updater";
 import { getAppBootstrap } from "./bootstrap";
 import type { BrowserWindowManager } from "./browser_window_manager";
 import { getLatestRelease } from "./fetch_cross_origin/github";
@@ -37,18 +39,20 @@ const log = electronLog.scope("main/listeners");
 const isDevelopment = process.env.NODE_ENV !== "production";
 const isMac = process.platform === "darwin";
 
-autoUpdater.logger = log;
-
 const LINES_TO_READ = 200;
 
 export default function setupMainIpc({
   dolphinManager,
+  settingsManager,
   flags,
   browserWindowManager,
+  appUpdater,
 }: {
   dolphinManager: DolphinManager;
+  settingsManager: SettingsManager;
   flags: ConfigFlags;
   browserWindowManager: BrowserWindowManager;
+  appUpdater: AppUpdater;
 }) {
   ipcMain.on("onDragStart", (event, files: string[]) => {
     // The Electron.Item type declaration is missing the files attribute
@@ -60,7 +64,7 @@ export default function setupMainIpc({
   });
 
   ipcMain.on("getAppBootstrapSync", (event) => {
-    event.returnValue = getAppBootstrap(flags);
+    event.returnValue = getAppBootstrap(flags, appUpdater.getUpdateState());
   });
 
   ipc_fetchNewsFeed.main!.handle(async () => {
@@ -134,18 +138,25 @@ export default function setupMainIpc({
     }
   });
 
-  autoUpdater.on("update-downloaded", () => {
+  autoUpdater.on("update-downloaded", (info: UpdateInfo) => {
+    settingsManager.updateSetting("pendingUpdateVersion", info.version).catch(log.error);
     ipc_launcherUpdateReadyEvent.main!.trigger({}).catch(log.warn);
   });
 
   ipc_installUpdate.main!.handle(async () => {
-    autoUpdater.quitAndInstall(false, true);
-    return { success: true };
+    try {
+      log.info("Installing update via quitAndInstall");
+      await appUpdater.quitAndInstall();
+      return { success: true };
+    } catch (err) {
+      log.error("Failed to install update:", err);
+      return { success: false, error: err instanceof Error ? err.message : String(err) };
+    }
   });
 
   ipc_checkForUpdate.main!.handle(async () => {
-    autoUpdater.checkForUpdatesAndNotify().catch(log.error);
-    return { success: true };
+    const result = await autoUpdater.checkForUpdatesAndNotify();
+    return { updateAvailable: result != null };
   });
 
   ipc_getLatestGitHubReleaseVersion.main!.handle(async ({ owner, repo }) => {

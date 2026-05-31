@@ -12,9 +12,13 @@ export const ipc_checkValidIso = makeEndpoint.main(
 
 export const ipc_copyLogsToClipboard = makeEndpoint.main("copyLogsToClipboard", <EmptyPayload>_, <SuccessPayload>_);
 
-export const ipc_checkForUpdate = makeEndpoint.main("checkForUpdate", <EmptyPayload>_, <SuccessPayload>_);
+export const ipc_checkForUpdate = makeEndpoint.main("checkForUpdate", <EmptyPayload>_, <{ updateAvailable: boolean }>_);
 
-export const ipc_installUpdate = makeEndpoint.main("installUpdate", <EmptyPayload>_, <SuccessPayload>_);
+export const ipc_installUpdate = makeEndpoint.main(
+  "installUpdate",
+  <EmptyPayload>_,
+  <{ success: boolean; error?: string }>_,
+);
 
 export const ipc_getLatestGitHubReleaseVersion = makeEndpoint.main(
   "getLatestGitHubReleaseVersion",

@@ -69,4 +69,15 @@ export async function initializeApp(services: Services) {
     .forEach((result) => {
       log.error(result.reason);
     });
+
+  // Show the update result after awaiting the promises since we load the app
+  // via React.Suspense so nothing is visible anyway while the promises are being awaited.
+  const updateState = window.electron.bootstrap.updateState;
+  if (updateState) {
+    if (updateState.status === "succeeded") {
+      notificationService.showInfo(Messages.updatedToVersion(updateState.version));
+    } else {
+      showError(Messages.updateFailed(updateState.version));
+    }
+  }
 }

@@ -3,6 +3,7 @@ export const HeaderMessages = {
   checkForUpdates: () => "Check for updates",
   checkingForUpdates: () => "Checking for updates...",
   failedToGetUpdates: () => "Failed to get updates",
+  noUpdateAvailable: () => "No update available",
   noMeleeIsoFile: () => "No Melee ISO file specified",
   settings: () => "Settings",
   chooseAConnectCode: () => "Choose a connect code",

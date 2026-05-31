@@ -3,6 +3,7 @@ import log from "electron-log";
 import os from "os";
 import osName from "os-name";
 
+import type { UpdateState } from "./app_updater";
 import type { ConfigFlags } from "./flags/flags";
 
 export type AppBootstrap = {
@@ -13,9 +14,10 @@ export type AppBootstrap = {
   isLinux: boolean;
   isWindows: boolean;
   locale: string;
+  updateState?: UpdateState;
 };
 
-export function getAppBootstrap(flags: ConfigFlags): AppBootstrap {
+export function getAppBootstrap(flags: ConfigFlags, updateState?: UpdateState): AppBootstrap {
   let release = os.release();
   try {
     const name = osName(os.platform(), release);
@@ -32,6 +34,7 @@ export function getAppBootstrap(flags: ConfigFlags): AppBootstrap {
     isLinux: process.platform === "linux",
     isWindows: process.platform === "win32",
     locale: app.getLocale(),
+    updateState,
   };
   return bootstrap;
 }
