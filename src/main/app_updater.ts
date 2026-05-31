@@ -63,9 +63,9 @@ export class AppUpdater {
   }
 
   public async quitAndInstall(): Promise<void> {
+    // The restart _should_ happen instantly.
+    // If we still haven't restarted the app within the timeout, something probably went wrong.
     const timeout = new Promise<void>((_resolve, reject) => {
-      // The restart should happen instantly.
-      // So if we still haven't restarted the app within the timeout, something probably went wrong.
       setTimeout(() => {
         reject(new Error(`Timed out after ${INSTALL_UPDATE_TIMEOUT_MS / 1000}s trying to install update.`));
       }, INSTALL_UPDATE_TIMEOUT_MS);
