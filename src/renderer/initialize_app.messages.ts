@@ -6,7 +6,7 @@ export const InitializeAppMessages = {
     "Failed to install {0}. Try closing all Dolphin instances and restarting the launcher.",
   netplayDolphin: () => "Netplay Dolphin",
   playbackDolphin: () => "Playback Dolphin",
-  updatedToVersion: (version: string) => `Successfully updated to version {0}!`,
+  updatedToVersion: (version: string) => `Slippi Launcher has been updated to version {0}`,
   updateFailed: (version: string) =>
     `Auto-update to version {0} failed. Try manually downloading the latest version from slippi.gg.`,
 };
