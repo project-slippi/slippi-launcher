@@ -25,10 +25,11 @@ import url from "url";
 import { download } from "utils/download";
 import { fileExists } from "utils/file_exists";
 
+import pkg from "../../release/app/package.json";
 import { getConfigFlags } from "./flags/flags";
 import { installModules } from "./install_modules";
 import { MenuBuilder } from "./menu";
-import { clearTempFolder, resolveHtmlPath } from "./util";
+import { clearTempFolder, getAssetPath, resolveHtmlPath } from "./util";
 
 const BACKGROUND_COLOR = "#1B0B28";
 
@@ -43,6 +44,8 @@ let didFinishLoad = false;
 log.initialize();
 log.errorHandler.startCatching();
 log.transports.file.level = isDevelopment ? "info" : "warn";
+
+app.setName(pkg.productName);
 
 // Disable IPC hooks in development to prevent duplicate console logs
 // In dev mode, both main and renderer import electron-log, which causes duplication
@@ -105,6 +108,7 @@ const createWindow = async () => {
     minHeight: isDevelopment ? undefined : 450,
     minWidth: isDevelopment ? undefined : 900,
     backgroundColor: BACKGROUND_COLOR,
+    icon: getAssetPath("icon.png"),
 
     // This setting only takes effect on macOS, and simply opts it into the modern
     // Big-Sur frame UI for the window style.
