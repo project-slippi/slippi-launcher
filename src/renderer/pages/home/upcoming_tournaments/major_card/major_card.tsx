@@ -16,7 +16,7 @@ type MajorCardProps = {
   startTimestamp: Date;
   endTimestamp: Date;
   timezone: string;
-  startggUrl: string;
+  tournamentUrl: string;
   entrants: number | null;
 };
 
@@ -27,7 +27,7 @@ export const MajorCard = ({
   startTimestamp,
   endTimestamp,
   timezone,
-  startggUrl,
+  tournamentUrl,
   entrants,
 }: MajorCardProps) => {
   const currentLanguage = useAppStore((store) => store.currentLanguage) as SupportedLanguage;
@@ -41,7 +41,7 @@ export const MajorCard = ({
   const dateRange = formatDateRange(startTimestamp, endTimestamp, timezone, currentLanguage);
 
   return (
-    <A href={startggUrl} className={styles.card}>
+    <A href={tournamentUrl} className={styles.card}>
       <div className={styles.imageContainer}>
         <img src={imageUrl} alt={name} className={styles.image} />
       </div>

@@ -23,7 +23,8 @@ const FeaturedMajor = ({
     name: string;
     imageUrl: string;
     cityAndState: string;
-    startggUrl: string;
+    tournamentUrl: string | null;
+    bracketUrl: string;
     startTimestamp: Date;
     endTimestamp: Date;
     timezone: string;
@@ -44,7 +45,7 @@ const FeaturedMajor = ({
   }
 
   return (
-    <A href={major.startggUrl} className={styles.featuredCard}>
+    <A href={major.tournamentUrl ?? major.bracketUrl} className={styles.featuredCard}>
       <div className={styles.featuredCardInner}>
         <div className={styles.featuredImageContainer}>
           <img src={major.imageUrl} alt={major.name} className={styles.featuredImage} />
@@ -135,7 +136,7 @@ export const UpcomingTournaments = () => {
                 startTimestamp={major.startTimestamp}
                 endTimestamp={major.endTimestamp}
                 timezone={major.timezone}
-                startggUrl={major.startggDetailsUrl ?? major.startggUrl}
+                tournamentUrl={major.tournamentUrl ?? major.bracketUrl}
                 entrants={major.entrants}
               />
             ))}

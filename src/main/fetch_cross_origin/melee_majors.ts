@@ -37,10 +37,10 @@ type Tournament = {
   name: string;
 
   /**
-   * Internal slug-like identifier derived from the tournament's start.gg URL.
+   * Internal slug-like identifier derived from the tournament's URL.
    * Stable across builds and safe to use as a key.
    */
-  startggTournamentName: string;
+  slug: string;
 
   /**
    * RFC 3339 timestamp for when the tournament begins.
@@ -99,13 +99,14 @@ type Tournament = {
   /**
    * Canonical start.gg URL for the main Melee singles event page.
    */
-  startggUrl: string;
+  bracketUrl: string;
 
   /**
-   * start.gg URL for the tournament's overview/details page.
-   * Null if it cannot be derived.
+   * start.gg URL for the tournament's overview /details page, which lists all events and general info.
+   * Prefer this over bracketUrl for general-purpose linking.
+   * Null if the details URL cannot be derived from bracketUrl.
    */
-  startggDetailsUrl: string | null;
+  tournamentUrl: string | null;
 
   /**
    * Primary livestream URL (typically Twitch or YouTube).

@@ -31,7 +31,7 @@ export const MeleeMajorsCarousel = () => {
               title: tournament.name,
               subtitle,
               image: tournament.imageUrl,
-              link: tournament.startggDetailsUrl ?? tournament.startggUrl,
+              link: tournament.tournamentUrl ?? tournament.bracketUrl,
               isHappeningNow,
               countdown: isHappeningNow ? undefined : timeUntilTournament,
               streamUrl: tournament.streamUrl ?? undefined,
