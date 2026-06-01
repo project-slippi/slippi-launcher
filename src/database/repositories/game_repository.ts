@@ -11,18 +11,18 @@ type DB = Kysely<Database>;
 const SQLITE_PARAM_LIMIT_BATCH_SIZE = 500;
 
 export class GameRepository {
-  public static async insertGame(db: DB, game: NewGame): Promise<GameRecord> {
+  static async insertGame(db: DB, game: NewGame): Promise<GameRecord> {
     return db.insertInto("game").values(game).returningAll().executeTakeFirstOrThrow();
   }
 
-  public static async findGameByFileId(db: DB, fileId: number) {
+  static async findGameByFileId(db: DB, fileId: number) {
     const query = db.selectFrom("file").where("_id", "=", fileId).innerJoin("game", "game.file_id", "file._id");
 
     const res = await query.selectAll(["file", "game"]).select(["game._id as _id"]).executeTakeFirst();
     return res;
   }
 
-  public static async findGameByFolderAndFilename(db: DB, folder: string, filename: string) {
+  static async findGameByFolderAndFilename(db: DB, folder: string, filename: string) {
     const query = db
       .selectFrom("file")
       .where("folder", "=", folder)
@@ -41,7 +41,7 @@ export class GameRepository {
    * @param filters Array of filters to apply (AND logic between filters)
    * @returns Number of games matching the criteria
    */
-  public static async countGames(db: DB, folder: string | null, filters: ReplayFilter[]): Promise<number> {
+  static async countGames(db: DB, folder: string | null, filters: ReplayFilter[]): Promise<number> {
     let query = db.selectFrom("file").innerJoin("game", "game.file_id", "file._id");
 
     // Apply folder filter if specified
@@ -66,7 +66,7 @@ export class GameRepository {
    * @param options Pagination and ordering options
    * @returns Array of game records with file information
    */
-  public static async searchGames(
+  static async searchGames(
     db: DB,
     folder: string | null,
     filters: ReplayFilter[],
@@ -122,7 +122,7 @@ export class GameRepository {
    * @param excludeFileIds Optional file IDs to exclude from the results
    * @returns Array of file IDs
    */
-  public static async getFileIdsForBulkDelete(
+  static async getFileIdsForBulkDelete(
     db: DB,
     folder: string | null,
     filters: ReplayFilter[],
@@ -169,7 +169,7 @@ export class GameRepository {
    * @param orderBy Ordering options
    * @returns Array of file paths with folder and name
    */
-  public static async getAllFilePaths(
+  static async getAllFilePaths(
     db: DB,
     folder: string | null,
     filters: ReplayFilter[],

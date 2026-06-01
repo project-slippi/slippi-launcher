@@ -90,7 +90,7 @@ export class SpectateManager extends EventEmitter {
   /**
    * Connects to the Slippi server and the local Dolphin instance
    */
-  public async connect(authToken: string) {
+  async connect(authToken: string) {
     if (this.wsConnection) {
       return;
     }
@@ -188,7 +188,7 @@ export class SpectateManager extends EventEmitter {
     });
   }
 
-  public async refreshBroadcastList(): Promise<void> {
+  async refreshBroadcastList(): Promise<void> {
     Preconditions.checkExists(this.wsConnection, "No websocket connection");
 
     this.wsConnection.sendUTF(
@@ -198,7 +198,7 @@ export class SpectateManager extends EventEmitter {
     );
   }
 
-  public stopWatchingBroadcast(broadcastId: string) {
+  stopWatchingBroadcast(broadcastId: string) {
     if (this.wsConnection) {
       // Send the stop request to the server
       this.wsConnection.sendUTF(
@@ -227,7 +227,7 @@ export class SpectateManager extends EventEmitter {
    * @param {string?} dolphinOptions.idPostfix A postfix to use with the generated dolphin ID to avoid collisions
    * @returns {string} The ID of the dolphin window used
    */
-  public watchBroadcast(broadcastId: string, targetPath: string, dolphinOptions: SpectateDolphinOptions) {
+  watchBroadcast(broadcastId: string, targetPath: string, dolphinOptions: SpectateDolphinOptions) {
     Preconditions.checkExists(this.wsConnection, "No websocket connection");
 
     const openBroadcast = this.openBroadcasts[broadcastId];
@@ -291,7 +291,7 @@ export class SpectateManager extends EventEmitter {
     this.emit(SpectateEvent.SPECTATE_LIST_UPDATE, this.getOpenBroadcasts());
   }
 
-  public handleClosedDolphin(playbackId: string) {
+  handleClosedDolphin(playbackId: string) {
     const broadcastInfo = Object.values(this.openBroadcasts).find((info) => info.dolphinId === playbackId);
     if (!broadcastInfo) {
       // This is not one of the spectator dolphin instances
@@ -309,7 +309,7 @@ export class SpectateManager extends EventEmitter {
     this.stopWatchingBroadcast(broadcastInfo.broadcastId);
   }
 
-  public getOpenBroadcasts() {
+  getOpenBroadcasts() {
     return Object.values(this.openBroadcasts).map((value) => ({
       broadcastId: value.broadcastId,
       dolphinId: value.dolphinId,
@@ -317,7 +317,7 @@ export class SpectateManager extends EventEmitter {
     }));
   }
 
-  public disconnect() {
+  disconnect() {
     this.emit(SpectateEvent.BROADCAST_LIST_UPDATE, []);
     this.emit(SpectateEvent.LOG, "Disconnecting from spectate server");
     // No need to emit a SPECTATE_LIST_UPDATE event here, since we will emit one for each broadcast that is stopped

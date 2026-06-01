@@ -33,12 +33,12 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
     };
   }
 
-  public static getDerivedStateFromError() {
+  static getDerivedStateFromError() {
     // Update state so the next render will show the fallback UI.
     return { hasError: true };
   }
 
-  public componentDidCatch(_error: any, errorInfo: any) {
+  componentDidCatch(_error: any, errorInfo: any) {
     // You can also log the error to an error reporting service
     this.setState({ errorInfo });
   }
@@ -69,7 +69,7 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
     );
   }
 
-  public render() {
+  render() {
     if (!this.state.hasError) {
       return this.props.children;
     }

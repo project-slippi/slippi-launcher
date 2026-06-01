@@ -14,7 +14,7 @@ export class Continuation {
 
   private constructor(private readonly value: string, private readonly nextIdInclusive: number) {}
 
-  public static fromString(continuation: string | undefined): Continuation | null {
+  static fromString(continuation: string | undefined): Continuation | null {
     if (!continuation) {
       return null;
     }
@@ -40,7 +40,7 @@ export class Continuation {
    * @param mapper A function that extracts the required continuation fields from the last record.
    * @returns A tuple with the correctly sized record list, and the encoded continuation token.
    */
-  public static truncate<T>(
+  static truncate<T>(
     records: T[],
     limit: number,
     mapper: (item: T) => { value: string; nextIdInclusive: number },
@@ -53,15 +53,15 @@ export class Continuation {
     return [records, undefined];
   }
 
-  public getValue(): string {
+  getValue(): string {
     return this.value;
   }
 
-  public getNextIdInclusive(): number {
+  getNextIdInclusive(): number {
     return this.nextIdInclusive;
   }
 
-  public toString(): string | undefined {
+  toString(): string | undefined {
     if (this.nextIdInclusive != null) {
       const joined = [this.value, this.nextIdInclusive.toString()].join(Continuation.separator);
       return encodeToBase64(joined);

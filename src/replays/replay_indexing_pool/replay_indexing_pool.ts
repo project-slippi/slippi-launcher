@@ -21,7 +21,7 @@ export class ReplayIndexingPool {
   /**
    * Initialize the worker pool
    */
-  public async initialize(): Promise<void> {
+  async initialize(): Promise<void> {
     log.info(`Initializing replay indexing pool with ${this.poolSize} workers`);
 
     const workerPromises = Array.from({ length: this.poolSize }, (_, i) =>
@@ -53,7 +53,7 @@ export class ReplayIndexingPool {
   /**
    * Parse a single replay file using the next available worker
    */
-  public async parseReplayFile(folder: string, filename: string): Promise<ParseFileResult> {
+  async parseReplayFile(folder: string, filename: string): Promise<ParseFileResult> {
     if (this.isTerminated) {
       throw new Error("Worker pool has been terminated");
     }
@@ -70,7 +70,7 @@ export class ReplayIndexingPool {
    * Parse multiple replay files in parallel across all workers in the pool.
    * Files are distributed evenly across workers for optimal parallelization.
    */
-  public async parseReplayFileBatch(folder: string, filenames: string[]): Promise<ParseFileResult[]> {
+  async parseReplayFileBatch(folder: string, filenames: string[]): Promise<ParseFileResult[]> {
     if (this.isTerminated) {
       throw new Error("Worker pool has been terminated");
     }
@@ -140,14 +140,14 @@ export class ReplayIndexingPool {
   /**
    * Get the number of workers in the pool
    */
-  public getPoolSize(): number {
+  getPoolSize(): number {
     return this.workers.length;
   }
 
   /**
    * Terminate all workers in the pool
    */
-  public async terminate(): Promise<void> {
+  async terminate(): Promise<void> {
     if (this.isTerminated) {
       return;
     }

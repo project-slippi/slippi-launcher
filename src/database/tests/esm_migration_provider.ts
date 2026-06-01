@@ -38,7 +38,7 @@ function fixPathForImport(filePath: string): string {
 export class ESMCompatibleMigrationProvider implements MigrationProvider {
   constructor(private readonly migrationFolder: string) {}
 
-  public async getMigrations(): Promise<Record<string, Migration>> {
+  async getMigrations(): Promise<Record<string, Migration>> {
     const migrations: Record<string, Migration> = {};
     const files = await fs.readdir(this.migrationFolder);
 

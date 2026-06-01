@@ -96,7 +96,7 @@ export class ReplayIndexingPoolManager {
    * Parse a single replay file.
    * Creates worker pool on-demand if needed, schedules shutdown after idle timeout.
    */
-  public async parseReplayFile(folder: string, filename: string): Promise<ParseFileResult> {
+  async parseReplayFile(folder: string, filename: string): Promise<ParseFileResult> {
     try {
       const pool = await this.ensurePool();
       const result = await pool.parseReplayFile(folder, filename);
@@ -112,7 +112,7 @@ export class ReplayIndexingPoolManager {
    * Parse multiple replay files in parallel.
    * Creates worker pool on-demand if needed, schedules shutdown after idle timeout.
    */
-  public async parseReplayFileBatch(folder: string, filenames: string[]): Promise<ParseFileResult[]> {
+  async parseReplayFileBatch(folder: string, filenames: string[]): Promise<ParseFileResult[]> {
     try {
       const pool = await this.ensurePool();
       const results = await pool.parseReplayFileBatch(folder, filenames);
@@ -127,21 +127,21 @@ export class ReplayIndexingPoolManager {
   /**
    * Get the current pool size (0 if no pool exists)
    */
-  public getPoolSize(): number {
+  getPoolSize(): number {
     return this.pool?.getPoolSize() ?? 0;
   }
 
   /**
    * Check if pool is currently active
    */
-  public isPoolActive(): boolean {
+  isPoolActive(): boolean {
     return this.pool !== null && !this.isShuttingDown;
   }
 
   /**
    * Force immediate shutdown of the worker pool
    */
-  public async terminate(): Promise<void> {
+  async terminate(): Promise<void> {
     this.clearIdleTimer();
     await this.shutdownPool();
   }

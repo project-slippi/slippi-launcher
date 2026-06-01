@@ -26,12 +26,12 @@ class MockAuthClient implements AuthService {
   }
 
   @delayAndMaybeError(SHOULD_ERROR)
-  public async init(): Promise<AuthUser | undefined> {
+  async init(): Promise<AuthUser | undefined> {
     return undefined;
   }
 
   @delayAndMaybeError(SHOULD_ERROR)
-  public async logout(): Promise<void> {
+  async logout(): Promise<void> {
     const activeAccountId = this._multiAccountService.getActiveAccountId();
     if (activeAccountId) {
       await this._multiAccountService.removeAccount(activeAccountId);
@@ -39,7 +39,7 @@ class MockAuthClient implements AuthService {
     }
   }
 
-  public getCurrentUser(): AuthUser | undefined {
+  getCurrentUser(): AuthUser | undefined {
     const auth = this._multiAccountService.getActiveAuth();
     if (!auth || !auth.currentUser) {
       return undefined;
@@ -47,7 +47,7 @@ class MockAuthClient implements AuthService {
     return this._mapFirebaseUserToAuthUser(auth.currentUser);
   }
 
-  public onUserChange(onChange: (user: AuthUser | undefined) => void): () => void {
+  onUserChange(onChange: (user: AuthUser | undefined) => void): () => void {
     const subscription = this._onAuthStateChanged.subscribe(onChange);
     return () => {
       subscription.unsubscribe();
@@ -55,12 +55,12 @@ class MockAuthClient implements AuthService {
   }
 
   @delayAndMaybeError(SHOULD_ERROR)
-  public async resetPassword(): Promise<void> {
+  async resetPassword(): Promise<void> {
     throw new Error("Mock reset password is not implemented");
   }
 
   @delayAndMaybeError(SHOULD_ERROR)
-  public async login(args: { email: string; password: string }): Promise<AuthUser | undefined> {
+  async login(args: { email: string; password: string }): Promise<AuthUser | undefined> {
     await this._multiAccountService.addAccount(args.email, args.password);
     const user = this.getCurrentUser();
 
@@ -69,7 +69,7 @@ class MockAuthClient implements AuthService {
   }
 
   @delayAndMaybeError(SHOULD_ERROR)
-  public async signUp(args: { email: string; password: string; displayName: string }): Promise<AuthUser | undefined> {
+  async signUp(args: { email: string; password: string; displayName: string }): Promise<AuthUser | undefined> {
     await this._multiAccountService.signUp(args.email, args.password, args.displayName);
     const user = this.getCurrentUser();
     this._userSubject.next(user);
@@ -77,12 +77,12 @@ class MockAuthClient implements AuthService {
   }
 
   @delayAndMaybeError(SHOULD_ERROR)
-  public async getUserToken(): Promise<string> {
+  async getUserToken(): Promise<string> {
     return "dummyToken";
   }
 
   @delayAndMaybeError(SHOULD_ERROR)
-  public async updateDisplayName(displayName: string): Promise<void> {
+  async updateDisplayName(displayName: string): Promise<void> {
     const auth = this._multiAccountService.getActiveAuth();
     Preconditions.checkExists(auth?.currentUser, "User is not logged in.");
 
@@ -102,7 +102,7 @@ class MockAuthClient implements AuthService {
   }
 
   @delayAndMaybeError(SHOULD_ERROR)
-  public async refreshUser(): Promise<void> {
+  async refreshUser(): Promise<void> {
     const auth = this._multiAccountService.getActiveAuth();
     Preconditions.checkExists(auth?.currentUser, "User is not logged in.");
 
@@ -112,11 +112,11 @@ class MockAuthClient implements AuthService {
   }
 
   @delayAndMaybeError(SHOULD_ERROR)
-  public async sendVerificationEmail(): Promise<void> {
+  async sendVerificationEmail(): Promise<void> {
     // Do nothing
   }
 
-  public getMultiAccountService(): any {
+  getMultiAccountService(): any {
     // Mock implementation - return a basic mock
     return this._multiAccountService;
   }

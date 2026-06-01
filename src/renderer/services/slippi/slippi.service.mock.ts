@@ -65,7 +65,7 @@ class MockSlippiBackendClient implements SlippiBackendService {
   }
 
   @delayAndMaybeError(SHOULD_ERROR)
-  public async validateUserId(userId: string): Promise<{ displayName: string; connectCode: string }> {
+  async validateUserId(userId: string): Promise<{ displayName: string; connectCode: string }> {
     const userData = this.fakeUsers.get(userId);
     if (!userData || !userData.playKey) {
       throw new Error(`No user with ID: ${userId}`);
@@ -78,7 +78,7 @@ class MockSlippiBackendClient implements SlippiBackendService {
   }
 
   @delayAndMaybeError(SHOULD_ERROR)
-  public async fetchUserData(): Promise<UserData | undefined> {
+  async fetchUserData(): Promise<UserData | undefined> {
     const user = this.authService.getCurrentUser();
     Preconditions.checkExists(user, "No user logged in");
 
@@ -101,22 +101,22 @@ class MockSlippiBackendClient implements SlippiBackendService {
   }
 
   @delayAndMaybeError(SHOULD_ERROR)
-  public async fetchRankedNetplayProfile(_userId: string): Promise<RankedProfile | undefined> {
+  async fetchRankedNetplayProfile(_userId: string): Promise<RankedProfile | undefined> {
     return Promise.resolve(mockRankedProfile);
   }
 
   @delayAndMaybeError(SHOULD_ERROR)
-  public async assertPlayKey(_playKey: PlayKey) {
+  async assertPlayKey(_playKey: PlayKey) {
     // Do nothing
   }
 
   @delayAndMaybeError(SHOULD_ERROR)
-  public async deletePlayKey(): Promise<void> {
+  async deletePlayKey(): Promise<void> {
     // Do nothing
   }
 
   @delayAndMaybeError(SHOULD_ERROR)
-  public async changeDisplayName(name: string) {
+  async changeDisplayName(name: string) {
     const user = this.authService.getCurrentUser();
     Preconditions.checkExists(user, "No user logged in");
 
@@ -129,7 +129,7 @@ class MockSlippiBackendClient implements SlippiBackendService {
   }
 
   @delayAndMaybeError(SHOULD_ERROR)
-  public async acceptRules() {
+  async acceptRules() {
     const user = this.authService.getCurrentUser();
     Preconditions.checkExists(user, "No user logged in");
     const userData = this.fakeUsers.get(user.uid);
@@ -140,12 +140,12 @@ class MockSlippiBackendClient implements SlippiBackendService {
   }
 
   @delayAndMaybeError(SHOULD_ERROR)
-  public async initializeNetplay(_codeStart: string): Promise<void> {
+  async initializeNetplay(_codeStart: string): Promise<void> {
     // Do nothing
   }
 
   @delayAndMaybeError(SHOULD_ERROR)
-  public async fetchChatMessageData(userId: string): Promise<ChatMessageData> {
+  async fetchChatMessageData(userId: string): Promise<ChatMessageData> {
     const userData = this.fakeUsers.get(userId);
     Preconditions.checkExists(userData, "User not found");
 
@@ -156,7 +156,7 @@ class MockSlippiBackendClient implements SlippiBackendService {
   }
 
   @delayAndMaybeError(SHOULD_ERROR)
-  public async submitChatMessages(userId: string, messages: string[]): Promise<string[]> {
+  async submitChatMessages(userId: string, messages: string[]): Promise<string[]> {
     const userData = this.fakeUsers.get(userId);
     Preconditions.checkExists(userData, "User not found");
 

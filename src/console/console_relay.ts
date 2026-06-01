@@ -39,7 +39,7 @@ export class ConsoleRelay extends EventEmitter {
     this.server.listen(Ports.RELAY_START + id, "0.0.0.0");
   }
 
-  public stopRelay() {
+  stopRelay() {
     this.clients.forEach((client) => client.destroy());
     this.clients = [];
     if (this.server !== null) {
@@ -48,7 +48,7 @@ export class ConsoleRelay extends EventEmitter {
     this.server = null;
   }
 
-  public write(newData: Buffer) {
+  write(newData: Buffer) {
     this.dataBuffer.buffersToConcat.push(newData);
     if (this.clients) {
       this.clients.forEach((client) => {
@@ -61,7 +61,7 @@ export class ConsoleRelay extends EventEmitter {
     }
   }
 
-  public async clearBuffer() {
+  async clearBuffer() {
     this.dataBuffer.buffersToConcat = [];
     this.dataBuffer.fullBuffer = Buffer.from([]);
   }

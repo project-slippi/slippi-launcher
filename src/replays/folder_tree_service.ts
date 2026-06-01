@@ -7,7 +7,7 @@ import type { FolderResult } from "./types";
 export class FolderTreeService {
   private tree: readonly FolderResult[] = [];
 
-  public init(rootFolders: readonly string[]): readonly FolderResult[] {
+  init(rootFolders: readonly string[]): readonly FolderResult[] {
     this.tree = rootFolders.map((fullPath) => {
       const name = path.basename(fullPath);
       return { name, fullPath, subdirectories: [], collapsed: false };
@@ -15,7 +15,7 @@ export class FolderTreeService {
     return this.tree;
   }
 
-  public async select(folder: string): Promise<readonly FolderResult[]> {
+  async select(folder: string): Promise<readonly FolderResult[]> {
     const childNode = await this._findChild(folder, this.tree);
     // Use non-blocking async iteration instead of synchronous fs.readdir()
     childNode.subdirectories = await listSubFoldersAsync(folder);

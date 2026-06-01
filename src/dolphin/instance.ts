@@ -47,7 +47,7 @@ export class DolphinInstance extends EventEmitter {
   /***
    * Spawns the Dolphin instance with any additional command line parameters
    */
-  public async start(additionalParams?: string[]): Promise<void> {
+  async start(additionalParams?: string[]): Promise<void> {
     const params: string[] = [];
 
     // Auto-start the ISO if provided
@@ -168,7 +168,7 @@ export class PlaybackDolphinInstance extends DolphinInstance {
   /***
    * Starts Dolphin with the specified replay communication options
    */
-  public async play(options: ReplayCommunication) {
+  async play(options: ReplayCommunication) {
     // Automatically generate a command id if not provided
     if (!options.commandId) {
       options.commandId = Math.random().toString(36).slice(2);

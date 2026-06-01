@@ -27,7 +27,7 @@ export class AppUpdater {
     autoUpdater.disableDifferentialDownload = true;
   }
 
-  public async verifyPendingUpdate(): Promise<void> {
+  async verifyPendingUpdate(): Promise<void> {
     const currentVersion = app.getVersion();
     const pendingVersion = this.settingsManager.get().pendingUpdateVersion;
 
@@ -49,7 +49,7 @@ export class AppUpdater {
     await this.settingsManager.updateSetting("pendingUpdateVersion", undefined);
   }
 
-  public getUpdateState(): UpdateState | undefined {
+  getUpdateState(): UpdateState | undefined {
     return this.updateState;
   }
 
@@ -62,7 +62,7 @@ export class AppUpdater {
     autoUpdater.quitAndInstall(false, true);
   }
 
-  public async quitAndInstall(): Promise<void> {
+  async quitAndInstall(): Promise<void> {
     // The restart _should_ happen instantly.
     // If we still haven't restarted the app within the timeout, something probably went wrong.
     const timeout = new Promise<void>((_resolve, reject) => {

@@ -9,7 +9,7 @@ export class FlagBuilder<Flags extends Record<never, never>> {
     this.argv = argv;
   }
 
-  public addBooleanFlag<K extends string>(
+  addBooleanFlag<K extends string>(
     name: K,
     value: string | undefined,
     defaultValue: boolean,
@@ -18,7 +18,7 @@ export class FlagBuilder<Flags extends Record<never, never>> {
     return this as any;
   }
 
-  public addIntegerFlag<K extends string>(
+  addIntegerFlag<K extends string>(
     name: K,
     value: string | undefined,
     defaultValue: number,
@@ -27,12 +27,12 @@ export class FlagBuilder<Flags extends Record<never, never>> {
     return this as any;
   }
 
-  public withOverride(flagToOverride: keyof Flags, flagName: string) {
+  withOverride(flagToOverride: keyof Flags, flagName: string) {
     this.overrides[flagName] = flagToOverride;
     return this;
   }
 
-  public build(): Flags {
+  build(): Flags {
     const overrides = this.handleFlagOverrides();
     return {
       ...this.flags,

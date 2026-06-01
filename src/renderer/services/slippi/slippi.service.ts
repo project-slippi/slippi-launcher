@@ -128,7 +128,7 @@ class SlippiBackendClient implements SlippiBackendService {
     });
   }
 
-  public async validateUserId(userId: string): Promise<{ displayName: string; connectCode: string }> {
+  async validateUserId(userId: string): Promise<{ displayName: string; connectCode: string }> {
     const res = await this.client.query({
       query: QUERY_VALIDATE_USER_ID,
       variables: {
@@ -150,7 +150,7 @@ class SlippiBackendClient implements SlippiBackendService {
     throw new Error("No user with that ID");
   }
 
-  public async fetchUserData(): Promise<UserData | undefined> {
+  async fetchUserData(): Promise<UserData | undefined> {
     const user = this.authService.getCurrentUser();
     Preconditions.checkExists(user, "User is not logged in");
 
@@ -193,7 +193,7 @@ class SlippiBackendClient implements SlippiBackendService {
     };
   }
 
-  public async fetchRankedNetplayProfile(userId: string): Promise<RankedProfile | undefined> {
+  async fetchRankedNetplayProfile(userId: string): Promise<RankedProfile | undefined> {
     const res = await this.client.query({
       query: QUERY_GET_RANKED_NETPLAY_PROFILE,
       variables: {
@@ -212,7 +212,7 @@ class SlippiBackendClient implements SlippiBackendService {
     return mapSlippiRankedProfile(netplayProfile);
   }
 
-  public async fetchChatMessageData(userId: string): Promise<ChatMessageData> {
+  async fetchChatMessageData(userId: string): Promise<ChatMessageData> {
     const res = await this.client.query({
       query: QUERY_CHAT_MESSAGE_DATA,
       variables: {
@@ -229,7 +229,7 @@ class SlippiBackendClient implements SlippiBackendService {
     };
   }
 
-  public async submitChatMessages(uid: string, messages: string[]): Promise<string[]> {
+  async submitChatMessages(uid: string, messages: string[]): Promise<string[]> {
     const res = await this.client.mutate({
       mutation: MUTATION_SUBMIT_CHAT_MESSAGES,
       variables: { fbUid: uid, messages },
@@ -239,7 +239,7 @@ class SlippiBackendClient implements SlippiBackendService {
     return res.data?.userSetChatMessages?.activeChatMessages ?? [];
   }
 
-  public async assertPlayKey(playKey: PlayKey) {
+  async assertPlayKey(playKey: PlayKey) {
     const playKeyExists = await this.dolphinService.checkPlayKeyExists(playKey);
     if (playKeyExists) {
       return;
@@ -248,11 +248,11 @@ class SlippiBackendClient implements SlippiBackendService {
     await this.dolphinService.storePlayKeyFile(playKey);
   }
 
-  public async deletePlayKey(): Promise<void> {
+  async deletePlayKey(): Promise<void> {
     await this.dolphinService.removePlayKeyFile();
   }
 
-  public async changeDisplayName(name: string) {
+  async changeDisplayName(name: string) {
     const user = this.authService.getCurrentUser();
     Preconditions.checkExists(user, "User is not logged in");
 
@@ -270,7 +270,7 @@ class SlippiBackendClient implements SlippiBackendService {
     await this.authService.updateDisplayName(name);
   }
 
-  public async acceptRules() {
+  async acceptRules() {
     const user = this.authService.getCurrentUser();
     Preconditions.checkExists(user, "User is not logged in");
 
@@ -286,7 +286,7 @@ class SlippiBackendClient implements SlippiBackendService {
     }
   }
 
-  public async initializeNetplay(codeStart: string): Promise<void> {
+  async initializeNetplay(codeStart: string): Promise<void> {
     const res = await this.client.mutate({ mutation: MUTATION_INIT_NETPLAY, variables: { codeStart } });
     handleErrors(res.errors);
   }

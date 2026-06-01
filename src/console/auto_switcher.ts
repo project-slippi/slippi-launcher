@@ -28,11 +28,11 @@ export class AutoSwitcher extends EventEmitter {
     this.obsPairs = [];
   }
 
-  public async disconnect() {
+  async disconnect() {
     await this.obs.disconnect();
   }
 
-  public updateSettings(settings: AutoSwitcherSettings) {
+  updateSettings(settings: AutoSwitcherSettings) {
     this.obsIP = settings.ip;
     this.obsPort = settings.port;
     this.obsSourceName = settings.sourceName;
@@ -58,7 +58,7 @@ export class AutoSwitcher extends EventEmitter {
     });
   };
 
-  public async connect() {
+  async connect() {
     if (this.obsIP && this.obsPort && this.obsSourceName) {
       // if you send a password when authentication is disabled, OBS will still connect
       try {
@@ -125,7 +125,7 @@ export class AutoSwitcher extends EventEmitter {
   }
 
   // As long as we are receiving data from the console, show the source feed in OBS.
-  public handleStatusOutput(timeoutLength = 200) {
+  handleStatusOutput(timeoutLength = 200) {
     const setTimer = () => {
       if (this.statusOutput.timeout) {
         // If we have a timeout, clear it

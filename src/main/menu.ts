@@ -36,7 +36,7 @@ export class MenuBuilder {
     this.createWindow = options.createWindow;
   }
 
-  public buildMenu(): Menu {
+  buildMenu(): Menu {
     if (this.enableDevTools) {
       this.setupDevelopmentEnvironment();
     }

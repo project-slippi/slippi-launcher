@@ -10,15 +10,15 @@ const SECONDS = 1000;
 const CONSOLE_EXPIRY_TIMEOUT = 35 * SECONDS;
 
 export class ConnectionScanner {
-  public availableConnectionsByIp: Record<string, DiscoveredConsoleInfo | undefined> = {};
+  availableConnectionsByIp: Record<string, DiscoveredConsoleInfo | undefined> = {};
   private timeoutsByIp: Record<string, NodeJS.Timeout | undefined> = {};
   private server: dgram.Socket | null = null;
 
-  public getAvailable() {
+  getAvailable() {
     return this.availableConnectionsByIp;
   }
 
-  public getIsScanning() {
+  getIsScanning() {
     return Boolean(this.server);
   }
 
@@ -100,7 +100,7 @@ export class ConnectionScanner {
     this.stopScanning();
   };
 
-  public async startScanning() {
+  async startScanning() {
     if (this.server) {
       // Do nothing if server is already set
       return;
@@ -140,7 +140,7 @@ export class ConnectionScanner {
     server.bind(20582);
   }
 
-  public stopScanning() {
+  stopScanning() {
     if (!this.server) {
       // Nothing to do if server already disconnected
       return;

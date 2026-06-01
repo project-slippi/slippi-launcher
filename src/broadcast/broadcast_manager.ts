@@ -106,7 +106,7 @@ export class BroadcastManager extends EventEmitter {
   /**
    * Connects to the Slippi server and the local Dolphin instance
    */
-  public async start(config: StartBroadcastConfig) {
+  async start(config: StartBroadcastConfig) {
     Preconditions.checkExists(SLIPPI_WS_SERVER, "Slippi websocket server is undefined");
 
     // First try to connect to Dolphin if we haven't already
@@ -385,7 +385,7 @@ export class BroadcastManager extends EventEmitter {
     this.connectingSubState.step = ConnectingSubStep.SOCKET;
   }
 
-  public stop() {
+  stop() {
     // TODO: Handle cancelling the retry case
 
     this.emit(BroadcastEvent.LOG, "Service stop message received");

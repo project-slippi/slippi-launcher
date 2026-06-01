@@ -95,12 +95,7 @@ export class ReplayPresenter {
 
   constructor(private readonly replayService: ReplayService, private readonly authService: AuthService) {}
 
-  public async init(
-    rootFolder: string,
-    extraFolders: string[],
-    forceReload?: boolean,
-    currentFolder?: string,
-  ): Promise<void> {
+  async init(rootFolder: string, extraFolders: string[], forceReload?: boolean, currentFolder?: string): Promise<void> {
     const { currentRoot } = useReplays.getState();
     if (currentRoot === rootFolder && !forceReload) {
       return;
@@ -132,13 +127,13 @@ export class ReplayPresenter {
     await Promise.all([loadFolderList(), this.loadFolder(folderToLoad, true)]);
   }
 
-  public selectFile(file: FileResult, index?: number, total?: number): void {
+  selectFile(file: FileResult, index?: number, total?: number): void {
     useReplays.setState((state) => {
       state.selectedFile = { fileResult: file, index, total };
     });
   }
 
-  public clearSelectedFile() {
+  clearSelectedFile() {
     useReplays.setState((state) => {
       state.selectedFile = {
         fileResult: undefined,
@@ -148,19 +143,19 @@ export class ReplayPresenter {
     });
   }
 
-  public removeFilesByIds(fileIds: string[]) {
+  removeFilesByIds(fileIds: string[]) {
     useReplays.setState((state) => {
       state.files = state.files.filter(({ id }) => !fileIds.includes(id));
     });
   }
 
-  public updateProgress(progress: { current: number; total: number } | undefined) {
+  updateProgress(progress: { current: number; total: number } | undefined) {
     useReplays.setState((state) => {
       state.progress = progress;
     });
   }
 
-  public async loadFolder(childPath?: string, forceReload?: boolean): Promise<void> {
+  async loadFolder(childPath?: string, forceReload?: boolean): Promise<void> {
     // Increment request ID for this load operation
     const requestId = ++this.currentLoadRequestId;
     const { currentFolder } = useReplays.getState();
@@ -246,7 +241,7 @@ export class ReplayPresenter {
     await Promise.all([loadFolderTree(), loadFolderDetails()]);
   }
 
-  public toggleFolder(folder: string) {
+  toggleFolder(folder: string) {
     useReplays.setState((state) => {
       if (state.collapsedFolders.includes(folder)) {
         state.collapsedFolders = state.collapsedFolders.filter((f) => f !== folder);
@@ -256,7 +251,7 @@ export class ReplayPresenter {
     });
   }
 
-  public setSelectedFiles(filePaths: string[], resetSelectAllMode = true) {
+  setSelectedFiles(filePaths: string[], resetSelectAllMode = true) {
     useReplays.setState((state) => {
       state.selectedFiles = filePaths;
       // Reset selectAllMode when manually changing selection
@@ -267,7 +262,7 @@ export class ReplayPresenter {
     });
   }
 
-  public setSelectAllMode(enabled: boolean) {
+  setSelectAllMode(enabled: boolean) {
     useReplays.setState((state) => {
       state.selectAllMode = enabled;
       if (!enabled) {
@@ -276,7 +271,7 @@ export class ReplayPresenter {
     });
   }
 
-  public toggleFileInSelectAllMode(filePath: string) {
+  toggleFileInSelectAllMode(filePath: string) {
     useReplays.setState((state) => {
       const isDeselected = state.deselectedFiles.includes(filePath);
       if (isDeselected) {
@@ -295,7 +290,7 @@ export class ReplayPresenter {
     });
   }
 
-  public async loadMoreReplays(): Promise<void> {
+  async loadMoreReplays(): Promise<void> {
     // Increment request ID for this load more operation
     const requestId = ++this.currentLoadRequestId;
     const { continuation, loadingMore, hasMoreReplays, currentFolder } = useReplays.getState();

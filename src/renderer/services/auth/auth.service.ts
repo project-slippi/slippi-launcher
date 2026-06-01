@@ -28,7 +28,7 @@ class AuthClient implements AuthService {
     this._multiAccountService = createMultiAccountService();
   }
 
-  public async init(): Promise<AuthUser | undefined> {
+  async init(): Promise<AuthUser | undefined> {
     // Initialize multi-account service
     await this._multiAccountService.init();
 
@@ -73,7 +73,7 @@ class AuthClient implements AuthService {
   /**
    * Get the multi-account service (for accessing multi-account features)
    */
-  public getMultiAccountService(): MultiAccountService {
+  getMultiAccountService(): MultiAccountService {
     return this._multiAccountService;
   }
 
@@ -89,14 +89,14 @@ class AuthClient implements AuthService {
     return userObject;
   }
 
-  public onUserChange(onChange: (user: AuthUser | undefined) => void): () => void {
+  onUserChange(onChange: (user: AuthUser | undefined) => void): () => void {
     const subscription = this._onAuthStateChanged.subscribe(onChange);
     return () => {
       subscription.unsubscribe();
     };
   }
 
-  public getCurrentUser(): AuthUser | undefined {
+  getCurrentUser(): AuthUser | undefined {
     const auth = this._multiAccountService.getActiveAuth();
     if (!auth || !auth.currentUser) {
       return undefined;
@@ -104,19 +104,19 @@ class AuthClient implements AuthService {
     return this._mapFirebaseUserToAuthUser(auth.currentUser);
   }
 
-  public async signUp({ email, displayName, password }: { email: string; displayName: string; password: string }) {
+  async signUp({ email, displayName, password }: { email: string; displayName: string; password: string }) {
     // Delegate to multi-account service to create user and add account
     await this._multiAccountService.signUp(email, password, displayName);
     return this.getCurrentUser();
   }
 
-  public async login({ email, password }: { email: string; password: string }) {
+  async login({ email, password }: { email: string; password: string }) {
     // Add account via multi-account service (auto-switches if exists)
     await this._multiAccountService.addAccount(email, password);
     return this.getCurrentUser();
   }
 
-  public async sendVerificationEmail() {
+  async sendVerificationEmail() {
     const auth = this._multiAccountService.getActiveAuth();
     Preconditions.checkExists(auth, "No active account");
     Preconditions.checkExists(auth.currentUser, "User is not logged in.");
@@ -127,7 +127,7 @@ class AuthClient implements AuthService {
     }
   }
 
-  public async refreshUser(): Promise<void> {
+  async refreshUser(): Promise<void> {
     const auth = this._multiAccountService.getActiveAuth();
     Preconditions.checkExists(auth, "No active account");
     Preconditions.checkExists(auth.currentUser, "User is not logged in.");
@@ -137,20 +137,20 @@ class AuthClient implements AuthService {
     this._userSubject.next(this.getCurrentUser());
   }
 
-  public async logout() {
+  async logout() {
     const activeAccountId = this._multiAccountService.getActiveAccountId();
     if (activeAccountId) {
       await this._multiAccountService.removeAccount(activeAccountId);
     }
   }
 
-  public async resetPassword(email: string) {
+  async resetPassword(email: string) {
     // Use the active auth or default app for password reset
     const auth = this._multiAccountService.getActiveAuth() ?? getAuth();
     await sendPasswordResetEmail(auth, email);
   }
 
-  public async getUserToken(): Promise<string> {
+  async getUserToken(): Promise<string> {
     const auth = this._multiAccountService.getActiveAuth();
     Preconditions.checkExists(auth, "No active account");
     Preconditions.checkExists(auth.currentUser, "User is not logged in.");
@@ -159,7 +159,7 @@ class AuthClient implements AuthService {
     return token;
   }
 
-  public async updateDisplayName(displayName: string): Promise<void> {
+  async updateDisplayName(displayName: string): Promise<void> {
     const auth = this._multiAccountService.getActiveAuth();
     Preconditions.checkExists(auth, "No active account");
     Preconditions.checkExists(auth.currentUser, "User is not logged in.");

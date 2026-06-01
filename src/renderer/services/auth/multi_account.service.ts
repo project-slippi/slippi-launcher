@@ -61,7 +61,7 @@ class MultiAccountClient implements MultiAccountService {
   /**
    * Initialize the multi-account service and restore previous sessions
    */
-  public async init(): Promise<void> {
+  async init(): Promise<void> {
     if (this._initialized) {
       return;
     }
@@ -100,7 +100,7 @@ class MultiAccountClient implements MultiAccountService {
   /**
    * Sign up a new user and add them to accounts
    */
-  public async signUp(email: string, password: string, displayName: string): Promise<StoredAccount> {
+  async signUp(email: string, password: string, displayName: string): Promise<StoredAccount> {
     try {
       // Use default Firebase app for signup
       const defaultApp = getApps().find((app) => app.name === "[DEFAULT]") ?? initializeApp(firebaseConfig);
@@ -217,7 +217,7 @@ class MultiAccountClient implements MultiAccountService {
   /**
    * Save accounts to settings
    */
-  public async saveAccounts(): Promise<void> {
+  async saveAccounts(): Promise<void> {
     try {
       const accountData: AccountData = {
         activeId: this._activeAccountId,
@@ -303,7 +303,7 @@ class MultiAccountClient implements MultiAccountService {
   /**
    * Add a new account
    */
-  public async addAccount(email: string, password: string): Promise<StoredAccount> {
+  async addAccount(email: string, password: string): Promise<StoredAccount> {
     // Check if we've hit the account limit
     if (this._accounts.length >= MAX_ACCOUNTS) {
       throw new Error(`Maximum of ${MAX_ACCOUNTS} accounts allowed`);
@@ -380,7 +380,7 @@ class MultiAccountClient implements MultiAccountService {
   /**
    * Switch to a different account
    */
-  public async switchAccount(accountId: string): Promise<void> {
+  async switchAccount(accountId: string): Promise<void> {
     const account = this._accounts.find((acc) => acc.id === accountId);
 
     if (!account) {
@@ -434,7 +434,7 @@ class MultiAccountClient implements MultiAccountService {
   /**
    * Remove an account
    */
-  public async removeAccount(accountId: string): Promise<void> {
+  async removeAccount(accountId: string): Promise<void> {
     const accountIndex = this._accounts.findIndex((acc) => acc.id === accountId);
 
     if (accountIndex === -1) {
@@ -493,7 +493,7 @@ class MultiAccountClient implements MultiAccountService {
   /**
    * Get all stored accounts
    */
-  public getAccounts(): StoredAccount[] {
+  getAccounts(): StoredAccount[] {
     // Return sorted by last active (most recent first)
     return [...this._accounts].sort((a, b) => b.lastActive.getTime() - a.lastActive.getTime());
   }
@@ -501,14 +501,14 @@ class MultiAccountClient implements MultiAccountService {
   /**
    * Get the active account ID
    */
-  public getActiveAccountId(): string | null {
+  getActiveAccountId(): string | null {
     return this._activeAccountId;
   }
 
   /**
    * Get the active Firebase Auth instance (for AuthService to use)
    */
-  public getActiveAuth(): Auth | null {
+  getActiveAuth(): Auth | null {
     if (!this._activeAccountId) {
       return null;
     }
@@ -519,9 +519,7 @@ class MultiAccountClient implements MultiAccountService {
   /**
    * Subscribe to accounts list changes
    */
-  public onAccountsChange(
-    onChange: (data: { accounts: StoredAccount[]; activeId: string | null }) => void,
-  ): () => void {
+  onAccountsChange(onChange: (data: { accounts: StoredAccount[]; activeId: string | null }) => void): () => void {
     const subscription = this._onAccountsChanged.subscribe(onChange);
     return () => {
       subscription.unsubscribe();

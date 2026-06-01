@@ -25,13 +25,13 @@ const semverRegex =
   /(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(?:-((?:0|[1-9][0-9]*|[0-9]*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9][0-9]*|[0-9]*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?/;
 
 export class MainlineDolphinInstallation implements DolphinInstallation {
-  public readonly installationFolder: string;
+  readonly installationFolder: string;
   constructor(private readonly dolphinLaunchType: DolphinLaunchType, private readonly betaSuffix: string) {
     const dolphinFolder = dolphinLaunchType === DolphinLaunchType.NETPLAY ? "netplay" : "playback";
     this.installationFolder = path.join(app.getPath("userData"), `${dolphinFolder}${this.betaSuffix}`);
   }
 
-  public get userFolder(): string {
+  get userFolder(): string {
     switch (process.platform) {
       case "win32": {
         return path.join(this.installationFolder, "User");
@@ -58,7 +58,7 @@ export class MainlineDolphinInstallation implements DolphinInstallation {
     }
   }
 
-  public get sysFolder(): string {
+  get sysFolder(): string {
     const dolphinPath = this.installationFolder;
     switch (process.platform) {
       case "linux":
@@ -74,7 +74,7 @@ export class MainlineDolphinInstallation implements DolphinInstallation {
     }
   }
 
-  public async findDolphinExecutable(): Promise<string> {
+  async findDolphinExecutable(): Promise<string> {
     const dolphinPath = this.installationFolder;
     const type = this.dolphinLaunchType;
 
@@ -117,12 +117,12 @@ export class MainlineDolphinInstallation implements DolphinInstallation {
     return path.join(dolphinPath, result);
   }
 
-  public async clearCache() {
+  async clearCache() {
     const cacheFolder = path.join(this.userFolder, "Cache");
     await rm(cacheFolder, { recursive: true, force: true });
   }
 
-  public async importConfig(fromPath: string) {
+  async importConfig(fromPath: string) {
     const newUserFolder = this.userFolder;
     await mkdir(this.userFolder, { recursive: true });
     const oldUserFolder = path.join(fromPath, "User");
@@ -137,7 +137,7 @@ export class MainlineDolphinInstallation implements DolphinInstallation {
     await this.clearCache();
   }
 
-  public async validate({
+  async validate({
     onStart,
     onProgress,
     onComplete,
@@ -178,7 +178,7 @@ export class MainlineDolphinInstallation implements DolphinInstallation {
     });
   }
 
-  public async downloadAndInstall({
+  async downloadAndInstall({
     dolphinDownloadInfo,
     onProgress,
     onComplete,
@@ -216,19 +216,19 @@ export class MainlineDolphinInstallation implements DolphinInstallation {
     }
   }
 
-  public async addGamePath(gameDir: string): Promise<void> {
+  async addGamePath(gameDir: string): Promise<void> {
     const iniPath = path.join(this.userFolder, "Config", "Dolphin.ini");
     const iniFile = await IniFile.init(iniPath);
     await addGamePath(iniFile, gameDir);
   }
 
-  public async getSettings(): Promise<SyncedDolphinSettings> {
+  async getSettings(): Promise<SyncedDolphinSettings> {
     const iniPath = path.join(this.userFolder, "Config", "Dolphin.ini");
     const iniFile = await IniFile.init(iniPath);
     return await getSlippiMainlineSettings(iniFile);
   }
 
-  public async updateSettings(options: Partial<SyncedDolphinSettings>): Promise<void> {
+  async updateSettings(options: Partial<SyncedDolphinSettings>): Promise<void> {
     const iniPath = path.join(this.userFolder, "Config", "Dolphin.ini");
     const iniFile = await IniFile.init(iniPath);
     await setSlippiMainlineSettings(iniFile, options);
@@ -239,7 +239,7 @@ export class MainlineDolphinInstallation implements DolphinInstallation {
     return !dolphinVersion || lt(dolphinVersion, latestVersion);
   }
 
-  public async getDolphinVersion(): Promise<string | undefined> {
+  async getDolphinVersion(): Promise<string | undefined> {
     try {
       const dolphinPath = await this.findDolphinExecutable();
       const dolphinVersionOut = await executeCommand(dolphinPath, ["--version"]);
@@ -250,7 +250,7 @@ export class MainlineDolphinInstallation implements DolphinInstallation {
     }
   }
 
-  public async findPlayKey(): Promise<string> {
+  async findPlayKey(): Promise<string> {
     const slippiDir = path.join(this.userFolder, "Slippi");
     await mkdir(slippiDir, { recursive: true });
     return path.resolve(slippiDir, "user.json");

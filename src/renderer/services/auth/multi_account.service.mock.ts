@@ -62,7 +62,7 @@ class MockMultiAccountClient implements MultiAccountService {
     }
   }
 
-  public async init(): Promise<void> {
+  async init(): Promise<void> {
     if (this._initialized) {
       return;
     }
@@ -77,7 +77,7 @@ class MockMultiAccountClient implements MultiAccountService {
     }
   }
 
-  public async signUp(email: string, password: string, displayName: string): Promise<StoredAccount> {
+  async signUp(email: string, password: string, displayName: string): Promise<StoredAccount> {
     try {
       const uid = email + displayName;
       const newUser = generateFakeUser({
@@ -105,7 +105,7 @@ class MockMultiAccountClient implements MultiAccountService {
     });
   }
 
-  public async addAccount(email: string, password: string): Promise<StoredAccount> {
+  async addAccount(email: string, password: string): Promise<StoredAccount> {
     if (this._accounts.length >= MAX_ACCOUNTS) {
       throw new Error(`Maximum of ${MAX_ACCOUNTS} accounts allowed`);
     }
@@ -153,7 +153,7 @@ class MockMultiAccountClient implements MultiAccountService {
     this._notifyAccountsChanged();
   }
 
-  public async switchAccount(accountId: string): Promise<void> {
+  async switchAccount(accountId: string): Promise<void> {
     const account = this._accounts.find((acc) => acc.id === accountId);
 
     if (!account) {
@@ -187,7 +187,7 @@ class MockMultiAccountClient implements MultiAccountService {
     }
   }
 
-  public async removeAccount(accountId: string): Promise<void> {
+  async removeAccount(accountId: string): Promise<void> {
     const accountIndex = this._accounts.findIndex((acc) => acc.id === accountId);
 
     if (accountIndex === -1) {
@@ -216,19 +216,19 @@ class MockMultiAccountClient implements MultiAccountService {
     }
   }
 
-  public getAccounts(): StoredAccount[] {
+  getAccounts(): StoredAccount[] {
     return [...this._accounts].sort((a, b) => b.lastActive.getTime() - a.lastActive.getTime());
   }
 
-  public getActiveAccountId(): string | null {
+  getActiveAccountId(): string | null {
     return this._activeAccountId;
   }
 
-  public async saveAccounts(): Promise<void> {
+  async saveAccounts(): Promise<void> {
     // No-op for mock
   }
 
-  public getActiveAuth(): Auth | null {
+  getActiveAuth(): Auth | null {
     if (!this._activeAccountId) {
       return null;
     }
@@ -236,9 +236,7 @@ class MockMultiAccountClient implements MultiAccountService {
     return this._authInstances.get(this._activeAccountId) ?? null;
   }
 
-  public onAccountsChange(
-    onChange: (data: { accounts: StoredAccount[]; activeId: string | null }) => void,
-  ): () => void {
+  onAccountsChange(onChange: (data: { accounts: StoredAccount[]; activeId: string | null }) => void): () => void {
     const subscription = this._onAccountsChanged.subscribe(onChange);
     return () => {
       subscription.unsubscribe();

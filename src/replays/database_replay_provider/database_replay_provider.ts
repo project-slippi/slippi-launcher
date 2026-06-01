@@ -43,7 +43,7 @@ export class DatabaseReplayProvider implements ReplayProvider {
     return requestId !== undefined && this.currentSearchRequestId !== requestId;
   }
 
-  public async searchReplays(
+  async searchReplays(
     folder: string | undefined,
     limit: number,
     continuation?: string,
@@ -163,7 +163,7 @@ export class DatabaseReplayProvider implements ReplayProvider {
     };
   }
 
-  public async getAllFilePaths(
+  async getAllFilePaths(
     folder: string | undefined,
     orderBy: {
       field: "lastFrame" | "startTime";
@@ -190,7 +190,7 @@ export class DatabaseReplayProvider implements ReplayProvider {
     return records.map((record) => path.resolve(record.folder, record.name));
   }
 
-  public async loadFile(filePath: string): Promise<FileResult> {
+  async loadFile(filePath: string): Promise<FileResult> {
     const filename = path.basename(filePath);
     const folder = path.dirname(filePath);
 
@@ -213,7 +213,7 @@ export class DatabaseReplayProvider implements ReplayProvider {
     return mapGameRecordToFileResult(gameAndFileRecord, playerRecords);
   }
 
-  public async calculateGameStats(fullPath: string): Promise<StatsType | undefined> {
+  async calculateGameStats(fullPath: string): Promise<StatsType | undefined> {
     const game = new SlippiGame(fullPath);
     const settings = game.getSettings();
     if (!settings || settings.players.length === 0) {
@@ -227,12 +227,12 @@ export class DatabaseReplayProvider implements ReplayProvider {
     return game.getStats();
   }
 
-  public async calculateStadiumStats(fullPath: string): Promise<StadiumStatsType | undefined> {
+  async calculateStadiumStats(fullPath: string): Promise<StadiumStatsType | undefined> {
     const game = new SlippiGame(fullPath);
     return game.getStadiumStats();
   }
 
-  public async deleteReplays(fileIds: string[]): Promise<void> {
+  async deleteReplays(fileIds: string[]): Promise<void> {
     const deleteStartTime = Date.now();
     log.info(`Deleting ${fileIds.length} replay(s) by ID`);
 
@@ -257,7 +257,7 @@ export class DatabaseReplayProvider implements ReplayProvider {
     log.info(`Deleted ${fileRecords.length} replay(s) in ${totalDuration}ms total`);
   }
 
-  public async bulkDeleteReplays(
+  async bulkDeleteReplays(
     folder: string | undefined,
     filters: ReplayFilter[] = [],
     options?: {

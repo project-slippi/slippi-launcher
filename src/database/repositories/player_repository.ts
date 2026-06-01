@@ -9,11 +9,11 @@ type DB = Kysely<Database>;
 const SQLITE_PARAM_LIMIT_BATCH_SIZE = 500;
 
 export class PlayerRepository {
-  public static async insertPlayer(db: DB, ...player: NewPlayer[]): Promise<PlayerRecord[]> {
+  static async insertPlayer(db: DB, ...player: NewPlayer[]): Promise<PlayerRecord[]> {
     return db.insertInto("player").values(player).returningAll().execute();
   }
 
-  public static async findAllPlayersByGame(db: DB, ...gameId: number[]): Promise<Map<number, PlayerRecord[]>> {
+  static async findAllPlayersByGame(db: DB, ...gameId: number[]): Promise<Map<number, PlayerRecord[]>> {
     const gameIdToPlayersMap = new Map<number, PlayerRecord[]>();
 
     // Batch the query to stay under SQLite's 999 parameter limit

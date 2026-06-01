@@ -22,7 +22,7 @@ class MockDolphinClient implements DolphinService {
   private events = Observable.from(this.eventSubject);
 
   @delayAndMaybeError(SHOULD_ERROR)
-  public async downloadDolphin(dolphinType: DolphinLaunchType): Promise<void> {
+  async downloadDolphin(dolphinType: DolphinLaunchType): Promise<void> {
     // Mock installation percentage
     for (let i = 0; i <= 100; i++) {
       const progressEvent: DolphinDownloadProgressEvent = {
@@ -46,60 +46,60 @@ class MockDolphinClient implements DolphinService {
   }
 
   @delayAndMaybeError(SHOULD_ERROR)
-  public async configureDolphin(_dolphinType: DolphinLaunchType): Promise<void> {
+  async configureDolphin(_dolphinType: DolphinLaunchType): Promise<void> {
     throw new Error("Method not implemented.");
   }
 
   @delayAndMaybeError(SHOULD_ERROR)
-  public async softResetDolphin(_dolphinType: DolphinLaunchType): Promise<void> {
+  async softResetDolphin(_dolphinType: DolphinLaunchType): Promise<void> {
     throw new Error("Method not implemented.");
   }
 
   @delayAndMaybeError(SHOULD_ERROR)
-  public async hardResetDolphin(dolphinType: DolphinLaunchType): Promise<void> {
+  async hardResetDolphin(dolphinType: DolphinLaunchType): Promise<void> {
     await this.downloadDolphin(dolphinType);
   }
 
   @delayAndMaybeError(SHOULD_ERROR)
-  public async storePlayKeyFile(_key: PlayKey): Promise<void> {
+  async storePlayKeyFile(_key: PlayKey): Promise<void> {
     throw new Error("Method not implemented.");
   }
 
   @delayAndMaybeError(SHOULD_ERROR)
-  public async checkPlayKeyExists(_key: PlayKey): Promise<boolean> {
+  async checkPlayKeyExists(_key: PlayKey): Promise<boolean> {
     throw new Error("Method not implemented.");
   }
 
   @delayAndMaybeError(SHOULD_ERROR)
-  public async removePlayKeyFile(): Promise<void> {
+  async removePlayKeyFile(): Promise<void> {
     throw new Error("Method not implemented.");
   }
 
   @delayAndMaybeError(SHOULD_ERROR)
-  public async viewSlpReplay(_files: ReplayQueueItem[]): Promise<void> {
+  async viewSlpReplay(_files: ReplayQueueItem[]): Promise<void> {
     throw new Error("Method not implemented.");
   }
 
   @delayAndMaybeError(SHOULD_ERROR)
-  public async launchNetplayDolphin(_options: { bootToCss?: boolean | undefined }): Promise<void> {
+  async launchNetplayDolphin(_options: { bootToCss?: boolean | undefined }): Promise<void> {
     throw new Error("Method not implemented.");
   }
 
   @delayAndMaybeError(SHOULD_ERROR)
-  public async openDolphinSettingsFolder(_dolphinType: DolphinLaunchType): Promise<void> {
+  async openDolphinSettingsFolder(_dolphinType: DolphinLaunchType): Promise<void> {
     throw new Error("Method not implemented.");
   }
 
   @delayAndMaybeError(SHOULD_ERROR)
-  public async fetchGeckoCodes(_dolphinLaunchType: DolphinLaunchType): Promise<GeckoCode[]> {
+  async fetchGeckoCodes(_dolphinLaunchType: DolphinLaunchType): Promise<GeckoCode[]> {
     throw new Error("Method not implemented.");
   }
   @delayAndMaybeError(SHOULD_ERROR)
-  public async saveGeckoCodes(_dolphinLaunchType: DolphinLaunchType, _geckoCodes: GeckoCode[]): Promise<void> {
+  async saveGeckoCodes(_dolphinLaunchType: DolphinLaunchType, _geckoCodes: GeckoCode[]): Promise<void> {
     throw new Error("Method not implemented.");
   }
 
-  public onEvent<T extends DolphinEventType>(eventType: T, handle: (event: DolphinEventMap[T]) => void): () => void {
+  onEvent<T extends DolphinEventType>(eventType: T, handle: (event: DolphinEventMap[T]) => void): () => void {
     const subscription = this.events.filter<DolphinEventMap[T]>((event) => event.type === eventType).subscribe(handle);
     return () => subscription.unsubscribe();
   }

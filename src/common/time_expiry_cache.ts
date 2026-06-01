@@ -3,7 +3,7 @@ export class TimeExpiryCache<K, V> {
 
   constructor(private readonly expiresInMs: number) {}
 
-  public get(key: K): V | undefined {
+  get(key: K): V | undefined {
     const cachedValue = this.cache.get(key);
     if (cachedValue) {
       const elapsedMs = Date.now() - cachedValue.time;
@@ -16,13 +16,13 @@ export class TimeExpiryCache<K, V> {
     return undefined;
   }
 
-  public set(key: K, value: V): this {
+  set(key: K, value: V): this {
     this.cache.set(key, { value, time: Date.now() });
     return this;
   }
 
   // For completeness
-  public clear(): void {
+  clear(): void {
     this.cache.clear();
   }
 }

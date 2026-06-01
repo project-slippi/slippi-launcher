@@ -14,19 +14,19 @@ class I18nClient implements I18nService {
 
   constructor(private readonly englishOnly: boolean) {}
 
-  public onLanguageChange(handle: (language: string) => void): () => void {
+  onLanguageChange(handle: (language: string) => void): () => void {
     const subscription = this.languageChangeSubject.subscribe(handle);
     return () => subscription.unsubscribe();
   }
 
-  public async setLanguage(language: string): Promise<void> {
+  async setLanguage(language: string): Promise<void> {
     localStorage.setItem(this.localStorageKey, language);
     await i18next.changeLanguage(language);
     // Notify React components that the language has changed
     this.languageChangeSubject.next(language);
   }
 
-  public async init(): Promise<void> {
+  async init(): Promise<void> {
     if (this.initialized && i18next.isInitialized) {
       log.info("i18next already initialized, skipping...");
       return;

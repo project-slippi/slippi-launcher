@@ -13,7 +13,7 @@ export class BrowserWindowManager {
   private externalWindowsByUrl = new Map<string, BrowserWindow>();
   private alwaysOnTop = false;
 
-  public setAlwaysOnTop(enabled: boolean): void {
+  setAlwaysOnTop(enabled: boolean): void {
     this.alwaysOnTop = enabled;
     for (const win of this.externalWindowsByUrl.values()) {
       if (!win.isDestroyed()) {
@@ -22,11 +22,11 @@ export class BrowserWindowManager {
     }
   }
 
-  public isAlwaysOnTop(): boolean {
+  isAlwaysOnTop(): boolean {
     return this.alwaysOnTop;
   }
 
-  public async openInNewBrowserWindow(url: string) {
+  async openInNewBrowserWindow(url: string) {
     const existing = this.externalWindowsByUrl.get(url);
     if (existing && !existing.isDestroyed()) {
       if (existing.isMinimized()) {

@@ -26,10 +26,10 @@ declare module "stun" {
     server: StunServer;
   };
   export declare class StunResponse {
-    public getXorAddress(): AddressType;
+    getXorAddress(): AddressType;
   }
   export declare class StunServer {
-    public close(): void;
+    close(): void;
   }
   export declare function createServer(options: { type: string }): StunServer;
   export declare function request(url: string, options: RequestOptions): Promise<StunResponse>;

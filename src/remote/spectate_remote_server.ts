@@ -107,7 +107,7 @@ export class SpectateRemoteServer {
       });
   }
 
-  public async start(initialAuthToken: string, port: number): Promise<void> {
+  async start(initialAuthToken: string, port: number): Promise<void> {
     if (!this.spectateController) {
       await this.setupSpectateController();
     }
@@ -277,7 +277,7 @@ export class SpectateRemoteServer {
     ipc_spectateRemoteStateEvent.main!.trigger({ connected: false, started: true }).catch(log.error);
   }
 
-  public stop() {
+  stop() {
     // Cancel any pending throttled refresh calls
     this.throttledRefresh.cancel();
 

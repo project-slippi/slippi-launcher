@@ -35,7 +35,7 @@ export class DolphinManager {
   private playbackDolphinInstances = new Map<string, PlaybackDolphinInstance>();
   private netplayDolphinInstance: DolphinInstance | null = null;
   private eventSubject = new Subject<DolphinEvent>();
-  public events = Observable.from(this.eventSubject);
+  events = Observable.from(this.eventSubject);
 
   constructor(private settingsManager: SettingsManager) {
     this.betaFlags[DolphinLaunchType.NETPLAY].promotedToStable = settingsManager.getDolphinPromotedToStable(
@@ -46,7 +46,7 @@ export class DolphinManager {
     );
   }
 
-  public getInstallation(launchType: DolphinLaunchType): DolphinInstallation {
+  getInstallation(launchType: DolphinLaunchType): DolphinInstallation {
     const { betaAvailable, promotedToStable } = this.betaFlags[launchType];
     if (betaAvailable || promotedToStable) {
       const betaSuffix = promotedToStable ? "" : "-beta";
@@ -55,7 +55,7 @@ export class DolphinManager {
     return new IshiirukaDolphinInstallation(launchType);
   }
 
-  public async installDolphin(dolphinType: DolphinLaunchType): Promise<void> {
+  async installDolphin(dolphinType: DolphinLaunchType): Promise<void> {
     const useBeta = this.settingsManager.getUseDolphinBeta(dolphinType);
     let dolphinDownloadInfo: DolphinVersionResponse | undefined = undefined;
     try {
@@ -85,7 +85,7 @@ export class DolphinManager {
     }
   }
 
-  public async launchPlaybackDolphin(id: string, replayComm: ReplayCommunication): Promise<void> {
+  async launchPlaybackDolphin(id: string, replayComm: ReplayCommunication): Promise<void> {
     const playbackInstallation = this.getInstallation(DolphinLaunchType.PLAYBACK);
     const dolphinPath = await playbackInstallation.findDolphinExecutable();
     const meleeIsoPath = await this._getIsoPath();
@@ -119,7 +119,7 @@ export class DolphinManager {
     await playbackInstance.play(replayComm);
   }
 
-  public async launchNetplayDolphin() {
+  async launchNetplayDolphin() {
     Preconditions.checkState(this.netplayDolphinInstance == null, "Netplay dolphin is already open!");
 
     await this._updateDolphinSettings(DolphinLaunchType.NETPLAY);
@@ -157,7 +157,7 @@ export class DolphinManager {
     this.netplayDolphinInstance = dolphinInstance;
   }
 
-  public async configureDolphin(launchType: DolphinLaunchType) {
+  async configureDolphin(launchType: DolphinLaunchType) {
     log.debug(`configuring ${launchType} dolphin...`);
 
     await this._updateDolphinSettings(launchType);
@@ -208,7 +208,7 @@ export class DolphinManager {
     }
   }
 
-  public async reinstallDolphin(launchType: DolphinLaunchType, cleanInstall?: boolean) {
+  async reinstallDolphin(launchType: DolphinLaunchType, cleanInstall?: boolean) {
     switch (launchType) {
       case DolphinLaunchType.NETPLAY: {
         if (this.netplayDolphinInstance !== null) {
@@ -264,7 +264,7 @@ export class DolphinManager {
     return meleeIsoPath;
   }
 
-  public async importConfig(launchType: DolphinLaunchType, dolphinPath: string): Promise<void> {
+  async importConfig(launchType: DolphinLaunchType, dolphinPath: string): Promise<void> {
     const installation = this.getInstallation(launchType);
     await installation.importConfig(dolphinPath);
     if (launchType === DolphinLaunchType.NETPLAY) {

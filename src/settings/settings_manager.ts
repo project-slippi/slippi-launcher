@@ -84,7 +84,7 @@ export class SettingsManager extends EventEmitter {
    *   // event.value is automatically typed as string | null ✓
    * });
    */
-  public onSettingChange<K extends SettingKey>(
+  onSettingChange<K extends SettingKey>(
     key: K,
     callback: (
       value: K extends keyof SettingsSchema
@@ -112,30 +112,30 @@ export class SettingsManager extends EventEmitter {
     };
   }
 
-  public get(): AppSettings {
+  get(): AppSettings {
     // Join the settings with our default settings.
     // This allows us to change the defaults without persisting them
     // into the storage.
     return merge({}, defaultAppSettings, this.appSettings);
   }
 
-  public getRootSlpPath(): string {
+  getRootSlpPath(): string {
     return this.get().settings.rootSlpPath;
   }
 
-  public getEnableNetplayReplays(): boolean {
+  getEnableNetplayReplays(): boolean {
     return this.get().settings.enableNetplayReplays;
   }
 
-  public getEnableMonthlySubfolders(): boolean {
+  getEnableMonthlySubfolders(): boolean {
     return this.get().settings.useMonthlySubfolders;
   }
 
-  public getEnableJukebox(): boolean {
+  getEnableJukebox(): boolean {
     return this.get().settings.enableJukebox;
   }
 
-  public getUseDolphinBeta(type: DolphinLaunchType): boolean {
+  getUseDolphinBeta(type: DolphinLaunchType): boolean {
     const settings = this.get().settings;
     switch (type) {
       case DolphinLaunchType.NETPLAY:
@@ -145,7 +145,7 @@ export class SettingsManager extends EventEmitter {
     }
   }
 
-  public getDolphinPromotedToStable(type: DolphinLaunchType): boolean {
+  getDolphinPromotedToStable(type: DolphinLaunchType): boolean {
     const settings = this.get();
     switch (type) {
       case DolphinLaunchType.NETPLAY:
@@ -158,7 +158,7 @@ export class SettingsManager extends EventEmitter {
   /**
    * Add a new console connection
    */
-  public async addConsoleConnection(conn: Omit<StoredConnection, "id">): Promise<void> {
+  async addConsoleConnection(conn: Omit<StoredConnection, "id">): Promise<void> {
     const connections = this.get().connections;
     // Auto-generate an ID
     let prevId = 0;
@@ -172,7 +172,7 @@ export class SettingsManager extends EventEmitter {
   /**
    * Edit an existing console connection
    */
-  public async editConsoleConnection(id: number, conn: Omit<StoredConnection, "id">): Promise<void> {
+  async editConsoleConnection(id: number, conn: Omit<StoredConnection, "id">): Promise<void> {
     const connections = this.get().connections;
     const index = connections.findIndex((c) => c.id === id);
     if (index === -1) {
@@ -186,7 +186,7 @@ export class SettingsManager extends EventEmitter {
   /**
    * Delete a console connection
    */
-  public async deleteConsoleConnection(id: number): Promise<void> {
+  async deleteConsoleConnection(id: number): Promise<void> {
     const connections = this.get().connections.filter((c) => c.id !== id);
     await this.updateSetting("connections", connections);
   }
@@ -194,7 +194,7 @@ export class SettingsManager extends EventEmitter {
   /**
    * Set whether Dolphin beta is used (for backward compatibility with DolphinManager)
    */
-  public async setUseDolphinBeta(dolphinType: DolphinLaunchType, useBeta: boolean): Promise<void> {
+  async setUseDolphinBeta(dolphinType: DolphinLaunchType, useBeta: boolean): Promise<void> {
     const key = dolphinType === DolphinLaunchType.NETPLAY ? "useNetplayBeta" : "usePlaybackBeta";
     await this.updateSetting(key, useBeta);
   }
@@ -202,7 +202,7 @@ export class SettingsManager extends EventEmitter {
   /**
    * Set whether Dolphin has been promoted to stable (internal use)
    */
-  public async setDolphinPromotedToStable(dolphinType: DolphinLaunchType, promotedToStable: boolean): Promise<void> {
+  async setDolphinPromotedToStable(dolphinType: DolphinLaunchType, promotedToStable: boolean): Promise<void> {
     const key = dolphinType === DolphinLaunchType.NETPLAY ? "netplayPromotedToStable" : "playbackPromotedToStable";
     await this.updateSetting(key, promotedToStable);
   }
@@ -211,7 +211,7 @@ export class SettingsManager extends EventEmitter {
    * NEW: Generic setting update method
    * Updates a single setting and emits change event
    */
-  public async updateSetting<K extends SettingKey>(
+  async updateSetting<K extends SettingKey>(
     key: K,
     value: K extends keyof SettingsSchema
       ? SettingsSchema[K]
@@ -250,7 +250,7 @@ export class SettingsManager extends EventEmitter {
    * NEW: Batch update multiple settings
    * More efficient than calling updateSetting multiple times
    */
-  public async updateSettings(updates: SettingUpdate[]): Promise<void> {
+  async updateSettings(updates: SettingUpdate[]): Promise<void> {
     await this.setMutex.acquire();
 
     // Get current settings for previous values

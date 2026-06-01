@@ -37,7 +37,7 @@ export class MirrorManager extends EventEmitter {
     super();
   }
 
-  public async connect(config: MirrorConfig) {
+  async connect(config: MirrorConfig) {
     if (this.mirrors[config.ipAddress]) {
       this.emit(MirrorEvent.ERROR, `Already connected to Wii @ ${config.ipAddress}`);
       return;
@@ -198,7 +198,7 @@ export class MirrorManager extends EventEmitter {
     };
   }
 
-  public async disconnect(ip: string) {
+  async disconnect(ip: string) {
     this.emit(MirrorEvent.LOG, "Disconnect requested");
     const details = this.mirrors[ip];
     if (!details) {
@@ -229,11 +229,11 @@ export class MirrorManager extends EventEmitter {
     });
   }
 
-  public getActiveMirrorCount(): number {
+  getActiveMirrorCount(): number {
     return Object.keys(this.mirrors).length;
   }
 
-  public async startMirroring(ip: string) {
+  async startMirroring(ip: string) {
     this.emit(MirrorEvent.LOG, "Mirroring starting");
     const details = this.mirrors[ip];
     if (!details) {
@@ -268,7 +268,7 @@ export class MirrorManager extends EventEmitter {
     );
   }
 
-  public async handleClosedDolphin(playbackId: string) {
+  async handleClosedDolphin(playbackId: string) {
     const broadcastInfo = Object.values(this.mirrors).find((info) => info.ipAddress === playbackId);
     if (!broadcastInfo) {
       // This is not one of the spectator dolphin instances
