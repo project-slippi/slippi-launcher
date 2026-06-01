@@ -699,7 +699,7 @@ msgstr "Забыли пароль?"
 msgid "Found {0, plural, one {# tournament} other {# tournaments}} near {1}, {2}."
 msgstr ""
 "{0, plural, one {Найден # турнир} few {Найдено # турнира} other {Найдено # турниров}} "
-"рядом с {1}, {2}."
+"рядом с {1} ({2})."
 
 #: src/renderer/pages/settings/create.messages.ts:3:15
 msgid "Game"
