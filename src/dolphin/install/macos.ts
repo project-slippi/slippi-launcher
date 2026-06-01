@@ -1,4 +1,5 @@
-import { chmod, chown, cp, readdir, rm } from "node:fs/promises";
+import { copy } from "fs-extra";
+import { chmod, chown, readdir, rm } from "node:fs/promises";
 import os from "os";
 import path from "path";
 
@@ -51,7 +52,10 @@ export async function installMainlineDolphinOnMac({
   try {
     const appMountPath = path.join(mountPath, "Slippi_Dolphin.app");
     const destPath = path.join(destinationFolder, "Slippi_Dolphin.app");
-    await cp(appMountPath, destPath, { recursive: true });
+    // Use fs-extra's copy() for macOS .app bundles.
+    // Replacing this with fs.cp() has previously caused copied apps to fail
+    // macOS code-signature validation ("app is damaged" errors).
+    await copy(appMountPath, destPath, { recursive: true });
   } catch {
     log("Failed to copy files from DMG");
   } finally {

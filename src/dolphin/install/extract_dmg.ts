@@ -4,14 +4,19 @@
 
 import { Preconditions } from "@common/preconditions";
 import dmg from "dmg";
-import { cp, readdir } from "node:fs/promises";
+import { copy } from "fs-extra";
+import { readdir } from "node:fs/promises";
 
 export async function extractDmg(filename: string, destination: string): Promise<string[]> {
   Preconditions.checkState(filename.endsWith(".dmg"), `Expected a dmg file, got ${filename}`);
 
   const mountPath = await mountDmg(filename);
   const files = await readdir(mountPath);
-  await cp(mountPath, destination, { recursive: true });
+
+  // Use fs-extra's copy() for macOS .app bundles.
+  // Replacing this with fs.cp() has previously caused copied apps to fail
+  // macOS code-signature validation ("app is damaged" errors).
+  await copy(mountPath, destination, { recursive: true });
   await unmountDmg(mountPath);
   return files;
 }

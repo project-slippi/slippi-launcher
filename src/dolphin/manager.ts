@@ -2,7 +2,7 @@ import { Preconditions } from "@common/preconditions";
 import type { SettingsManager } from "@settings/settings_manager";
 import { app } from "electron";
 import electronLog from "electron-log";
-import { cp, rename, rm, unlink } from "node:fs/promises";
+import { cp, rename, rm } from "node:fs/promises";
 
 async function move(src: string, dest: string, options?: { overwrite?: boolean }): Promise<void> {
   try {
@@ -10,7 +10,7 @@ async function move(src: string, dest: string, options?: { overwrite?: boolean }
   } catch (err: unknown) {
     if ((err as NodeJS.ErrnoException).code === "EXDEV") {
       await cp(src, dest, { recursive: true, force: options?.overwrite ?? true });
-      await unlink(src);
+      await rm(src, { recursive: true, force: true });
     } else {
       throw err;
     }
