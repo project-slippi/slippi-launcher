@@ -35,19 +35,59 @@ type IpApiResponse = {
 
 export type UserLocationInfo = Pick<IpApiResponse, "lat" | "lon" | "country" | "countryCode" | "city" | "regionName">;
 
-export async function fetchCurrentLocation(): Promise<UserLocationInfo> {
-  const cachedResponse = cache.get(API);
+/**
+ * Fetches the user's current location based on their IP address.
+ * @param lang The language to use for the response, e.g. country, region, city names. Defaults to English if not provided.
+ * @returns The user's current location information.
+ */
+export async function fetchCurrentLocation(lang?: string): Promise<UserLocationInfo> {
+  const url = generateApiUrl(lang);
+  const cachedResponse = cache.get(url);
   if (cachedResponse) {
     return cachedResponse;
   }
 
   // Fetch the data
-  const res = await fetch(API);
+  const res = await fetch(url);
   const data = (await res.json()) as IpApiResponse;
   Preconditions.checkState(data.status === "success", `Failed to fetch current location: ${data.status}`);
 
   // Cache the data
-  cache.set(API, data);
+  cache.set(url, data);
 
   return data;
+}
+
+function generateApiUrl(lang?: string) {
+  const url = new URL(API);
+  if (lang) {
+    url.searchParams.set("lang", mapToSupportedLanguage(lang));
+  }
+  return url.toString();
+}
+
+/**
+ * Maps a language code to a supported language code for the IP API.
+ *
+ * The list of supported langauge values are:
+ * - de    Deutsch (German)
+ * - es    Español (Spanish)
+ * - pt-BR Português - Brasil (Portuguese)
+ * - fr    Français (French)
+ * - ja    日本語 (Japanese)
+ * - zh-CN 中国 (Chinese)
+ * - ru    Русский (Russian)
+ *
+ * The lang value must match one of these exactly or it will default back to English.
+ *
+ * @param lang The language code to map.
+ * @returns The mapped language code.
+ */
+function mapToSupportedLanguage(lang: string) {
+  switch (lang) {
+    case "pt":
+      return "pt-BR";
+    default:
+      return lang;
+  }
 }

@@ -678,7 +678,7 @@ msgstr "パスワードをお忘れですか？"
 #. {1} city: string - The approximate city the user is in. e.g. Shimomeguro
 #. {2} greaterRegion: string - The greater region/state/prefecture the city is contained in. e.g. Tokyo
 msgid "Found {0, plural, one {# tournament} other {# tournaments}} near {1}, {2}."
-msgstr "{1}、{2}の近くで{0}件の大会が見つかりました。"
+msgstr "{2}の{1}の近くで{0}件の大会が見つかりました。"
 
 #: src/renderer/pages/settings/create.messages.ts:3:15
 msgid "Game"
