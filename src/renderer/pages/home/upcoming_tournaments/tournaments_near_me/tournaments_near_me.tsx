@@ -134,7 +134,7 @@ export const TournamentsNearMe = ({ locationInfo }: { locationInfo: UserLocation
         storeValue(STORAGE_KEY_RADIUS, 100);
       }
 
-      const events = await window.electron.fetch.fetchNearestTournaments(
+      const events = await window.electron.contentManagement.fetchNearestTournaments(
         {
           lat: locationInfo.lat,
           lng: locationInfo.lon,

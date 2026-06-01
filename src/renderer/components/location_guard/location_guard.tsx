@@ -49,7 +49,7 @@ const LocationGuardImpl = ({ render }: { render: (locationInfo: UserLocationInfo
   const currentLanguage = useAppStore((state) => state.currentLanguage);
   const { data, isLoading, error } = useQuery({
     queryKey: ["geoLocationQuery", currentLanguage],
-    queryFn: async () => await window.electron.fetch.fetchCurrentLocation(currentLanguage),
+    queryFn: async () => await window.electron.contentManagement.fetchCurrentLocation(currentLanguage),
     staleTime: 5 * 60 * 1000,
   });
 

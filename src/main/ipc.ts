@@ -40,6 +40,12 @@ export const ipc_runNetworkDiagnostics = makeEndpoint.main(
   <{ address: string; cgnat: Presence; natType: NatType; portMapping: PortMapping }>_,
 );
 
+export const ipc_contentManagementService = makeEndpoint.main(
+  "contentManagementService",
+  <{ service: string; params: Record<string, unknown> }>_,
+  <{ data: unknown }>_,
+);
+
 // Events
 
 export const ipc_openInNewBrowserWindow = makeEndpoint.main(

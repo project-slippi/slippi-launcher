@@ -13,12 +13,14 @@ import { fileExists } from "utils/file_exists";
 import type { AppUpdater } from "./app_updater";
 import { getAppBootstrap } from "./bootstrap";
 import type { BrowserWindowManager } from "./browser_window_manager";
+import { dispatchContentManagementService } from "./content_management/dispatcher";
 import { getLatestRelease } from "./fetch_cross_origin/github";
 import type { ConfigFlags } from "./flags/flags";
 import {
   ipc_checkForUpdate,
   ipc_checkValidIso,
   ipc_clearTempFolder,
+  ipc_contentManagementService,
   ipc_copyLogsToClipboard,
   ipc_fetchNewsFeed,
   ipc_getLatestGitHubReleaseVersion,
@@ -70,6 +72,11 @@ export default function setupMainIpc({
   ipc_fetchNewsFeed.main!.handle(async () => {
     const result = await fetchNewsFeedData();
     return result;
+  });
+
+  ipc_contentManagementService.main!.handle(async ({ service, params }) => {
+    const data = await dispatchContentManagementService(service, params);
+    return { data };
   });
 
   ipc_checkValidIso.main!.handle(async ({ path }) => {

@@ -15,7 +15,7 @@ export const useNewsFeedQuery = () => {
 export const useMeleeMajorsQuery = () => {
   return useQuery({
     queryKey: ["meleeMajorsQuery"],
-    queryFn: () => window.electron.fetch.fetchUpcomingMeleeMajors(),
+    queryFn: () => window.electron.contentManagement.fetchUpcomingMeleeMajors(),
     // The melee majors list rarely ever changes so we probably don't need to fetch often at all
     staleTime: 24 * HOUR,
   });

@@ -11,9 +11,7 @@ import { isSubdirectory } from "utils/is_subdirectory";
 
 import commonApi from "./api";
 import type { AppBootstrap } from "./bootstrap";
-import { fetchCurrentLocation } from "./fetch_cross_origin/ip_api";
-import { fetchUpcomingMeleeMajors } from "./fetch_cross_origin/melee_majors";
-import { fetchNearestTournaments } from "./fetch_cross_origin/smash_map";
+import contentManagementApi from "./content_management_api";
 
 const bootstrap = ipcRenderer.sendSync("getAppBootstrapSync") as AppBootstrap;
 
@@ -26,6 +24,7 @@ const api = {
   dolphin: dolphinApi,
   replays: replaysApi,
   remote: spectateRemoteApi,
+  contentManagement: contentManagementApi,
   utils: {
     isSubdirectory,
     pathExists: (folder: string) => pathExists(folder),
@@ -42,11 +41,6 @@ const api = {
     openPath: shell.openPath,
     openExternal: shell.openExternal,
     showItemInFolder: shell.showItemInFolder,
-  },
-  fetch: {
-    fetchCurrentLocation,
-    fetchNearestTournaments,
-    fetchUpcomingMeleeMajors,
   },
 };
 
