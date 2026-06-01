@@ -1,10 +1,10 @@
 import Sqlite from "better-sqlite3";
 import { app } from "electron";
 import log from "electron-log";
-import fs from "fs-extra";
 import type { LogEvent } from "kysely";
 import { Kysely, sql } from "kysely";
 import { SqliteWorkerDialect } from "kysely-sqlite-worker";
+import { rename, rm } from "node:fs/promises";
 import path from "path";
 
 import { migrateToLatest } from "./migrate_to_latest";
@@ -147,15 +147,15 @@ async function backupAndRecreateDatabase(databasePath: string) {
 
   try {
     // Delete the existing backup if necessary
-    await fs.rm(backupDatabasePath, { force: true });
+    await rm(backupDatabasePath, { force: true });
 
     // Rename the current database
-    await fs.rename(databasePath, backupDatabasePath);
+    await rename(databasePath, backupDatabasePath);
   } catch (err) {
     log.warn(`Failed to backup database: ${err}. Attempting to delete and recreate without backup.`);
     try {
       // If we can't backup, just delete the corrupted database
-      await fs.rm(databasePath, { force: true });
+      await rm(databasePath, { force: true });
     } catch (deleteErr) {
       log.error(`Failed to delete corrupted database: ${deleteErr}`);
       throw new Error(`Unable to recreate database. Please manually delete: ${databasePath}`);

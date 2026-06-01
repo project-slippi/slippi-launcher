@@ -3,7 +3,8 @@ import { addGamePath, getSlippiMainlineSettings, setSlippiMainlineSettings } fro
 import { IniFile } from "@dolphin/config/ini_file";
 import { app } from "electron";
 import electronLog from "electron-log";
-import * as fs from "fs-extra";
+import { pathExists } from "main/util";
+import { cp, mkdir, readdir, rm } from "node:fs/promises";
 import os from "os";
 import path from "path";
 import { lt } from "semver";
@@ -78,10 +79,10 @@ export class MainlineDolphinInstallation implements DolphinInstallation {
     const type = this.dolphinLaunchType;
 
     // Make sure the directory actually exists
-    await fs.ensureDir(dolphinPath);
+    await mkdir(dolphinPath, { recursive: true });
 
     // Check the directory contents
-    const files = await fs.readdir(dolphinPath);
+    const files = await readdir(dolphinPath);
     const result = files.find((filename) => {
       switch (process.platform) {
         case "win32":
@@ -106,7 +107,7 @@ export class MainlineDolphinInstallation implements DolphinInstallation {
 
     if (process.platform === "darwin") {
       const dolphinBinaryPath = path.join(dolphinPath, result, "Contents", "MacOS", "Slippi_Dolphin");
-      const dolphinExists = await fs.pathExists(dolphinBinaryPath);
+      const dolphinExists = await pathExists(dolphinBinaryPath);
       if (!dolphinExists) {
         throw new Error(`No ${type} Dolphin found in: ${dolphinPath}, try resetting dolphin`);
       }
@@ -118,19 +119,19 @@ export class MainlineDolphinInstallation implements DolphinInstallation {
 
   public async clearCache() {
     const cacheFolder = path.join(this.userFolder, "Cache");
-    await fs.remove(cacheFolder);
+    await rm(cacheFolder, { recursive: true, force: true });
   }
 
   public async importConfig(fromPath: string) {
     const newUserFolder = this.userFolder;
-    await fs.ensureDir(this.userFolder);
+    await mkdir(this.userFolder, { recursive: true });
     const oldUserFolder = path.join(fromPath, "User");
 
-    if (!(await fs.pathExists(oldUserFolder))) {
+    if (!(await pathExists(oldUserFolder))) {
       return;
     }
 
-    await fs.copy(oldUserFolder, newUserFolder, { overwrite: true });
+    await cp(oldUserFolder, newUserFolder, { recursive: true, force: true });
 
     // we shouldn't keep the old cache folder since it might be out of date
     await this.clearCache();
@@ -251,14 +252,14 @@ export class MainlineDolphinInstallation implements DolphinInstallation {
 
   public async findPlayKey(): Promise<string> {
     const slippiDir = path.join(this.userFolder, "Slippi");
-    await fs.ensureDir(slippiDir);
+    await mkdir(slippiDir, { recursive: true });
     return path.resolve(slippiDir, "user.json");
   }
 
   private async _uninstallDolphin() {
-    await fs.remove(this.installationFolder);
+    await rm(this.installationFolder, { recursive: true, force: true });
     if (isLinux || isMac) {
-      await fs.remove(this.userFolder);
+      await rm(this.userFolder, { recursive: true, force: true });
     }
   }
 
@@ -271,7 +272,7 @@ export class MainlineDolphinInstallation implements DolphinInstallation {
       if (isLinux || isMac) {
         // macOS and Linux use bundles which are safe to delete since they contain no user config
         // deleting the bundle first lets us ignore any issues that would come up when overwriting the bundle
-        await fs.remove(this.installationFolder);
+        await rm(this.installationFolder, { recursive: true, force: true });
       }
       await this.clearCache(); // clear cache to avoid shader issues on new versions
     }

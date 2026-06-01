@@ -1,5 +1,5 @@
 import type { DolphinInstallation } from "@dolphin/types";
-import * as fs from "fs-extra";
+import { chmod, rm } from "node:fs/promises";
 import { async as AsyncStreamZip } from "node-stream-zip";
 
 // TODO: Figure out how to make this not depend on DolphinLaunchType
@@ -17,7 +17,7 @@ export async function installDolphinOnLinux({
   try {
     const dolphinAppImagePath = await installation.findDolphinExecutable();
     log(`${dolphinAppImagePath} already exists. Deleting...`);
-    await fs.remove(dolphinAppImagePath);
+    await rm(dolphinAppImagePath, { recursive: true, force: true });
   } catch (err) {
     log("No existing AppImage found");
   }
@@ -29,5 +29,5 @@ export async function installDolphinOnLinux({
   // make the appimage executable because sometimes it doesn't have the right perms out the gate
   const dolphinAppImagePath = await installation.findDolphinExecutable();
   log(`Setting executable permissions...`);
-  await fs.chmod(dolphinAppImagePath, "755");
+  await chmod(dolphinAppImagePath, "755");
 }

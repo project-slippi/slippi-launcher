@@ -1,7 +1,7 @@
 import { shell } from "electron";
 import log from "electron-log";
-import * as fs from "fs-extra";
 import isEqual from "lodash/isEqual";
+import { readFile } from "node:fs/promises";
 import { fileExists } from "utils/file_exists";
 
 import {
@@ -79,7 +79,7 @@ export default function setupDolphinIpc({ dolphinManager }: { dolphinManager: Do
     }
 
     try {
-      const jsonKey = await fs.readFile(keyPath);
+      const jsonKey = await readFile(keyPath);
       const fileContents = jsonKey.toString();
       const storedKey = JSON.parse(fileContents);
       return { exists: isEqual(storedKey, key) };

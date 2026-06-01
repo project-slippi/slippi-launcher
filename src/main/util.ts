@@ -1,9 +1,18 @@
 /* eslint import/prefer-default-export: off, import/no-mutable-exports: off */
 import { Preconditions } from "@common/preconditions";
 import { app } from "electron";
-import * as fs from "fs-extra";
+import { access, mkdir, open, rm, stat as fsStat } from "node:fs/promises";
 import path from "path";
 import { URL } from "url";
+
+export async function pathExists(path: string): Promise<boolean> {
+  try {
+    await access(path);
+    return true;
+  } catch {
+    return false;
+  }
+}
 
 export let resolveHtmlPath: (htmlFileName: string) => string;
 
@@ -20,12 +29,11 @@ if (process.env.NODE_ENV === "development") {
   };
 }
 
-const RESOURCES_PATH = app.isPackaged
-  ? path.join(process.resourcesPath, "assets")
-  : path.join(__dirname, "../../assets");
-
 export const getAssetPath = (...paths: string[]): string => {
-  return path.resolve(path.join(RESOURCES_PATH, ...paths));
+  const resourcesPath = app.isPackaged
+    ? path.join(process.resourcesPath, "assets")
+    : path.join(__dirname, "../../assets");
+  return path.resolve(path.join(resourcesPath, ...paths));
 };
 
 // Implemenation taken from https://github.com/alexbbt/read-last-lines/blob/11945800b013fe5016c4ea36e49d28c67aa75e7c/src/index.js
@@ -34,27 +42,27 @@ export async function readLastLines(
   maxLineCount: number,
   encoding: BufferEncoding = "utf-8",
 ): Promise<string> {
-  const fileExists = await fs.pathExists(inputFilePath);
+  const fileExists = await pathExists(inputFilePath);
   Preconditions.checkState(fileExists, `${inputFilePath} does not exist`);
 
   // Load file Stats.
-  const stat = await fs.stat(inputFilePath);
+  const fileStat = await fsStat(inputFilePath);
 
   // Open file for reading.
-  const file = await fs.open(inputFilePath, "r");
+  const file = await open(inputFilePath, "r");
 
-  const bufferSize = Math.min(16384, stat.size);
+  const bufferSize = Math.min(16384, fileStat.size);
   const readBuffer = new Uint8Array(bufferSize);
   let readBufferRemaining = 0;
   const allBytes: number[] = [];
   let lineCount = 0;
-  let fileOffset = stat.size;
+  let fileOffset = fileStat.size;
 
   while (lineCount < maxLineCount && fileOffset > 0) {
     // Read the next chunk of the file
     const readSize = Math.min(readBuffer.length, fileOffset);
     fileOffset -= readSize;
-    const readResult = await fs.read(file, readBuffer, 0, readSize, fileOffset);
+    const readResult = await file.read(readBuffer, 0, readSize, fileOffset);
 
     // If there's still data in our read buffer, then finish processing that
     readBufferRemaining = readResult.bytesRead;
@@ -71,7 +79,7 @@ export async function readLastLines(
     }
   }
 
-  await fs.close(file);
+  await file.close();
 
   // Reverse the array
   allBytes.reverse();
@@ -81,6 +89,6 @@ export async function readLastLines(
 
 export async function clearTempFolder() {
   const tmpDir = path.join(app.getPath("userData"), "temp");
-  await fs.remove(tmpDir);
-  await fs.ensureDir(tmpDir);
+  await rm(tmpDir, { recursive: true, force: true });
+  await mkdir(tmpDir, { recursive: true });
 }

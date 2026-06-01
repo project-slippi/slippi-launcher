@@ -5,9 +5,15 @@
 
 import electronLog from "electron-log";
 import fs from "fs";
-import { ensureFile } from "fs-extra";
+import { mkdir, open } from "node:fs/promises";
+import { dirname } from "node:path";
 import readline from "readline";
 import { fileExists } from "utils/file_exists";
+
+async function ensureFile(filePath: string): Promise<void> {
+  await mkdir(dirname(filePath), { recursive: true });
+  await open(filePath, "a").then((fh) => fh.close());
+}
 
 const log = electronLog.scope("iniFile");
 

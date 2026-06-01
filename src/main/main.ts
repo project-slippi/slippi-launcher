@@ -17,9 +17,9 @@ import { ipc_openSettingsModalEvent } from "@settings/ipc";
 import type CrossProcessExports from "electron";
 import { app, BrowserWindow, shell } from "electron";
 import log from "electron-log";
-import * as fs from "fs-extra";
 import get from "lodash/get";
 import last from "lodash/last";
+import { mkdir } from "node:fs/promises";
 import path from "path";
 import url from "url";
 import { download } from "utils/download";
@@ -248,7 +248,7 @@ const handleSlippiURIAsync = async (aUrl: string) => {
       }
 
       const tmpDir = path.join(app.getPath("userData"), "temp");
-      await fs.ensureDir(tmpDir);
+      await mkdir(tmpDir, { recursive: true });
       const destination = path.join(tmpDir, path.basename(replayPath));
 
       const fileAlreadyExists = await fileExists(destination);

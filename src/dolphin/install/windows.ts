@@ -1,4 +1,4 @@
-import { remove } from "fs-extra";
+import { rm } from "node:fs/promises";
 import { async as AsyncStreamZip } from "node-stream-zip";
 import path from "path";
 
@@ -13,7 +13,7 @@ export async function installDolphinOnWindows({
 }) {
   // clear Sys folder in case of file removals
   const sysFolder = path.join(destinationFolder, "Sys");
-  await remove(sysFolder);
+  await rm(sysFolder, { recursive: true, force: true });
 
   // don't need to backup user files since our zips don't contain them
   log(`Extracting ${assetPath} to: ${destinationFolder}`);

@@ -10,7 +10,8 @@ import {
   SlpStreamEvent,
 } from "@slippi/slippi-js/node";
 import { EventEmitter } from "events";
-import * as fs from "fs-extra";
+import { mkdirSync } from "node:fs";
+import { mkdir } from "node:fs/promises";
 import path from "path";
 
 import { AutoSwitcher } from "./auto_switcher";
@@ -45,7 +46,7 @@ export class MirrorManager extends EventEmitter {
     this.emit(MirrorEvent.LOG, "Setting up mirror");
 
     try {
-      await fs.ensureDir(config.folderPath);
+      await mkdir(config.folderPath, { recursive: true });
     } catch (err) {
       if (err) {
         this.emit(MirrorEvent.ERROR, err);
@@ -107,7 +108,7 @@ export class MirrorManager extends EventEmitter {
         try {
           if (config.useNicknameFolders && details.consoleNick && details.consoleNick.length > 0) {
             const replayFolder = path.join(config.folderPath, details.consoleNick.trim());
-            fs.ensureDirSync(replayFolder);
+            mkdirSync(replayFolder, { recursive: true });
 
             fileWriter.updateSettings({ consoleNickname: details.consoleNick, folderPath: replayFolder });
           }

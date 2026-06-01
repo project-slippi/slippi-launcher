@@ -1,4 +1,5 @@
-import * as fs from "fs-extra";
+import { pathExists } from "main/util";
+import { mkdir, readdir } from "node:fs/promises";
 import path from "path";
 
 import { setBootToCss } from "./config/config";
@@ -10,10 +11,10 @@ import { DolphinLaunchType } from "./types";
 
 export async function findDolphinExecutable(type: DolphinLaunchType, dolphinPath: string): Promise<string> {
   // Make sure the directory actually exists
-  await fs.ensureDir(dolphinPath);
+  await mkdir(dolphinPath, { recursive: true });
 
   // Check the directory contents
-  const files = await fs.readdir(dolphinPath);
+  const files = await readdir(dolphinPath);
   const result = files.find((filename) => {
     switch (process.platform) {
       case "win32":
@@ -38,7 +39,7 @@ export async function findDolphinExecutable(type: DolphinLaunchType, dolphinPath
 
   if (process.platform === "darwin") {
     const dolphinBinaryPath = path.join(dolphinPath, result, "Contents", "MacOS", "Slippi Dolphin");
-    const dolphinExists = await fs.pathExists(dolphinBinaryPath);
+    const dolphinExists = await pathExists(dolphinBinaryPath);
     if (!dolphinExists) {
       throw new Error(`No ${type} Dolphin found in: ${dolphinPath}, try resetting dolphin`);
     }
@@ -51,7 +52,7 @@ export async function findDolphinExecutable(type: DolphinLaunchType, dolphinPath
 export async function updateBootToCssCode(installation: DolphinInstallation, options: { enable: boolean }) {
   const { userFolder, sysFolder } = installation;
 
-  await Promise.all([fs.ensureDir(userFolder), fs.ensureDir(sysFolder)]);
+  await Promise.all([mkdir(userFolder, { recursive: true }), mkdir(sysFolder, { recursive: true })]);
 
   // Update vanilla ISO configs
   await Promise.all(
@@ -68,7 +69,7 @@ export async function updateBootToCssCode(installation: DolphinInstallation, opt
 export async function fetchGeckoCodes(installation: DolphinInstallation) {
   const { userFolder, sysFolder } = installation;
 
-  await Promise.all([fs.ensureDir(userFolder), fs.ensureDir(sysFolder)]);
+  await Promise.all([mkdir(userFolder, { recursive: true }), mkdir(sysFolder, { recursive: true })]);
   const globalIniPath = path.join(sysFolder, "GameSettings", `GALE01r2.ini`);
   const localIniPath = path.join(userFolder, "GameSettings", `GALE01.ini`);
   const globalIni = await IniFile.init(globalIniPath);
@@ -80,7 +81,7 @@ export async function fetchGeckoCodes(installation: DolphinInstallation) {
 export async function saveGeckoCodes(installation: DolphinInstallation, geckoCodes: GeckoCode[]) {
   const { userFolder, sysFolder } = installation;
 
-  await Promise.all([fs.ensureDir(userFolder), fs.ensureDir(sysFolder)]);
+  await Promise.all([mkdir(userFolder, { recursive: true }), mkdir(sysFolder, { recursive: true })]);
   const localIniPath = path.join(userFolder, "GameSettings", `GALE01.ini`);
   const localIni = await IniFile.init(localIniPath);
 

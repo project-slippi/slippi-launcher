@@ -4,7 +4,7 @@
 
 import type { GameStartType, MetadataType } from "@slippi/slippi-js/node";
 import { SlippiGame } from "@slippi/slippi-js/node";
-import * as fs from "fs-extra";
+import { stat } from "node:fs/promises";
 import type { ModuleMethods } from "threads/dist/types/master";
 import { expose } from "threads/worker";
 
@@ -51,7 +51,7 @@ const methods: WorkerSpec = {
       let sizeBytes = 0;
       let birthTime: string | undefined = undefined;
       try {
-        const fileInfo = await fs.stat(fullPath);
+        const fileInfo = await stat(fullPath);
         sizeBytes = fileInfo.size;
         birthTime = fileInfo.birthtime.toISOString();
       } catch (err) {

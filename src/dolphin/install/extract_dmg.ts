@@ -4,14 +4,14 @@
 
 import { Preconditions } from "@common/preconditions";
 import dmg from "dmg";
-import * as fs from "fs-extra";
+import { cp, readdir } from "node:fs/promises";
 
 export async function extractDmg(filename: string, destination: string): Promise<string[]> {
   Preconditions.checkState(filename.endsWith(".dmg"), `Expected a dmg file, got ${filename}`);
 
   const mountPath = await mountDmg(filename);
-  const files = await fs.readdir(mountPath);
-  await fs.copy(mountPath, destination, { recursive: true });
+  const files = await readdir(mountPath);
+  await cp(mountPath, destination, { recursive: true });
   await unmountDmg(mountPath);
   return files;
 }

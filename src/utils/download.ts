@@ -1,4 +1,4 @@
-import * as fs from "fs-extra";
+import { mkdir, unlink } from "node:fs/promises";
 import { dirname } from "path";
 import { download as wgetDownload } from "wget-improved";
 
@@ -17,13 +17,13 @@ export async function download(options: {
   }
 
   // Make sure the folder exists
-  await fs.ensureDir(dirname(destinationFile));
+  await mkdir(dirname(destinationFile), { recursive: true });
 
   return new Promise((resolve, reject) => {
     let totalBytes = 0;
     const downloader = wgetDownload(url, destinationFile);
     downloader.on("error", (err) => {
-      fs.unlink(destinationFile, () => {
+      unlink(destinationFile).catch(() => {
         reject(err);
       });
     });

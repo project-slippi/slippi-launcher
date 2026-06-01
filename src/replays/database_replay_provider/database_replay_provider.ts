@@ -10,8 +10,9 @@ import type { StadiumStatsType, StatsType } from "@slippi/slippi-js/node";
 import { SlippiGame } from "@slippi/slippi-js/node";
 import { shell } from "electron";
 import log from "electron-log";
-import * as fs from "fs-extra";
 import type { Kysely, Transaction } from "kysely";
+import { pathExists } from "main/util";
+import { stat } from "node:fs/promises";
 import path from "path";
 
 import { extractPlayerNames } from "../extract_player_names";
@@ -73,7 +74,7 @@ export class DatabaseReplayProvider implements ReplayProvider {
     // Only sync if we're not using continuation (i.e., first page of results) and folder is specified
     if (folder !== undefined && continuationValue === null && nextIdInclusive === null) {
       // Only sync if the folder exists on disk
-      if (await fs.pathExists(folder)) {
+      if (await pathExists(folder)) {
         const syncStartTime = Date.now();
         await this.syncReplayDatabase(folder, onProgress, INSERT_REPLAY_BATCH_SIZE, requestId);
         const syncDuration = Date.now() - syncStartTime;
@@ -175,7 +176,7 @@ export class DatabaseReplayProvider implements ReplayProvider {
   ): Promise<string[]> {
     // Sync the database first (add new files, remove deleted files)
     // Only sync if folder is specified and exists on disk
-    if (folder !== undefined && (await fs.pathExists(folder))) {
+    if (folder !== undefined && (await pathExists(folder))) {
       await this.syncReplayDatabase(folder, undefined, INSERT_REPLAY_BATCH_SIZE);
     }
 
@@ -270,7 +271,7 @@ export class DatabaseReplayProvider implements ReplayProvider {
 
     // Sync the database first to ensure we're working with up-to-date data
     // Only sync if folder is specified and exists on disk
-    if (folder !== undefined && (await fs.pathExists(folder))) {
+    if (folder !== undefined && (await pathExists(folder))) {
       const syncStartTime = Date.now();
       await this.syncReplayDatabase(folder, undefined, INSERT_REPLAY_BATCH_SIZE);
       const syncDuration = Date.now() - syncStartTime;
@@ -613,7 +614,7 @@ export class DatabaseReplayProvider implements ReplayProvider {
       let sizeBytes = 0;
       let birthTime: string | undefined = undefined;
       try {
-        const fileInfo = await fs.stat(fullPath);
+        const fileInfo = await stat(fullPath);
         sizeBytes = fileInfo.size;
         birthTime = fileInfo.birthtime.toISOString();
       } catch (err) {

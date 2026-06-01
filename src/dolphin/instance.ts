@@ -5,8 +5,9 @@ import { randomBytes } from "crypto";
 import { app } from "electron";
 import electronLog from "electron-log";
 import { EventEmitter } from "events";
-import * as fs from "fs-extra";
 import debounce from "lodash/debounce";
+import { mkdirSync } from "node:fs";
+import { unlink, writeFile } from "node:fs/promises";
 import path from "path";
 import { fileExists } from "utils/file_exists";
 
@@ -25,7 +26,7 @@ export class MacOsRosettaRequiredError extends Error {
 
 const generateTempCommunicationFile = (): string => {
   const tmpDir = path.join(app.getPath("userData"), "temp");
-  fs.ensureDirSync(tmpDir);
+  mkdirSync(tmpDir, { recursive: true });
   const uniqueId = randomBytes(12).toString("hex");
   const commFileName = `slippi-comms-${uniqueId}.json`;
   const commFileFullPath = path.join(tmpDir, commFileName);
@@ -140,7 +141,7 @@ export class PlaybackDolphinInstance extends DolphinInstance {
       try {
         const exists = await fileExists(this.commPath);
         if (exists) {
-          await fs.unlink(this.commPath);
+          await unlink(this.commPath);
         }
       } catch (err) {
         log.warn(err);
@@ -160,7 +161,7 @@ export class PlaybackDolphinInstance extends DolphinInstance {
     if (diff < 1000) {
       await delay(1000 - diff);
     }
-    await fs.writeFile(this.commPath, JSON.stringify(options));
+    await writeFile(this.commPath, JSON.stringify(options));
     this.lastWriteMs = Date.now();
   }
 

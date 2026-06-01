@@ -1,4 +1,4 @@
-import * as fs from "fs-extra";
+import { chmod, chown, cp, readdir, rm } from "node:fs/promises";
 import os from "os";
 import path from "path";
 
@@ -16,12 +16,12 @@ export async function installIshiirukaDolphinOnMac({
   log(`Extracting to: ${destinationFolder}`);
   await extractDmg(assetPath, destinationFolder);
 
-  const files = await fs.readdir(destinationFolder);
+  const files = await readdir(destinationFolder);
   const filesToRemove = files.filter((file) => file !== "Slippi Dolphin.app");
 
   for (let i = 0; i < filesToRemove.length; i++) {
     const file = filesToRemove[i];
-    await fs.remove(path.join(destinationFolder, file));
+    await rm(path.join(destinationFolder, file), { recursive: true, force: true });
   }
 
   // sometimes permissions aren't set properly after the extraction so we will forcibly set them on install
@@ -29,10 +29,10 @@ export async function installIshiirukaDolphinOnMac({
   const userInfo = os.userInfo();
 
   await Promise.all([
-    fs.chmod(path.join(destinationFolder, "Slippi Dolphin.app"), "777"),
-    fs.chown(path.join(destinationFolder, "Slippi Dolphin.app"), userInfo.uid, userInfo.gid),
-    fs.chmod(binaryLocation, "777"),
-    fs.chown(binaryLocation, userInfo.uid, userInfo.gid),
+    chmod(path.join(destinationFolder, "Slippi Dolphin.app"), "777"),
+    chown(path.join(destinationFolder, "Slippi Dolphin.app"), userInfo.uid, userInfo.gid),
+    chmod(binaryLocation, "777"),
+    chown(binaryLocation, userInfo.uid, userInfo.gid),
   ]);
 }
 
@@ -51,7 +51,7 @@ export async function installMainlineDolphinOnMac({
   try {
     const appMountPath = path.join(mountPath, "Slippi_Dolphin.app");
     const destPath = path.join(destinationFolder, "Slippi_Dolphin.app");
-    await fs.copy(appMountPath, destPath, { recursive: true });
+    await cp(appMountPath, destPath, { recursive: true });
   } catch {
     log("Failed to copy files from DMG");
   } finally {
@@ -64,10 +64,10 @@ export async function installMainlineDolphinOnMac({
     const userInfo = os.userInfo();
 
     await Promise.all([
-      fs.chmod(path.join(destinationFolder, "Slippi_Dolphin.app"), "777"),
-      fs.chown(path.join(destinationFolder, "Slippi_Dolphin.app"), userInfo.uid, userInfo.gid),
-      fs.chmod(binaryLocation, "777"),
-      fs.chown(binaryLocation, userInfo.uid, userInfo.gid),
+      chmod(path.join(destinationFolder, "Slippi_Dolphin.app"), "777"),
+      chown(path.join(destinationFolder, "Slippi_Dolphin.app"), userInfo.uid, userInfo.gid),
+      chmod(binaryLocation, "777"),
+      chown(binaryLocation, userInfo.uid, userInfo.gid),
     ]);
   } catch {
     log("Could not chown/chmod Dolphin");

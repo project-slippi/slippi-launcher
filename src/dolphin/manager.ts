@@ -2,7 +2,20 @@ import { Preconditions } from "@common/preconditions";
 import type { SettingsManager } from "@settings/settings_manager";
 import { app } from "electron";
 import electronLog from "electron-log";
-import { move, remove } from "fs-extra";
+import { cp, rename, rm, unlink } from "node:fs/promises";
+
+async function move(src: string, dest: string, options?: { overwrite?: boolean }): Promise<void> {
+  try {
+    await rename(src, dest);
+  } catch (err: unknown) {
+    if ((err as NodeJS.ErrnoException).code === "EXDEV") {
+      await cp(src, dest, { recursive: true, force: options?.overwrite ?? true });
+      await unlink(src);
+    } else {
+      throw err;
+    }
+  }
+}
 import { Observable, Subject } from "observable-fns";
 import os from "os";
 import path from "path";
@@ -357,7 +370,7 @@ export class DolphinManager {
       const stablePath = path.join(app.getPath("userData"), dolphinFolder);
       const legacyPath = path.join(app.getPath("userData"), `${dolphinFolder}-legacy`);
       try {
-        await remove(betaPath);
+        await rm(betaPath, { recursive: true, force: true });
         await move(stablePath, legacyPath, { overwrite: true });
         if (process.platform === "darwin") {
           // mainline on macOS will take over the old user folder so move it on promotion

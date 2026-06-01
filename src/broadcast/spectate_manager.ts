@@ -1,7 +1,7 @@
 import { Preconditions } from "@common/preconditions";
 import { SlpFileWriter, SlpFileWriterEvent } from "@slippi/slippi-js/node";
 import { EventEmitter } from "events";
-import * as fs from "fs-extra";
+import { mkdirSync } from "node:fs";
 import type { connection, Message } from "websocket";
 import { client as WebSocketClient } from "websocket";
 
@@ -247,7 +247,7 @@ export class SpectateManager extends EventEmitter {
     const dolphinPlaybackId = dolphinOptions.dolphinId || generatePlaybackId(dolphinOptions.idPostfix);
     const broadcasterName = dolphinOptions.dolphinId || this.availableBroadcasts[broadcastId].name;
 
-    fs.ensureDirSync(targetPath);
+    mkdirSync(targetPath, { recursive: true });
     const slpFileWriter = new SlpFileWriter({
       folderPath: targetPath,
     });
