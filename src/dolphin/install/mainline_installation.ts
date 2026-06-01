@@ -3,7 +3,7 @@ import { addGamePath, getSlippiMainlineSettings, setSlippiMainlineSettings } fro
 import { IniFile } from "@dolphin/config/ini_file";
 import { app } from "electron";
 import electronLog from "electron-log";
-import { pathExists } from "main/util";
+import { pathExists } from "fs-extra";
 import { cp, mkdir, readdir, rm } from "node:fs/promises";
 import os from "os";
 import path from "path";
