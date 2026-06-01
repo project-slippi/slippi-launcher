@@ -6,7 +6,7 @@ const HOUR = 60 * MINUTE;
 export const useNewsFeedQuery = () => {
   return useQuery({
     queryKey: ["newsFeedQuery"],
-    queryFn: () => window.electron.common.fetchNewsFeed(),
+    queryFn: () => window.electron.contentManagement.fetchNewsFeed(),
     // Probably won't change that much so this should be fine
     staleTime: 15 * MINUTE,
   });
