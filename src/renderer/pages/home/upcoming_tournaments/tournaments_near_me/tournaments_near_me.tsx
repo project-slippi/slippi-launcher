@@ -120,8 +120,8 @@ export const TournamentsNearMe = ({ locationInfo }: { locationInfo: UserLocation
     return radius;
   }, [radius, units]);
 
-  const geoLocationQuery = useQuery({
-    queryKey: ["geoLocationQuery", radiusInKm],
+  const nearbyTournamentsQuery = useQuery({
+    queryKey: ["nearbyTournamentsQuery", radiusInKm],
     queryFn: async () => {
       if (!localStorage.getItem(STORAGE_KEY_UNITS)) {
         const defaultUnits: "km" | "mi" = ["US", "GB"].includes(locationInfo.countryCode) ? "mi" : "km";
@@ -167,10 +167,10 @@ export const TournamentsNearMe = ({ locationInfo }: { locationInfo: UserLocation
   };
 
   const sortedEvents = useMemo(() => {
-    if (!geoLocationQuery.data) {
+    if (!nearbyTournamentsQuery.data) {
       return [];
     }
-    const events = [...geoLocationQuery.data.events];
+    const events = [...nearbyTournamentsQuery.data.events];
     if (sortBy === "distance") {
       events.sort((a, b) => {
         const dist = a.distanceToVenueKm - b.distanceToVenueKm;
@@ -189,22 +189,22 @@ export const TournamentsNearMe = ({ locationInfo }: { locationInfo: UserLocation
     }
 
     return events;
-  }, [geoLocationQuery.data, sortBy]);
+  }, [nearbyTournamentsQuery.data, sortBy]);
 
   const content = () => {
-    if (geoLocationQuery.isLoading) {
+    if (nearbyTournamentsQuery.isLoading) {
       return <div className={styles.loading}>{Messages.loading()}</div>;
     }
 
-    if (geoLocationQuery.error instanceof Error) {
-      return <div className={styles.errorMessage}>{Messages.error(geoLocationQuery.error.message)}</div>;
+    if (nearbyTournamentsQuery.error instanceof Error) {
+      return <div className={styles.errorMessage}>{Messages.error(nearbyTournamentsQuery.error.message)}</div>;
     }
 
     return (
       <>
         <div className={styles.eventsCount}>
           {Messages.foundTournamentsNearby(
-            geoLocationQuery.data?.events.length ?? 0,
+            nearbyTournamentsQuery.data?.events.length ?? 0,
             locationInfo.city,
             locationInfo.regionName,
           )}
