@@ -63,7 +63,7 @@ msgstr "Avançado"
 #: src/renderer/pages/replays/replay_browser/file_selection_toolbar/file_selection_toolbar.messages.ts:3:40
 #. {0} count: number
 msgid "All {0, plural, one {# file} other {# files}} selected"
-msgstr "Todo(s) {0, plural, one {# arquivo} other {# arquivos}} selecionado(s)"
+msgstr "{0, plural, one {Todo # arquivo selecionado} other {Todos # arquivos selecionados}}"
 
 #: src/renderer/components/location_guard/location_guard.messages.ts:6:16
 msgid "Allow"
@@ -696,7 +696,7 @@ msgstr "Esqueceu sua senha?"
 #. {1} city: string - The approximate city the user is in. e.g. Shimomeguro
 #. {2} greaterRegion: string - The greater region/state/prefecture the city is contained in. e.g. Tokyo
 msgid "Found {0, plural, one {# tournament} other {# tournaments}} near {1}, {2}."
-msgstr "Encontrado(s) {0, plural, one {# torneio} other {# torneios}} perto de {1}, {2}."
+msgstr "{0, plural, one {Encontrado # torneio} other {Encontrados # torneios}} perto de {1}, {2}."
 
 #: src/renderer/pages/settings/create.messages.ts:3:15
 msgid "Game"
@@ -2018,39 +2018,39 @@ msgstr "ou arraste e solte aqui"
 #. {0} count: number
 #. {1} total: number
 msgid "{0, number} of {1, plural, one {# replay} other {# replays}} processed."
-msgstr "{0, number} de {1, plural, one {# replay} other {# replays}} processado(s)."
+msgstr "{0, number} de {1, plural, one {# replay processado} other {# replays processados}}."
 
 #: src/renderer/pages/replays/replay_browser/file_selection_toolbar/file_selection_toolbar.messages.ts:2:37
 #. {0} count: number
 msgid "{0, plural, one {# file} other {# files}} selected"
-msgstr "{0, plural, one {# arquivo} other {# arquivos}} selecionado(s)"
+msgstr "{0, plural, one {# arquivo selecionado} other {# arquivos selecionados}}"
 
 #: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:2:36
 #. {0} count: number
 msgid "{0, plural, one {# file} other {# files}} successfully deleted."
-msgstr "{0, plural, one {# arquivo} other {# arquivos}} excluído(s) com sucesso."
+msgstr "{0, plural, one {# arquivo excluído com sucesso} other {# arquivos excluídos com sucesso}}."
 
 #: src/renderer/pages/replays/replay_browser/file_selection_toolbar/file_selection_toolbar.messages.ts:9:37
 #. {0} count: number
 msgid "{0, plural, one {# file} other {# files}} will be deleted."
-msgstr "{0, plural, one {# arquivo} other {# arquivos}} será(ão) excluído(s)."
+msgstr "{0, plural, one {# arquivo será excluído} other {# arquivos serão excluídos}}."
 
 #: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:10:43
 #. {0} count: number
 msgid "{0, plural, one {# replay} other {# replays}} filtered."
-msgstr "{0, plural, one {# replay} other {# replays}} filtrado(s)."
+msgstr "{0, plural, one {# replay filtrado} other {# replays filtrados}}."
 
 #: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:9:40
 #. {0} count: number
 msgid "{0, plural, one {# replay} other {# replays}} found."
-msgstr "{0, plural, one {# replay} other {# replays}} encontrado(s)."
+msgstr "{0, plural, one {# replay encontrado} other {# replays encontrados}}."
 
 #: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:12:40
 #. {0} count: number
 msgid "{0, plural, one {# replay} other {# replays}} had errors."
-msgstr "{0, plural, one {# replay} other {# replays}} com erro(s)."
+msgstr "{0, plural, one {# replay com erros} other {# replays com erros}}."
 
 #: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:11:41
 #. {0} count: number
 msgid "{0, plural, one {# replay} other {# replays}} hidden."
-msgstr "{0, plural, one {# replay} other {# replays}} oculto(s)."
+msgstr "{0, plural, one {# replay oculto} other {# replays ocultos}}."
