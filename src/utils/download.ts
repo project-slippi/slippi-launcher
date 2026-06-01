@@ -1,6 +1,6 @@
+import { createWriteStream } from "node:fs";
 import { mkdir, unlink } from "node:fs/promises";
-import { dirname } from "path";
-import { download as wgetDownload } from "wget-improved";
+import { dirname } from "node:path";
 
 import { fileExists } from "./file_exists";
 
@@ -19,24 +19,58 @@ export async function download(options: {
   // Make sure the folder exists
   await mkdir(dirname(destinationFile), { recursive: true });
 
-  return new Promise((resolve, reject) => {
-    let totalBytes = 0;
-    const downloader = wgetDownload(url, destinationFile);
-    downloader.on("error", (err) => {
-      unlink(destinationFile).catch(() => {
-        reject(err);
-      });
-    });
-    downloader.on("start", (fileSize: number | null) => {
-      if (fileSize !== null) {
-        totalBytes = fileSize;
+  const file = createWriteStream(destinationFile);
+
+  try {
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      throw new Error(`Failed to download ${url}: HTTP ${response.status} ${response.statusText}`);
+    }
+
+    if (!response.body) {
+      throw new Error(`Failed to download ${url}: Response body is empty`);
+    }
+
+    const totalBytes = Number(response.headers.get("content-length") ?? 0);
+
+    let transferredBytes = 0;
+
+    const reader = response.body.getReader();
+
+    // eslint-disable-next-line no-constant-condition
+    while (true) {
+      const { done, value } = await reader.read();
+
+      if (done) {
+        break;
       }
+
+      transferredBytes += value.length;
+
+      onProgress?.({
+        transferredBytes,
+        totalBytes,
+      });
+
+      if (!file.write(value)) {
+        await new Promise<void>((resolve) => {
+          file.once("drain", resolve);
+        });
+      }
+    }
+
+    file.end();
+
+    await new Promise<void>((resolve, reject) => {
+      file.once("finish", resolve);
+      file.once("error", reject);
     });
-    downloader.on("end", () => {
-      resolve();
-    });
-    downloader.on("bytes", (transferredBytes: number) => {
-      onProgress?.({ transferredBytes, totalBytes });
-    });
-  });
+  } catch (err) {
+    file.destroy();
+
+    await unlink(destinationFile).catch(() => {});
+
+    throw err;
+  }
 }
