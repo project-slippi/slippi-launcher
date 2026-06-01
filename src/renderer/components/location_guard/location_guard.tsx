@@ -5,6 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { type UserLocationInfo } from "main/fetch_cross_origin/ip_api";
 import React from "react";
 
+import { useAppStore } from "@/lib/hooks/use_app_store";
 import { useEnableLocationAccess } from "@/lib/hooks/use_settings";
 
 import { LocationGuardMessages as Messages } from "./location_guard.messages";
@@ -45,9 +46,10 @@ export const LocationGuard = ({
 };
 
 const LocationGuardImpl = ({ render }: { render: (locationInfo: UserLocationInfo) => React.ReactNode }) => {
+  const currentLanguage = useAppStore((state) => state.currentLanguage);
   const { data, isLoading, error } = useQuery({
-    queryKey: ["geoLocationQuery"],
-    queryFn: async () => await window.electron.fetch.fetchCurrentLocation(),
+    queryKey: ["geoLocationQuery", currentLanguage],
+    queryFn: async () => await window.electron.fetch.fetchCurrentLocation(currentLanguage),
     staleTime: 5 * 60 * 1000,
   });
 
