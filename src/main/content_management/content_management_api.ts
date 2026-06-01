@@ -12,10 +12,14 @@ async function callService<N extends ContentManagementServiceName>(
   return result.data as ContentManagementResult<N>;
 }
 
-export default {
+const contentManagementService = {
   fetchCurrentLocation: (lang?: string) => callService("fetchCurrentLocation", { lang }),
   fetchNearestTournaments: (location: { lat: number; lng: number }, radiusKms?: number) =>
     callService("fetchNearestTournaments", { location, radiusKms }),
   fetchUpcomingMeleeMajors: () => callService("fetchUpcomingMeleeMajors", {}),
   fetchNewsFeed: () => callService("fetchNewsFeed", {}),
 };
+
+export type ContentManagementService = typeof contentManagementService;
+
+export default contentManagementService;

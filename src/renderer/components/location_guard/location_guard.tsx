@@ -7,6 +7,7 @@ import React from "react";
 
 import { useAppStore } from "@/lib/hooks/use_app_store";
 import { useEnableLocationAccess } from "@/lib/hooks/use_settings";
+import { useServices } from "@/services";
 
 import { LocationGuardMessages as Messages } from "./location_guard.messages";
 import styles from "./location_guard.module.css";
@@ -47,9 +48,10 @@ export const LocationGuard = ({
 
 const LocationGuardImpl = ({ render }: { render: (locationInfo: UserLocationInfo) => React.ReactNode }) => {
   const currentLanguage = useAppStore((state) => state.currentLanguage);
+  const { contentManagementService } = useServices();
   const { data, isLoading, error } = useQuery({
     queryKey: ["geoLocationQuery", currentLanguage],
-    queryFn: async () => await window.electron.contentManagement.fetchCurrentLocation(currentLanguage),
+    queryFn: async () => await contentManagementService.fetchCurrentLocation(currentLanguage),
     staleTime: 5 * 60 * 1000,
   });
 

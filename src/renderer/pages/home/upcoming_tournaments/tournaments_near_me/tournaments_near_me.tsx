@@ -8,6 +8,7 @@ import { useEffect, useMemo, useState } from "react";
 import { ExternalLink as A, ExternalLink } from "@/components/external_link";
 import { useAppStore } from "@/lib/hooks/use_app_store";
 import { formatDateRange, formatRelativeDate } from "@/lib/time";
+import { useServices } from "@/services";
 import type { SupportedLanguage } from "@/services/i18n/util";
 
 import { type DistanceValue, type UnitValue, DistanceUnitSelect } from "./select/distance_unit_select";
@@ -120,6 +121,7 @@ export const TournamentsNearMe = ({ locationInfo }: { locationInfo: UserLocation
     return radius;
   }, [radius, units]);
 
+  const { contentManagementService } = useServices();
   const nearbyTournamentsQuery = useQuery({
     queryKey: ["nearbyTournamentsQuery", radiusInKm],
     queryFn: async () => {
@@ -134,7 +136,7 @@ export const TournamentsNearMe = ({ locationInfo }: { locationInfo: UserLocation
         storeValue(STORAGE_KEY_RADIUS, 100);
       }
 
-      const events = await window.electron.contentManagement.fetchNearestTournaments(
+      const events = await contentManagementService.fetchNearestTournaments(
         {
           lat: locationInfo.lat,
           lng: locationInfo.lon,
