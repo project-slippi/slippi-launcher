@@ -21,6 +21,7 @@ const contentManagementApi = {
   fetchNearestTournaments: (location: { lat: number; lng: number }, radiusKms?: number) =>
     callService("fetchNearestTournaments", { location, radiusKms }),
   fetchUpcomingMeleeMajors: () => callService("fetchUpcomingMeleeMajors", {}),
+  fetchNewsFeed: () => callService("fetchNewsFeed", {}),
 };
 
 export default contentManagementApi;

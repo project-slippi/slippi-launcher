@@ -1,6 +1,7 @@
 import { fetchCurrentLocation } from "../fetch_cross_origin/ip_api";
 import { fetchUpcomingMeleeMajors } from "../fetch_cross_origin/melee_majors";
 import { fetchNearestTournaments } from "../fetch_cross_origin/smash_map";
+import { fetchNewsFeedData } from "../news_feed";
 import type { ContentManagementParams, ContentManagementServiceName } from "./registry";
 
 type HandlerMap = {
@@ -17,6 +18,7 @@ const handlers: HandlerMap = {
     return fetchNearestTournaments(location, radiusKms);
   },
   fetchUpcomingMeleeMajors: () => fetchUpcomingMeleeMajors(),
+  fetchNewsFeed: () => fetchNewsFeedData(),
 };
 
 export async function dispatchContentManagementService(

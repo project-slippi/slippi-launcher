@@ -1,8 +1,8 @@
-import type { IsoValidity, NatType, NewsItem, PortMapping, Presence } from "@common/types";
+import type { IsoValidity, NatType, PortMapping, Presence } from "@common/types";
 import type { EmptyPayload, SuccessPayload } from "utils/ipc";
 import { _, makeEndpoint } from "utils/ipc";
 
-export const ipc_fetchNewsFeed = makeEndpoint.main("fetchNewsFeed", <EmptyPayload>_, <NewsItem[]>_);
+import type { ContentManagementServiceName } from "./content_management/registry";
 
 export const ipc_checkValidIso = makeEndpoint.main(
   "checkValidIso",
@@ -42,7 +42,7 @@ export const ipc_runNetworkDiagnostics = makeEndpoint.main(
 
 export const ipc_contentManagementService = makeEndpoint.main(
   "contentManagementService",
-  <{ service: string; params: Record<string, unknown> }>_,
+  <{ service: ContentManagementServiceName; params: Record<string, unknown> }>_,
   <{ data: unknown }>_,
 );
 
