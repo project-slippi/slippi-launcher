@@ -111,7 +111,7 @@ async function initDatabaseAndRunMigrations(
   await applyPragmaSettings(database);
 
   const migrationsFolder = app.isPackaged
-    ? path.join(process.resourcesPath, "./migrations")
+    ? path.join(app.getAppPath(), "dist", "migrations")
     : path.join(__dirname, "./migrations");
   log.info(`Running migrations in ${migrationsFolder}`);
 
