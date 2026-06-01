@@ -10,8 +10,8 @@ import type { StadiumStatsType, StatsType } from "@slippi/slippi-js/node";
 import { SlippiGame } from "@slippi/slippi-js/node";
 import { shell } from "electron";
 import log from "electron-log";
+import { pathExists } from "fs-extra";
 import type { Kysely, Transaction } from "kysely";
-import { pathExists } from "main/util";
 import { stat } from "node:fs/promises";
 import path from "path";
 

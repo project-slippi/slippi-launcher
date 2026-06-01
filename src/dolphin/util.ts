@@ -1,4 +1,4 @@
-import { pathExists } from "main/util";
+import { pathExists } from "fs-extra";
 import { mkdir, readdir } from "node:fs/promises";
 import path from "path";
 

@@ -5,6 +5,7 @@ import spectateRemoteApi from "@remote/api";
 import replaysApi from "@replays/api";
 import settingsApi from "@settings/api";
 import { contextBridge, ipcRenderer, shell, webUtils } from "electron";
+import { pathExists } from "fs-extra";
 import path from "path";
 import { isSubdirectory } from "utils/is_subdirectory";
 
@@ -13,7 +14,6 @@ import type { AppBootstrap } from "./bootstrap";
 import { fetchCurrentLocation } from "./fetch_cross_origin/ip_api";
 import { fetchUpcomingMeleeMajors } from "./fetch_cross_origin/melee_majors";
 import { fetchNearestTournaments } from "./fetch_cross_origin/smash_map";
-import { pathExists } from "./util";
 
 const bootstrap = ipcRenderer.sendSync("getAppBootstrapSync") as AppBootstrap;
 

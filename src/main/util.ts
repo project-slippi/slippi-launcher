@@ -1,18 +1,10 @@
 /* eslint import/prefer-default-export: off, import/no-mutable-exports: off */
 import { Preconditions } from "@common/preconditions";
 import { app } from "electron";
-import { access, mkdir, open, rm, stat as fsStat } from "node:fs/promises";
+import { pathExists } from "fs-extra";
+import { mkdir, open, rm, stat as fsStat } from "node:fs/promises";
 import path from "path";
 import { URL } from "url";
-
-export async function pathExists(path: string): Promise<boolean> {
-  try {
-    await access(path);
-    return true;
-  } catch {
-    return false;
-  }
-}
 
 export let resolveHtmlPath: (htmlFileName: string) => string;
 
