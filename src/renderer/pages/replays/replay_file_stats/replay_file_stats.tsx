@@ -71,6 +71,7 @@ export const ReplayFileStats = (props: ReplayFileStatsProps) => {
   const gameStats = gameStatsQuery.data?.stats;
   const stadiumStats = stadiumStatsQuery.data?.stadiumStats;
 
+  // Add key bindings
   useMousetrap("escape", () => {
     if (!loading) {
       props.onClose();
@@ -89,6 +90,8 @@ export const ReplayFileStats = (props: ReplayFileStatsProps) => {
 
   const handleRevealLocation = () => window.electron.shell.showItemInFolder(filePath);
 
+  // We only want to show this full-screen error if we don't have a
+  // file in the prop. i.e. the SLP manually opened.
   if (!props.file && errorMessage) {
     return (
       <IconMessage Icon={ErrorIcon}>
@@ -119,6 +122,9 @@ export const ReplayFileStats = (props: ReplayFileStatsProps) => {
   const platform = game.consoleNickname || game.platform || HeaderMessages.unknown();
   const startAtDisplay = new Date(game.startTime ? Date.parse(game.startTime) : 0);
   const lastFrame = game.lastFrame ?? gameStats?.lastFrame;
+  // Sometimes metadata doesn't exist and won't have the last frame
+  // but we might have the stats computed which contains the real last frame.
+  // In that situation, we should use that lastFrame not the metadata one.
   const duration =
     lastFrame != null
       ? game.mode === GameMode.TARGET_TEST

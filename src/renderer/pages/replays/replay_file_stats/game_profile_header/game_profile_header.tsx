@@ -40,7 +40,9 @@ const PlayerInfoDisplay = ({ isTeams, players }: PlayerInfoDisplayProps) => {
         {...teamEls}
       </div>,
     );
+    // Add VS obj in between teams
     if (idx < teams.length - 1) {
+      // If this is not the last team, add a "vs" element
       elements.push(
         <div key={`vs-${idx}`} className={styles.vsText}>
           vs

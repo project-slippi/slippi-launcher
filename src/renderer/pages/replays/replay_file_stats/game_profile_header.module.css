@@ -54,6 +54,9 @@
   font-size: 22px;
 }
 
+/* `text-transform: capitalize` doesn't work unless it's an inline-block */
+
+/* See: https://stackoverflow.com/a/49783868 for more info */
 .detailContent {
   text-transform: capitalize;
   display: inline-block;

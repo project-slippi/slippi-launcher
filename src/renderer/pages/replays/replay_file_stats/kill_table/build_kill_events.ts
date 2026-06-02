@@ -29,10 +29,13 @@ export function buildKillEvents(stats: StatsType, oppPlayerIndex: number): KillE
 }
 
 function findKillMove(stats: StatsType, oppPlayerIndex: number, endFrame: number): string | null {
+  // Here we are going to grab the opponent's punishes and see if one of them was
+  // responsible for ending this stock, if so show the kill move, otherwise assume SD
   const punishes = stats?.conversions ?? [];
   const punishesByPlayer = groupBy(punishes, (p) => p.playerIndex);
   const punishesOnOpponent = punishesByPlayer[oppPlayerIndex] || [];
 
+  // Only get punishes that killed
   const killingPunishes = punishesOnOpponent.filter((punish) => punish.didKill);
   const punishThatEndedStock = killingPunishes.find((p) => p.endFrame === endFrame);
 
