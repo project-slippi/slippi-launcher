@@ -40,10 +40,13 @@ export const PunishTable = ({ player, timeline, filePath, onPlay }: Props) => (
             <StockLossRow key={i} loss={item.stockLoss} />
           ) : (
             <React.Fragment key={i}>
-              <EmptyStateRow stockCount={item.stockLoss.stockCount} />
+              <EmptyStateRow stockOrdinal={item.stockLoss.stockOrdinal} />
               <StockLossRow loss={item.stockLoss} />
             </React.Fragment>
           );
+        }
+        if (item.kind === "empty-state") {
+          return <EmptyStateRow key={i} stockOrdinal={item.stockOrdinal} />;
         }
         return null;
       })}

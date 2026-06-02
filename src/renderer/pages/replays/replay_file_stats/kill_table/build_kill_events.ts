@@ -31,9 +31,9 @@ export function buildKillEvents(stats: StatsType, oppPlayerIndex: number): KillE
 function findKillMove(stats: StatsType, oppPlayerIndex: number, endFrame: number): string | null {
   const punishes = stats?.conversions ?? [];
   const punishesByPlayer = groupBy(punishes, (p) => p.playerIndex);
-  const oppPunishes = punishesByPlayer[oppPlayerIndex] || [];
+  const punishesOnOpponent = punishesByPlayer[oppPlayerIndex] || [];
 
-  const killingPunishes = oppPunishes.filter((punish) => punish.didKill);
+  const killingPunishes = punishesOnOpponent.filter((punish) => punish.didKill);
   const punishThatEndedStock = killingPunishes.find((p) => p.endFrame === endFrame);
 
   if (!punishThatEndedStock) {

@@ -13,21 +13,29 @@ export function buildTimeline(
   const punishes = stats?.conversions ?? [];
   const stocks = stats?.stocks ?? [];
 
+  // ConversionType.playerIndex is the victim (player being comboed).
+  // So punishesByPlayer[oppPlayerIndex] = punishes landed ON the opponent = the current player's punishes.
   const punishesByPlayer = groupBy(punishes, (p) => p.playerIndex);
-  const oppPunishes: ConversionType[] = punishesByPlayer[oppPlayerIndex] || [];
+  const punishesOnOpponent: ConversionType[] = punishesByPlayer[oppPlayerIndex] || [];
 
   const stocksByPlayer = groupBy(stocks, (s) => s.playerIndex);
   const opponentStocks: StockType[] = stocksByPlayer[oppPlayerIndex] || [];
 
   const totalStocks = oppStartStocks ?? opponentStocks.reduce((max, s) => Math.max(max, s.count), 0);
   const sortedStocks = [...opponentStocks].sort((a, b) => a.startFrame - b.startFrame);
-  const sortedPunishes = [...oppPunishes].sort((a, b) => a.startFrame - b.startFrame);
+  const sortedPunishes = [...punishesOnOpponent].sort((a, b) => a.startFrame - b.startFrame);
 
   const result: TimelineItem[] = [];
   let stockIdx = 0;
+
+  // Tracks whether a punish was landed between the last stock loss and now.
+  // Used to determine whether to show an empty-state row for a stock:
+  //   - false = no punish on this stock → show empty state (opponent SD'd)
+  //   - true  = there was a punish on this stock → no empty state
   let hadPunishSinceLastStockLoss = false;
 
   for (const punish of sortedPunishes) {
+    // Process any stocks that were lost before this punish starts
     while (stockIdx < sortedStocks.length) {
       const stock = sortedStocks[stockIdx];
       if (stock.endFrame == null || punish.startFrame <= stock.endFrame) {
@@ -44,15 +52,29 @@ export function buildTimeline(
     hadPunishSinceLastStockLoss = true;
   }
 
+  // Process remaining stocks that were lost after the last punish (or with no punishes at all)
+  let processedStockInAfterLoop = false;
   while (stockIdx < sortedStocks.length) {
     const stock = sortedStocks[stockIdx];
     if (stock.endFrame == null) {
+      // Special case: the opponent's stock was still ongoing when the game ended
+      // (e.g. time out, or player SD'd on their own last stock). If we processed at least
+      // one stock in this after-loop, the ongoing stock needs an empty-state row to
+      // indicate no punishes were landed on it.
+      if (processedStockInAfterLoop) {
+        result.push({
+          kind: "empty-state",
+          stockOrdinal: totalStocks - stock.count + 1,
+        });
+      }
       break;
     }
+
     const loss = toStockLossEvent(stock, totalStocks, oppCharacterIconUrl, !hadPunishSinceLastStockLoss);
     result.push({ kind: "stock-loss", stockLoss: loss });
     stockIdx++;
     hadPunishSinceLastStockLoss = false;
+    processedStockInAfterLoop = true;
   }
 
   return result;
@@ -78,6 +100,7 @@ function toStockLossEvent(
 ): StockLossEvent {
   return {
     stockCount: stock.count - 1,
+    stockOrdinal: totalStocks - stock.count + 1,
     totalStocks,
     characterIconUrl,
     hasPunishesBeforeDeath: !isEmpty,

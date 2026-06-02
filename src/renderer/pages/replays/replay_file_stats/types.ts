@@ -43,12 +43,16 @@ export interface PunishEvent {
 
 export interface StockLossEvent {
   stockCount: number;
+  stockOrdinal: number;
   totalStocks: number;
   characterIconUrl: string;
   hasPunishesBeforeDeath: boolean;
 }
 
-export type TimelineItem = { kind: "stock-loss"; stockLoss: StockLossEvent } | { kind: "punish"; punish: PunishEvent };
+export type TimelineItem =
+  | { kind: "stock-loss"; stockLoss: StockLossEvent }
+  | { kind: "punish"; punish: PunishEvent }
+  | { kind: "empty-state"; stockOrdinal: number };
 
 export interface StatCell {
   value: string;
