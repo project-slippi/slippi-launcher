@@ -7,12 +7,12 @@ import { ErrorBoundary } from "@/components/error_boundary";
 import { getCharacterIcon } from "@/lib/utils";
 
 import styles from "./game_profile.module.css";
-import { KillTable } from "./kill_table";
 import { buildKillEvents } from "./kill_table/build_kill_events";
-import { OverallTable } from "./overall_table";
+import { KillTable } from "./kill_table/kill_table";
 import { buildSections } from "./overall_table/build_sections";
-import { PunishTable } from "./punish_table";
+import { OverallTable } from "./overall_table/overall_table";
 import { buildTimeline } from "./punish_table/build_timeline";
+import { PunishTable } from "./punish_table/punish_table";
 import type { PlayerDisplayInfo, PlayerStatSummary } from "./types";
 
 type GameProfileProps = {
