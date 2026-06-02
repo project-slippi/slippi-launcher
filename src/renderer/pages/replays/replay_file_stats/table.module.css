@@ -5,6 +5,7 @@
   border: none;
   background-color: var(--purple-dark);
   overflow: hidden;
+  background-image: linear-gradient(rgb(255 255 255 / 5%), rgb(255 255 255 / 5%));
 }
 
 .tableHeaderCell {
