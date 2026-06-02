@@ -1,6 +1,7 @@
-import { useQuery } from "@tanstack/react-query";
 import { create } from "zustand";
 import { combine } from "zustand/middleware";
+
+import { useNewsFeedQuery } from "@/lib/hooks/use_data_fetch_query";
 
 // Only consider news that is published within this time frame to be considered "new"
 const NEW_NEWS_THRESHOLD_MS = 30 * 24 * 60 * 60 * 1000; // 1 month in milliseconds
@@ -58,11 +59,7 @@ export function isNewsUnread(item: { id: string; publishedAt: Date }, readStatus
 }
 
 export function useHasUnreadNews(): boolean {
-  const { data: allPosts = [] } = useQuery({
-    queryKey: ["newsFeedQuery"],
-    queryFn: window.electron.common.fetchNewsFeed,
-    staleTime: 15 * 60 * 1000,
-  });
+  const { data: allPosts = [] } = useNewsFeedQuery();
   const readStatus = useNewsReadStore((s) => s.readStatus);
   return allPosts.some((post) => isNewsUnread(post, readStatus));
 }

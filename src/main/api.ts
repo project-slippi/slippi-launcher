@@ -5,7 +5,6 @@ import {
   ipc_checkValidIso,
   ipc_clearTempFolder,
   ipc_copyLogsToClipboard,
-  ipc_fetchNewsFeed,
   ipc_getLatestGitHubReleaseVersion,
   ipc_installUpdate,
   ipc_launcherUpdateDownloadingEvent,
@@ -19,10 +18,6 @@ import {
 export default {
   onDragStart(filePaths: string[]) {
     ipcRenderer.send("onDragStart", filePaths);
-  },
-  async fetchNewsFeed() {
-    const { result } = await ipc_fetchNewsFeed.renderer!.trigger({});
-    return result;
   },
   async checkValidIso(path: string) {
     const { result } = await ipc_checkValidIso.renderer!.trigger({ path });

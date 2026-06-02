@@ -3,6 +3,7 @@ import type { ConsoleService } from "@console/types";
 import type { DolphinService } from "@dolphin/types";
 import type { SpectateRemoteService } from "@remote/types";
 import type { ReplayService } from "@replays/types";
+import type { ContentManagementService } from "main/content_management/content_management_api";
 
 import type { AuthService } from "./auth/types";
 import type { I18nService } from "./i18n/types";
@@ -19,4 +20,5 @@ export type Services = {
   notificationService: NotificationService;
   i18nService: I18nService;
   spectateRemoteService: SpectateRemoteService;
+  contentManagementService: ContentManagementService;
 };

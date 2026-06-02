@@ -37,6 +37,7 @@ export async function installServices(): Promise<Services> {
   const broadcastService = window.electron.broadcast;
   const consoleService = window.electron.console;
   const spectateRemoteService = window.electron.remote;
+  const contentManagementService = window.electron.contentManagement;
 
   return {
     authService,
@@ -48,5 +49,6 @@ export async function installServices(): Promise<Services> {
     spectateRemoteService,
     notificationService,
     i18nService,
+    contentManagementService,
   };
 }

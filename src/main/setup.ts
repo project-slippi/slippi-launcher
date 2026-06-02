@@ -13,14 +13,15 @@ import { fileExists } from "utils/file_exists";
 import type { AppUpdater } from "./app_updater";
 import { getAppBootstrap } from "./bootstrap";
 import type { BrowserWindowManager } from "./browser_window_manager";
+import { dispatchContentManagementService } from "./content_management/dispatcher";
 import { getLatestRelease } from "./fetch_cross_origin/github";
 import type { ConfigFlags } from "./flags/flags";
 import {
   ipc_checkForUpdate,
   ipc_checkValidIso,
   ipc_clearTempFolder,
+  ipc_contentManagementService,
   ipc_copyLogsToClipboard,
-  ipc_fetchNewsFeed,
   ipc_getLatestGitHubReleaseVersion,
   ipc_installUpdate,
   ipc_launcherUpdateDownloadingEvent,
@@ -31,7 +32,6 @@ import {
   ipc_showOpenDialog,
 } from "./ipc";
 import { getNetworkDiagnostics } from "./network_diagnostics";
-import { fetchNewsFeedData } from "./news_feed";
 import { clearTempFolder, getAssetPath, readLastLines } from "./util";
 import { verifyIso } from "./verify_iso";
 
@@ -67,9 +67,9 @@ export default function setupMainIpc({
     event.returnValue = getAppBootstrap(flags, appUpdater.getUpdateState());
   });
 
-  ipc_fetchNewsFeed.main!.handle(async () => {
-    const result = await fetchNewsFeedData();
-    return result;
+  ipc_contentManagementService.main!.handle(async ({ service, params }) => {
+    const data = await dispatchContentManagementService(service, params);
+    return { data };
   });
 
   ipc_checkValidIso.main!.handle(async ({ path }) => {
