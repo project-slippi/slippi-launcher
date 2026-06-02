@@ -1,10 +1,6 @@
 import type { PlayerStatSummary, StatCell, StatRow, StatSection } from "../types";
 
-function sum(vals: number[]): number {
-  return vals.reduce((a, b) => a + b, 0);
-}
-
-function cell(value: string, highlight: boolean): StatCell {
+function cell(value: string, highlight: boolean = false): StatCell {
   return { value, highlight };
 }
 
@@ -63,12 +59,12 @@ function multiStat(
   label: string,
   playerVals: number[],
   oppVals: number[],
-  highlightFn: (a: number[], b: number[]) => boolean,
+  highlightFn?: (a: number[], b: number[]) => boolean,
 ): StatRow {
   return {
     label,
-    player: cell(playerVals.join(" / "), highlightFn(playerVals, oppVals)),
-    opp: cell(oppVals.join(" / "), highlightFn(oppVals, playerVals)),
+    player: cell(playerVals.join(" / "), highlightFn?.(playerVals, oppVals)),
+    opp: cell(oppVals.join(" / "), highlightFn?.(oppVals, playerVals)),
   };
 }
 
@@ -114,7 +110,6 @@ export function buildSections(p1: PlayerStatSummary, p2: PlayerStatSummary): Sta
           "Actions (Roll / Air Dodge / Spot Dodge)",
           [p1.rollCount, p1.airDodgeCount, p1.spotDodgeCount],
           [p2.rollCount, p2.airDodgeCount, p2.spotDodgeCount],
-          (a, b) => sum(a) > sum(b),
         ),
       ],
     },
@@ -149,7 +144,6 @@ export function buildSections(p1: PlayerStatSummary, p2: PlayerStatSummary): Sta
           "Actions (Wavedash / Waveland / Dash Dance / Ledgegrab)",
           [p1.wavedashCount, p1.wavelandCount, p1.dashDanceCount, p1.ledgegrabCount],
           [p2.wavedashCount, p2.wavelandCount, p2.dashDanceCount, p2.ledgegrabCount],
-          (a, b) => sum(a) > sum(b),
         ),
       ],
     },
