@@ -1,5 +1,3 @@
-import { css } from "@emotion/react";
-import styled from "@emotion/styled";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
@@ -17,21 +15,15 @@ import Tooltip from "@mui/material/Tooltip";
 import type { FileResult, PlayerInfo as PlayerInfoType } from "@replays/types";
 import type { StadiumStatsType, StatsType } from "@slippi/slippi-js";
 import { frameToGameTimer, GameMode, stages as stageUtils } from "@slippi/slippi-js";
-import get from "lodash/get";
-import groupBy from "lodash/groupBy";
 import React from "react";
 
 import { DolphinStatus, useDolphinStore } from "@/lib/dolphin/use_dolphin_store";
 import { convertFrameCountToDurationString, monthDayHourFormat } from "@/lib/time";
 
+import styles from "../game_profile_header.module.css";
 import { PlayerInfo } from "../player_info";
+import { groupBy } from "../table_utils";
 import { GameProfileHeaderMessages as Messages } from "./game_profile_header.messages";
-
-const Outer = styled.div`
-  margin-top: 10px;
-  display: flex;
-  align-items: center;
-`;
 
 type PlayerInfoDisplayProps = {
   isTeams?: boolean;
@@ -59,35 +51,21 @@ const PlayerInfoDisplay = ({ isTeams, players }: PlayerInfoDisplayProps) => {
       );
     });
     elements.push(
-      <div
-        key={`team-${idx}`}
-        css={css`
-          display: flex;
-        `}
-      >
+      <div key={`team-${idx}`} style={{ display: "flex" }}>
         {...teamEls}
       </div>,
     );
 
     // Add VS obj in between teams
     if (idx < teams.length - 1) {
-      // If this is not the last team, add a "vs" element
       elements.push(
-        <div
-          key={`vs-${idx}`}
-          css={css`
-            font-weight: bold;
-            color: rgba(255, 255, 255, 0.5);
-            padding: 0 10px;
-            font-size: 20px;
-          `}
-        >
+        <div key={`vs-${idx}`} className={styles.vsText}>
           vs
         </div>,
       );
     }
   });
-  return <Outer>{...elements}</Outer>;
+  return <div style={{ marginTop: 10, display: "flex", alignItems: "center" }}>{...elements}</div>;
 };
 
 type GameProfileHeaderProps = {
@@ -116,37 +94,13 @@ export const GameProfileHeader = ({
   onClose,
 }: GameProfileHeaderProps) => {
   return (
-    <div
-      css={css`
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        border-bottom: solid 3px rgba(255, 255, 255, 0.5);
-      `}
-    >
-      <div
-        css={css`
-          display: flex;
-          flex-direction: column;
-        `}
-      >
-        <div
-          css={css`
-            display: flex;
-            align-items: center;
-          `}
-        >
+    <div className={styles.header}>
+      <div className={styles.headerLeft}>
+        <div className={styles.headerTop}>
           <div>
             <Tooltip title={Messages.backToReplays()}>
               <span>
-                <IconButton
-                  onClick={onClose}
-                  disabled={disabled}
-                  css={css`
-                    padding: 8px;
-                  `}
-                  size="large"
-                >
+                <IconButton onClick={onClose} disabled={disabled} size="large" className={styles.backButton}>
                   <ArrowBackIcon />
                 </IconButton>
               </span>
@@ -196,8 +150,8 @@ const GameDetails = ({
         : convertFrameCountToDurationString(lastFrame, "long")
       : Messages.unknown();
 
-  const distance = get(stadiumStats, "distance");
-  const units = get(stadiumStats, "units");
+  const distance = (stadiumStats as any)?.distance;
+  const units = (stadiumStats as any)?.units;
 
   const eventDisplay = {
     label: <EventIcon />,
@@ -251,31 +205,14 @@ const GameDetails = ({
 
   const metadataElements = displayData.map((details, i) => {
     return (
-      <div
-        key={`item-${i}-${details.content}`}
-        css={css`
-          margin: 10px;
-          display: flex;
-          align-items: center;
-          font-size: 14px;
-        `}
-      >
-        <DetailLabel>{details.label}</DetailLabel>
-        <DetailContent>{details.content}</DetailContent>
+      <div key={`item-${i}-${details.content}`} className={styles.metadataItem}>
+        <label className={styles.detailLabel}>{details.label}</label>
+        <label className={styles.detailContent}>{details.content}</label>
       </div>
     );
   });
 
-  return (
-    <div
-      css={css`
-        display: flex;
-        padding: 0 10px;
-      `}
-    >
-      {metadataElements}
-    </div>
-  );
+  return <div className={styles.metadataContainer}>{metadataElements}</div>;
 };
 
 const LaunchReplayButton = React.memo(({ onClick }: { onClick: () => void }) => {
@@ -317,27 +254,11 @@ const Controls = ({
   const atStart = index == null || index === 0;
   const atEnd = total == null || index === total - 1;
   return (
-    <div
-      css={css`
-        display: flex;
-        flex-direction: column;
-        margin: 10px;
-      `}
-    >
+    <div className={styles.controls}>
       <div>
         <LaunchReplayButton onClick={onPlay} />
       </div>
-      <div
-        css={css`
-          margin-top: 10px;
-          display: grid;
-          grid-auto-flow: column;
-          align-items: center;
-          justify-content: center;
-          grid-gap: 10px;
-          font-size: 13px;
-        `}
-      >
+      <div className={styles.navContainer}>
         <Tooltip title={Messages.previousReplay()}>
           <span>
             <IconButton disabled={disabled || atStart} onClick={onPrev} size="small">
@@ -357,21 +278,3 @@ const Controls = ({
     </div>
   );
 };
-
-const DetailLabel = styled.label`
-  display: flex;
-  align-items: center;
-  font-weight: bold;
-  opacity: 0.6;
-  margin-right: 5px;
-  svg {
-    font-size: 22px;
-  }
-`;
-
-// `text-transform: capitalize` doesn't work unless it's an inline-block
-// See: https://stackoverflow.com/a/49783868 for more info
-const DetailContent = styled.label`
-  text-transform: capitalize;
-  display: inline-block;
-`;

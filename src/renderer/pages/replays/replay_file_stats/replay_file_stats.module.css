@@ -1,0 +1,55 @@
+.outer {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.outer::before {
+  z-index: -1;
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  content: "";
+  background-size: cover;
+  background-position: center center;
+  background-image: linear-gradient(to bottom, rgb(0 0 0 / 60%) 0 100%),
+    var(--bg-image, none);
+  box-shadow: inset 0 0 2000px rgb(255 255 255 / 20%);
+  filter: blur(10px);
+}
+
+.content {
+  display: flex;
+  flex: 1;
+  overflow: auto;
+}
+
+.errorContainer {
+  max-width: 800px;
+  overflow-wrap: break-word;
+  text-align: center;
+}
+
+.folderIcon {
+  color: var(--purple-light);
+}
+
+.fileLabel {
+  font-size: 11px;
+  font-weight: bold;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+}
+
+.filePathContainer {
+  display: flex;
+  flex-direction: column;
+  margin-left: 10px;
+  padding-right: 20px;
+}
+
+.filePathText {
+  color: white;
+}

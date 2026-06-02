@@ -1,0 +1,76 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: solid 3px rgb(255 255 255 / 50%);
+}
+
+.headerLeft {
+  display: flex;
+  flex-direction: column;
+}
+
+.headerTop {
+  display: flex;
+  align-items: center;
+}
+
+.backButton {
+  padding: 8px;
+}
+
+.playerDisplay {
+  display: flex;
+}
+
+.vsText {
+  font-weight: bold;
+  color: rgb(255 255 255 / 50%);
+  padding: 0 10px;
+  font-size: 20px;
+}
+
+.metadataContainer {
+  display: flex;
+  padding: 0 10px;
+}
+
+.metadataItem {
+  margin: 10px;
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+}
+
+.detailLabel {
+  display: flex;
+  align-items: center;
+  font-weight: bold;
+  opacity: 0.6;
+  margin-right: 5px;
+}
+
+.detailLabel svg {
+  font-size: 22px;
+}
+
+.detailContent {
+  text-transform: capitalize;
+  display: inline-block;
+}
+
+.controls {
+  display: flex;
+  flex-direction: column;
+  margin: 10px;
+}
+
+.navContainer {
+  margin-top: 10px;
+  display: grid;
+  grid-auto-flow: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-size: 13px;
+}

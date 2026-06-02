@@ -1,4 +1,3 @@
-import styled from "@emotion/styled";
 import Typography from "@mui/material/Typography";
 import type { FileResult } from "@replays/types";
 import type { StatsType } from "@slippi/slippi-js";
@@ -6,6 +5,7 @@ import React from "react";
 
 import { ErrorBoundary } from "@/components/error_boundary";
 
+import styles from "./game_profile.module.css";
 import { KillTable } from "./kill_table";
 import { OverallTable } from "./overall_table";
 import { PunishTable } from "./punish_table";
@@ -16,19 +16,13 @@ type GameProfileProps = {
   onPlay: (options: { path: string; startFrame: number }) => void;
 };
 
-const TableContainer = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-  grid-gap: 20px;
-`;
-
 const StatSection = (props: React.PropsWithChildren<{ title: string }>) => {
   return (
-    <div style={{ padding: 10 }}>
+    <div className={styles.section}>
       <Typography variant="h5" style={{ marginBottom: 10 }}>
         {props.title}
       </Typography>
-      <TableContainer>{props.children}</TableContainer>
+      <div className={styles.tableContainer}>{props.children}</div>
     </div>
   );
 };
@@ -37,7 +31,7 @@ export const GameProfile = ({ file, stats, onPlay }: GameProfileProps) => {
   const [firstPlayer, secondPlayer] = file.game.players;
 
   return (
-    <div style={{ flex: "1", margin: 20 }}>
+    <div className={styles.root}>
       <StatSection title="Overall">
         <ErrorBoundary>
           <OverallTable file={file} stats={stats} />

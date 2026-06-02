@@ -1,5 +1,3 @@
-import { css } from "@emotion/react";
-import styled from "@emotion/styled";
 import ErrorIcon from "@mui/icons-material/Error";
 import FolderIcon from "@mui/icons-material/Folder";
 import HelpIcon from "@mui/icons-material/Help";
@@ -17,43 +15,13 @@ import { useDolphinActions } from "@/lib/dolphin/use_dolphin_actions";
 import { useMousetrap } from "@/lib/hooks/use_mousetrap";
 import { getStageImage } from "@/lib/utils";
 import { useServices } from "@/services";
-import { cssVar } from "@/styles/css_variables";
-import { withFont } from "@/styles/with_font";
 
 import { GameProfile } from "./game_profile";
 import { GameProfileHeader } from "./game_profile_header/game_profile_header";
 import { HomeRunProfile } from "./home_run_profile";
 import { ReplayFileStatsMessages as Messages } from "./replay_file_stats.messages";
+import styles from "./replay_file_stats.module.css";
 import { TargetTestProfile } from "./target_test_profile";
-
-const Outer = styled.div<{
-  backgroundImage?: any;
-}>`
-  position: relative;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  &::before {
-    z-index: -1;
-    position: absolute;
-    height: 100%;
-    width: 100%;
-    content: "";
-    background-size: cover;
-    background-position: center center;
-    background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.6) 0 100%),
-      ${(p) => (p.backgroundImage ? `url("${p.backgroundImage}")` : "")};
-    box-shadow: inset 0 0 2000px rgba(255, 255, 255, 0.2);
-    filter: blur(10px);
-  }
-`;
-
-const Content = styled.div`
-  display: flex;
-  flex: 1;
-  overflow: auto;
-`;
 
 type ReplayFileStatsProps = {
   filePath: string;
@@ -119,13 +87,7 @@ export const ReplayFileStats = (props: ReplayFileStatsProps) => {
   if (!props.file && error) {
     return (
       <IconMessage Icon={ErrorIcon}>
-        <div
-          css={css`
-            max-width: 800px;
-            word-break: break-word;
-            text-align: center;
-          `}
-        >
+        <div className={styles.errorContainer}>
           <h2>{Messages.weCouldntOpenThatFile()}</h2>
           <Button color="secondary" onClick={props.onClose}>
             {Messages.goBack()}
@@ -143,7 +105,10 @@ export const ReplayFileStats = (props: ReplayFileStatsProps) => {
   const stageImage = game.stageId != null ? getStageImage(game.stageId) : undefined;
 
   return (
-    <Outer backgroundImage={stageImage}>
+    <div
+      className={styles.outer}
+      style={{ "--bg-image": stageImage ? `url("${stageImage}")` : "none" } as React.CSSProperties}
+    >
       <GameProfileHeader
         {...props}
         file={file}
@@ -152,7 +117,7 @@ export const ReplayFileStats = (props: ReplayFileStatsProps) => {
         stadiumStats={stadiumStatsQuery.data?.stadiumStats}
         onPlay={props.onPlay}
       />
-      <Content>
+      <div className={styles.content}>
         {!file || loading ? (
           <LoadingScreen message={Messages.crunchingNumbers()} />
         ) : game.mode == GameMode.TARGET_TEST ? (
@@ -168,45 +133,20 @@ export const ReplayFileStats = (props: ReplayFileStatsProps) => {
         ) : (
           <IconMessage Icon={HelpIcon} label={Messages.noStatsComputed()} />
         )}
-      </Content>
+      </div>
       <BasicFooter>
         <Tooltip title={Messages.revealLocation()}>
           <IconButton onClick={handleRevealLocation} size="small">
-            <FolderIcon
-              css={css`
-                color: ${cssVar("purpleLight")};
-              `}
-            />
+            <FolderIcon className={styles.folderIcon} />
           </IconButton>
         </Tooltip>
-        <div
-          css={css`
-            display: flex;
-            flex-direction: column;
-            margin-left: 10px;
-            padding-right: 20px;
-          `}
-        >
-          <div
-            css={css`
-              font-size: 11px;
-              font-weight: bold;
-              margin-bottom: 4px;
-              text-transform: uppercase;
-              font-family: ${withFont("Maven Pro")};
-            `}
-          >
+        <div className={styles.filePathContainer}>
+          <div className={styles.fileLabel} style={{ fontFamily: "Maven Pro, Helvetica, Arial, sans-serif" }}>
             {Messages.currentFile()}
           </div>
-          <div
-            css={css`
-              color: white;
-            `}
-          >
-            {filePath}
-          </div>
+          <div className={styles.filePathText}>{filePath}</div>
         </div>
       </BasicFooter>
-    </Outer>
+    </div>
   );
 };

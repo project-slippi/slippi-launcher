@@ -1,16 +1,13 @@
-import { css } from "@emotion/react";
 import Tooltip from "@mui/material/Tooltip";
 import type { FileResult, PlayerInfo } from "@replays/types";
 import type { ConversionType, StatsType, StockType } from "@slippi/slippi-js";
-import get from "lodash/get";
-import groupBy from "lodash/groupBy";
-import keyBy from "lodash/keyBy";
-import range from "lodash/range";
 
 import { convertFrameCountToDurationString } from "@/lib/time";
 import { getCharacterIcon, toOrdinal } from "@/lib/utils";
 
-import * as T from "./table_styles";
+import styles from "./punish_table.module.css";
+import * as T from "./table_components";
+import { groupBy } from "./table_utils";
 
 const columnCount = 6;
 
@@ -59,15 +56,7 @@ export const PunishTable = ({ file, stats, player, opp, onPlay }: PunishTablePro
       <T.TableRow key={`${punish.playerIndex}-punish-${punish.startFrame}`}>
         <T.TableCell>
           <Tooltip title="Play from here">
-            <span
-              onClick={playPunish}
-              css={css`
-                &:hover {
-                  cursor: pointer;
-                  text-decoration: underline;
-                }
-              `}
-            >
+            <span onClick={playPunish} className={styles.playLink}>
               {start}
             </span>
           </Tooltip>
@@ -102,7 +91,7 @@ export const PunishTable = ({ file, stats, player, opp, onPlay }: PunishTablePro
     const totalStocks = player.startStocks;
     const currentStocks = stock.count - 1;
 
-    const stockIcons = range(1, totalStocks != null ? totalStocks + 1 : 1).map((stockNum) => {
+    const stockIcons = Array.from({ length: totalStocks ?? 1 }, (_, i) => i + 1).map((stockNum) => {
       return (
         <T.GrayableImage
           key={`stock-image-${stock.playerIndex}-${stockNum}`}
@@ -126,8 +115,7 @@ export const PunishTable = ({ file, stats, player, opp, onPlay }: PunishTablePro
 
   const getPlayer = (playerIndex: number) => {
     const players = file.game.players || [];
-    const playersByIndex = keyBy(players, "playerIndex");
-    return playersByIndex[playerIndex];
+    return players.find((p) => p.playerIndex === playerIndex) as NonNullable<(typeof players)[number]>;
   };
 
   const renderDamageCell = (punish: ConversionType) => {
@@ -180,11 +168,11 @@ export const PunishTable = ({ file, stats, player, opp, onPlay }: PunishTablePro
   };
 
   const renderPunishRows = () => {
-    const punishes = get(stats, "conversions") || [];
+    const punishes = stats?.conversions ?? [];
     const punishesByPlayer = groupBy(punishes, "playerIndex");
     const playerPunishes = punishesByPlayer[opp.playerIndex] || [];
 
-    const stocks = get(stats, "stocks") || [];
+    const stocks = stats?.stocks ?? [];
     const stocksTakenFromPlayer = groupBy(stocks, "playerIndex");
     const opponentStocks = stocksTakenFromPlayer[opp.playerIndex] || [];
 

@@ -1,4 +1,3 @@
-import { css } from "@emotion/react";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
@@ -7,15 +6,13 @@ import Tooltip from "@mui/material/Tooltip";
 import type { FileResult, PlayerInfo } from "@replays/types";
 import type { StatsType, StockType } from "@slippi/slippi-js";
 import { animations as animationUtils, Frames, moves as moveUtils } from "@slippi/slippi-js";
-import get from "lodash/get";
-import groupBy from "lodash/groupBy";
-import keyBy from "lodash/keyBy";
-import last from "lodash/last";
 
 import { convertFrameCountToDurationString } from "@/lib/time";
 import { getCharacterIcon } from "@/lib/utils";
 
-import * as T from "./table_styles";
+import styles from "./kill_table.module.css";
+import * as T from "./table_components";
+import { groupBy } from "./table_utils";
 
 type PlayerInfoType = Pick<PlayerInfo, "playerIndex" | "characterId" | "characterColor" | "displayName" | "tag">;
 
@@ -75,15 +72,7 @@ export const KillTable = ({ file, stats, player, opp, onPlay }: KillTableProps) 
             start
           ) : (
             <Tooltip title="Play from here">
-              <span
-                onClick={playPunish}
-                css={css`
-                  &:hover {
-                    cursor: pointer;
-                    text-decoration: underline;
-                  }
-                `}
-              >
+              <span onClick={playPunish} className={styles.playLink}>
                 {start}
               </span>
             </Tooltip>
@@ -100,21 +89,21 @@ export const KillTable = ({ file, stats, player, opp, onPlay }: KillTableProps) 
   const renderKilledBy = (stock: StockType) => {
     // Here we are going to grab the opponent's punishes and see if one of them was
     // responsible for ending this stock, if so show the kill move, otherwise assume SD
-    const punishes = get(stats, "conversions") || [];
+    const punishes = stats?.conversions ?? [];
     const punishesByPlayer = groupBy(punishes, "playerIndex");
     const playerPunishes = punishesByPlayer[opp.playerIndex] || [];
 
     // Only get punishes that killed
     const killingPunishes = playerPunishes.filter((punish) => punish.didKill);
-    const killingPunishesByEndFrame = keyBy(killingPunishes, "endFrame");
-    const punishThatEndedStock = stock.endFrame != null ? killingPunishesByEndFrame[stock.endFrame] : undefined;
+    const punishThatEndedStock =
+      stock.endFrame != null ? killingPunishes.find((p) => p.endFrame === stock.endFrame) : undefined;
 
     if (!punishThatEndedStock) {
       // return <span className={styles['secondary-text']}>Self Destruct</span>;
       return <span>Self Destruct</span>;
     }
 
-    const lastMove = last(punishThatEndedStock.moves);
+    const lastMove = punishThatEndedStock.moves.at(-1);
     if (!lastMove) {
       return <span>Grab Release</span>;
     }
@@ -162,7 +151,7 @@ export const KillTable = ({ file, stats, player, opp, onPlay }: KillTableProps) 
   };
 
   const renderStocksRows = () => {
-    const stocks = get(stats, "stocks") || [];
+    const stocks = stats?.stocks ?? [];
     const stocksByOpponent = groupBy(stocks, "playerIndex");
     const opponentStocks = stocksByOpponent[opp.playerIndex] || [];
 
