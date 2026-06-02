@@ -39,13 +39,15 @@ export const KillStockRow = ({ event, filePath, onPlay }: Props) => {
         )}
       </T.TableCell>
       <T.TableCell>{end}</T.TableCell>
-      <T.TableCell>{event.killMoveName ?? "Self Destruct"}</T.TableCell>
+      <T.TableCell>{event.endFrame == null ? "–" : event.killMoveName ?? "Self Destruct"}</T.TableCell>
       <T.TableCell>
-        {event.killDirection && (
+        {event.endFrame == null ? (
+          <span>–</span>
+        ) : event.killDirection ? (
           <span style={{ color: "#2ECC40", fontSize: 24 }}>
             <DirectionIcon direction={event.killDirection} />
           </span>
-        )}
+        ) : undefined}
       </T.TableCell>
       <T.TableCell>{event.percent}%</T.TableCell>
     </T.TableRow>
