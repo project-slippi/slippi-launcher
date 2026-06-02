@@ -28,9 +28,10 @@ export const PunishRow = ({ punish, filePath, onPlay }: Props) => {
         </Tooltip>
       </T.TableCell>
       <T.TableCell>{end}</T.TableCell>
-      <T.TableCell colSpan={2}>
-        <DamageCell damage={punish.damage} damageRange={punish.damageRange} />
+      <T.TableCell>
+        <DamageCell damage={punish.damage} />
       </T.TableCell>
+      <T.TableCell>{punish.damageRange}</T.TableCell>
       <T.TableCell>{punish.movesCount}</T.TableCell>
       <T.TableCell>
         <OpeningTypeCell openingType={punish.openingType} />

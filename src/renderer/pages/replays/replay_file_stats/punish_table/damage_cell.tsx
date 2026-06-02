@@ -1,8 +1,8 @@
-import type { PunishEvent } from "../types";
+type Props = {
+  damage: number;
+};
 
-type Props = Pick<PunishEvent, "damage" | "damageRange">;
-
-export const DamageCell = ({ damage, damageRange }: Props) => {
+export const DamageCell = ({ damage }: Props) => {
   let diffColor = "green";
   if (damage >= 70) {
     diffColor = "red";
@@ -10,10 +10,5 @@ export const DamageCell = ({ damage, damageRange }: Props) => {
     diffColor = "yellow";
   }
 
-  return (
-    <div>
-      <div style={{ color: diffColor }}>{Math.trunc(damage)}%</div>
-      <div>{damageRange}</div>
-    </div>
-  );
+  return <div style={{ color: diffColor }}>{Math.trunc(damage)}%</div>;
 };
