@@ -4,11 +4,13 @@ import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import Tooltip from "@mui/material/Tooltip";
 import { Frames } from "@slippi/slippi-js";
+import React from "react";
 
 import { convertFrameCountToDurationString } from "@/lib/time";
 
 import * as T from "../table_components";
 import type { KillEvent } from "../types";
+import styles from "./kill_stock_row.module.css";
 
 type Props = {
   event: KillEvent;
@@ -32,7 +34,7 @@ export const KillStockRow = ({ event, filePath, onPlay }: Props) => {
           start
         ) : (
           <Tooltip title="Play from here">
-            <span onClick={playFromHere} style={{ cursor: "pointer", textDecoration: "underline" }}>
+            <span onClick={playFromHere} className={styles.playFromHere}>
               {start}
             </span>
           </Tooltip>
@@ -44,9 +46,7 @@ export const KillStockRow = ({ event, filePath, onPlay }: Props) => {
         {event.endFrame == null ? (
           <span>–</span>
         ) : event.killDirection ? (
-          <span style={{ color: "#2ECC40", fontSize: 24 }}>
-            <DirectionIcon direction={event.killDirection} />
-          </span>
+          <DirectionIcon direction={event.killDirection} />
         ) : undefined}
       </T.TableCell>
       <T.TableCell>{event.percent}%</T.TableCell>
@@ -55,14 +55,18 @@ export const KillStockRow = ({ event, filePath, onPlay }: Props) => {
 };
 
 const DirectionIcon = ({ direction }: { direction: NonNullable<KillEvent["killDirection"]> }) => {
-  switch (direction) {
-    case "up":
-      return <ArrowUpwardIcon fontSize="inherit" />;
-    case "down":
-      return <ArrowDownwardIcon fontSize="inherit" />;
-    case "left":
-      return <ArrowBackIcon fontSize="inherit" />;
-    case "right":
-      return <ArrowForwardIcon fontSize="inherit" />;
-  }
+  const icon = React.useMemo(() => {
+    switch (direction) {
+      case "up":
+        return <ArrowUpwardIcon fontSize="inherit" />;
+      case "down":
+        return <ArrowDownwardIcon fontSize="inherit" />;
+      case "left":
+        return <ArrowBackIcon fontSize="inherit" />;
+      case "right":
+        return <ArrowForwardIcon fontSize="inherit" />;
+    }
+  }, [direction]);
+
+  return <span className={styles.directionArrow}>{icon}</span>;
 };

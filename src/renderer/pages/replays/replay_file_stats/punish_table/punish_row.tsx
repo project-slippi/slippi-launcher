@@ -6,6 +6,7 @@ import * as T from "../table_components";
 import type { PunishEvent } from "../types";
 import { DamageCell } from "./damage_cell";
 import { OpeningTypeCell } from "./opening_type_cell";
+import styles from "./punish_row.module.css";
 
 type Props = {
   punish: PunishEvent;
@@ -22,7 +23,7 @@ export const PunishRow = ({ punish, filePath, onPlay }: Props) => {
     <T.TableRow>
       <T.TableCell>
         <Tooltip title="Play from here">
-          <span onClick={playFromHere} style={{ cursor: "pointer", textDecoration: "underline" }}>
+          <span onClick={playFromHere} className={styles.playFromHere}>
             {start}
           </span>
         </Tooltip>
