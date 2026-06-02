@@ -5,19 +5,22 @@ import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import type { FileResult } from "@replays/types";
-import { GameMode } from "@slippi/slippi-js";
+import { frameToGameTimer, GameMode, stages as stageUtils } from "@slippi/slippi-js";
 import { useQuery } from "@tanstack/react-query";
+import React from "react";
 
 import { BasicFooter } from "@/components/footer/footer";
 import { LoadingScreen } from "@/components/loading_screen/loading_screen";
 import { IconMessage } from "@/components/message";
 import { useDolphinActions } from "@/lib/dolphin/use_dolphin_actions";
 import { useMousetrap } from "@/lib/hooks/use_mousetrap";
+import { convertFrameCountToDurationString } from "@/lib/time";
 import { getStageImage } from "@/lib/utils";
 import { useServices } from "@/services";
 
 import { GameProfile } from "./game_profile";
 import { GameProfileHeader } from "./game_profile_header/game_profile_header";
+import { GameProfileHeaderMessages as HeaderMessages } from "./game_profile_header/game_profile_header.messages";
 import { HomeRunProfile } from "./home_run_profile";
 import { ReplayFileStatsMessages as Messages } from "./replay_file_stats.messages";
 import styles from "./replay_file_stats.module.css";
@@ -36,9 +39,9 @@ type ReplayFileStatsProps = {
 
 export const ReplayFileStats = (props: ReplayFileStatsProps) => {
   const { filePath } = props;
-
   const { dolphinService, replayService } = useServices();
   const { viewReplays } = useDolphinActions(dolphinService);
+
   const gameStatsQuery = useQuery({
     queryKey: ["loadStatsQuery", filePath],
     queryFn: async () => {
@@ -56,14 +59,18 @@ export const ReplayFileStats = (props: ReplayFileStatsProps) => {
   });
 
   const loading = gameStatsQuery.isLoading && stadiumStatsQuery.isLoading;
-  const error = gameStatsQuery.error as any;
+  const errorMessage =
+    gameStatsQuery.error instanceof Error
+      ? gameStatsQuery.error.message
+      : gameStatsQuery.error
+      ? String(gameStatsQuery.error)
+      : null;
 
   const file = gameStatsQuery.data?.file ?? props.file;
   const numPlayers = file?.game.players.length;
   const gameStats = gameStatsQuery.data?.stats;
   const stadiumStats = stadiumStatsQuery.data?.stadiumStats;
 
-  // Add key bindings
   useMousetrap("escape", () => {
     if (!loading) {
       props.onClose();
@@ -82,9 +89,7 @@ export const ReplayFileStats = (props: ReplayFileStatsProps) => {
 
   const handleRevealLocation = () => window.electron.shell.showItemInFolder(filePath);
 
-  // We only want to show this full-screen error if we don't have a
-  // file in the prop. i.e. the SLP manually opened.
-  if (!props.file && error) {
+  if (!props.file && errorMessage) {
     return (
       <IconMessage Icon={ErrorIcon}>
         <div className={styles.errorContainer}>
@@ -104,30 +109,65 @@ export const ReplayFileStats = (props: ReplayFileStatsProps) => {
   const { game } = file;
   const stageImage = game.stageId != null ? getStageImage(game.stageId) : undefined;
 
+  let stageName = HeaderMessages.unknown();
+  try {
+    stageName = stageUtils.getStageName(game.stageId != null ? game.stageId : 0);
+  } catch (err) {
+    console.error(err);
+  }
+
+  const platform = game.consoleNickname || game.platform || HeaderMessages.unknown();
+  const startAtDisplay = new Date(game.startTime ? Date.parse(game.startTime) : 0);
+  const lastFrame = game.lastFrame ?? gameStats?.lastFrame;
+  const duration =
+    lastFrame != null
+      ? game.mode === GameMode.TARGET_TEST
+        ? frameToGameTimer(lastFrame, {
+            startingTimerSeconds: game.startingTimerSeconds,
+            timerType: game.timerType,
+          })
+        : convertFrameCountToDurationString(lastFrame, "long")
+      : HeaderMessages.unknown();
+
+  const stadiumDistance = stadiumStats?.type === "home-run-contest" ? stadiumStats.distance : undefined;
+  const stadiumUnits = stadiumStats?.type === "home-run-contest" ? stadiumStats.units : undefined;
+
   return (
     <div
       className={styles.outer}
       style={{ "--bg-image": stageImage ? `url("${stageImage}")` : "none" } as React.CSSProperties}
     >
       <GameProfileHeader
-        {...props}
-        file={file}
-        disabled={loading}
-        stats={gameStatsQuery.data?.stats}
-        stadiumStats={stadiumStatsQuery.data?.stadiumStats}
+        players={file.game.players}
+        isTeams={file.game.isTeams}
+        index={props.index}
+        total={props.total}
+        gameDetails={{
+          stageName,
+          platform,
+          startAtDisplay,
+          duration,
+          gameMode: game.mode ?? GameMode.VS,
+          distance: stadiumDistance,
+          units: stadiumUnits,
+        }}
+        onNext={props.onNext}
+        onPrev={props.onPrev}
         onPlay={props.onPlay}
+        onClose={props.onClose}
+        disabled={loading}
       />
       <div className={styles.content}>
         {!file || loading ? (
           <LoadingScreen message={Messages.crunchingNumbers()} />
-        ) : game.mode == GameMode.TARGET_TEST ? (
+        ) : game.mode === GameMode.TARGET_TEST ? (
           <TargetTestProfile file={file} stats={stadiumStats} />
-        ) : game.mode == GameMode.HOME_RUN_CONTEST ? (
+        ) : game.mode === GameMode.HOME_RUN_CONTEST ? (
           <HomeRunProfile file={file} stats={stadiumStats} />
         ) : numPlayers !== 2 ? (
           <IconMessage Icon={ErrorIcon} label={Messages.gameStatsForTeamBattlesIsUnsupported()} />
-        ) : error ? (
-          <IconMessage Icon={ErrorIcon} label={`Error: ${error.message ?? JSON.stringify(error, null, 2)}`} />
+        ) : errorMessage ? (
+          <IconMessage Icon={ErrorIcon} label={`Error: ${errorMessage}`} />
         ) : gameStats ? (
           <GameProfile file={file} stats={gameStats} onPlay={viewReplays} />
         ) : (
@@ -141,9 +181,7 @@ export const ReplayFileStats = (props: ReplayFileStatsProps) => {
           </IconButton>
         </Tooltip>
         <div className={styles.filePathContainer}>
-          <div className={styles.fileLabel} style={{ fontFamily: "Maven Pro, Helvetica, Arial, sans-serif" }}>
-            {Messages.currentFile()}
-          </div>
+          <div className={styles.fileLabel}>{Messages.currentFile()}</div>
           <div className={styles.filePathText}>{filePath}</div>
         </div>
       </BasicFooter>
