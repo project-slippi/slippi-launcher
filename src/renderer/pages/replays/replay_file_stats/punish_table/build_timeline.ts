@@ -8,6 +8,7 @@ export function buildTimeline(
   _playerIndex: number,
   oppPlayerIndex: number,
   oppCharacterIconUrl: string,
+  oppStartStocks?: number,
 ): TimelineItem[] {
   const punishes = stats?.conversions ?? [];
   const stocks = stats?.stocks ?? [];
@@ -18,7 +19,7 @@ export function buildTimeline(
   const stocksByPlayer = groupBy(stocks, (s) => s.playerIndex);
   const opponentStocks: StockType[] = stocksByPlayer[oppPlayerIndex] || [];
 
-  const totalStocks = opponentStocks.length;
+  const totalStocks = oppStartStocks ?? opponentStocks.reduce((max, s) => Math.max(max, s.count), 0);
   const sortedStocks = [...opponentStocks].sort((a, b) => a.startFrame - b.startFrame);
   const sortedPunishes = [...oppPunishes].sort((a, b) => a.startFrame - b.startFrame);
 

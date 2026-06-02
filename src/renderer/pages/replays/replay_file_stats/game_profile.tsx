@@ -73,6 +73,7 @@ export const GameProfile = ({ file, stats, onPlay }: GameProfileProps) => {
             firstPlayer.playerIndex,
             secondPlayer.playerIndex,
             playerInfo[1].characterIconUrl,
+            secondPlayer.startStocks,
           )}
           filePath={file.fullPath}
           onPlay={onPlay}
@@ -84,6 +85,7 @@ export const GameProfile = ({ file, stats, onPlay }: GameProfileProps) => {
             secondPlayer.playerIndex,
             firstPlayer.playerIndex,
             playerInfo[0].characterIconUrl,
+            firstPlayer.startStocks,
           )}
           filePath={file.fullPath}
           onPlay={onPlay}
