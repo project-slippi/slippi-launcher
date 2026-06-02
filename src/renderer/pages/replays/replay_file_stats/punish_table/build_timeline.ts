@@ -5,7 +5,7 @@ import type { PunishEvent, StockLossEvent, TimelineItem } from "../types";
 
 export function buildTimeline(
   stats: StatsType,
-  playerIndex: number,
+  _playerIndex: number,
   oppPlayerIndex: number,
   oppCharacterIconUrl: string,
 ): TimelineItem[] {
@@ -13,14 +13,14 @@ export function buildTimeline(
   const stocks = stats?.stocks ?? [];
 
   const punishesByPlayer = groupBy(punishes, (p) => p.playerIndex);
-  const playerPunishes: ConversionType[] = punishesByPlayer[playerIndex] || [];
+  const oppPunishes: ConversionType[] = punishesByPlayer[oppPlayerIndex] || [];
 
   const stocksByPlayer = groupBy(stocks, (s) => s.playerIndex);
   const opponentStocks: StockType[] = stocksByPlayer[oppPlayerIndex] || [];
 
   const totalStocks = opponentStocks.length;
   const sortedStocks = [...opponentStocks].sort((a, b) => a.startFrame - b.startFrame);
-  const sortedPunishes = [...playerPunishes].sort((a, b) => a.startFrame - b.startFrame);
+  const sortedPunishes = [...oppPunishes].sort((a, b) => a.startFrame - b.startFrame);
 
   const result: TimelineItem[] = [];
   let stockIdx = 0;
