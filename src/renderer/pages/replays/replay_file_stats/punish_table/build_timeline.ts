@@ -46,6 +46,9 @@ export function buildTimeline(
 
   while (stockIdx < sortedStocks.length) {
     const stock = sortedStocks[stockIdx];
+    if (stock.endFrame == null) {
+      break;
+    }
     const loss = toStockLossEvent(stock, totalStocks, oppCharacterIconUrl, !hadPunishSinceLastStockLoss);
     result.push({ kind: "stock-loss", stockLoss: loss });
     stockIdx++;
