@@ -25,7 +25,6 @@ import url from "url";
 import { download } from "utils/download";
 import { fileExists } from "utils/file_exists";
 
-import pkg from "../../release/app/package.json";
 import { getConfigFlags } from "./flags/flags";
 import { installModules } from "./install_modules";
 import { MenuBuilder } from "./menu";
@@ -45,17 +44,8 @@ log.initialize();
 log.errorHandler.startCatching();
 log.transports.file.level = isDevelopment ? "info" : "warn";
 
-app.setName(pkg.productName);
-
-// Disable IPC hooks in development to prevent duplicate console logs
-// In dev mode, both main and renderer import electron-log, which causes duplication
-if (isDevelopment) {
-  log.transports.ipc.level = false;
-  app.commandLine.appendSwitch("remote-debugging-port", "9222");
-}
-
-// Only allow a single Slippi App instance
-const lockObtained = app.requestSingleInstanceLock();
+// Only allow a single Slippi App instance in production
+const lockObtained = !app.isPackaged || app.requestSingleInstanceLock();
 if (!lockObtained) {
   app.quit();
 }
@@ -63,13 +53,15 @@ if (!lockObtained) {
 const flags = getConfigFlags();
 const { dolphinManager, appUpdater, browserWindowManager } = installModules(flags);
 
-if (process.env.NODE_ENV === "production") {
-  const sourceMapSupport = require("source-map-support");
-  sourceMapSupport.install();
-}
-
 if (isDevelopment) {
   require("electron-debug")();
+
+  // Disable IPC hooks in development to prevent duplicate console logs
+  // In dev mode, both main and renderer import electron-log, which causes duplication
+  log.transports.ipc.level = false;
+
+  // Enable remote debugging for React DevTools
+  app.commandLine.appendSwitch("remote-debugging-port", "9222");
 }
 
 const installExtensions = async () => {
