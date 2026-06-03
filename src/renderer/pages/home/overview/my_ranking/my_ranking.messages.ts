@@ -4,4 +4,5 @@ export const MyRankingMessages = {
   noRanking: () => "No ranking",
   rankPending: () => "Rank pending",
   hide: () => "Hide ranking",
+  rankingHiddenNotification: () => "You can re-enable rank display in the settings.",
 };
