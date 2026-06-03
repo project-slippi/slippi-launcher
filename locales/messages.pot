@@ -36,7 +36,7 @@ msgstr ""
 msgid "Activate online play"
 msgstr ""
 
-#: src/renderer/pages/home/overview/ranked_status/ranked_status.messages.ts:3:17
+#: src/renderer/pages/home/overview/ranked_day_status/ranked_day_status.messages.ts:3:17
 msgid "Active"
 msgstr ""
 
@@ -125,6 +125,13 @@ msgstr ""
 msgid "Are you sure?"
 msgstr ""
 
+#: src/renderer/initialize_app.messages.ts:11:5
+#. {0} version: string
+msgid ""
+"Auto-update to version {0} failed. Try manually downloading the latest "
+"version from slippi.gg."
+msgstr ""
+
 #: src/renderer/pages/settings/advanced_app_settings/advanced_app_settings.messages.ts:3:39
 msgid "Automatically install Slippi Launcher updates when they become available."
 msgstr ""
@@ -175,7 +182,7 @@ msgstr ""
 msgid "Can't find the email? Check your spam folder. Still missing? "
 msgstr ""
 
-#: src/renderer/app/header/header.messages.ts:14:17
+#: src/renderer/app/header/header.messages.ts:15:17
 #: src/renderer/components/confirmation_modal/confirmation_modal.messages.ts:3:17
 #: src/renderer/pages/spectate/share_gameplay_block/start_broadcast_dialog.messages.ts:10:17
 msgid "Cancel"
@@ -227,7 +234,7 @@ msgstr ""
 msgid "Checking for updates..."
 msgstr ""
 
-#: src/renderer/app/header/header.messages.ts:8:29
+#: src/renderer/app/header/header.messages.ts:9:29
 #: src/renderer/pages/quick_start/steps/activate_online_step/activate_online_step.messages.ts:2:29
 msgid "Choose a connect code"
 msgstr ""
@@ -295,7 +302,7 @@ msgstr ""
 msgid "Configure {0}"
 msgstr ""
 
-#: src/renderer/app/header/header.messages.ts:16:18
+#: src/renderer/app/header/header.messages.ts:17:18
 #: src/renderer/components/confirmation_modal/confirmation_modal.messages.ts:2:18
 #: src/renderer/pages/spectate/share_gameplay_block/start_broadcast_dialog.messages.ts:11:18
 msgid "Confirm"
@@ -420,7 +427,7 @@ msgstr ""
 msgid "Disconnected"
 msgstr ""
 
-#: src/renderer/app/header/header.messages.ts:17:22
+#: src/renderer/app/header/header.messages.ts:18:22
 #: src/renderer/components/login_form/login_form.messages.ts:5:22
 msgid "Display Name"
 msgstr ""
@@ -479,6 +486,10 @@ msgstr ""
 msgid "Download"
 msgstr ""
 
+#: src/renderer/components/persistent_notification/persistent_notification.messages.ts:6:27
+msgid "Download manually"
+msgstr ""
+
 #: src/renderer/components/persistent_notification/persistent_notification.messages.ts:2:44
 #. {0} version: string
 msgid "Downloading version {0}..."
@@ -496,7 +507,7 @@ msgstr ""
 msgid "Edit connection"
 msgstr ""
 
-#: src/renderer/app/header/header.messages.ts:15:26
+#: src/renderer/app/header/header.messages.ts:16:26
 #: src/renderer/app/header/user_menu/user_menu.messages.ts:5:26
 msgid "Edit display name"
 msgstr ""
@@ -549,7 +560,7 @@ msgstr ""
 msgid "Enable in-game music."
 msgstr ""
 
-#: src/renderer/pages/home/overview/ranked_status/ranked_status.messages.ts:5:19
+#: src/renderer/pages/home/overview/ranked_day_status/ranked_day_status.messages.ts:5:19
 msgid "Ending In"
 msgstr ""
 
@@ -704,6 +715,10 @@ msgstr ""
 msgid "Hide advanced options"
 msgstr ""
 
+#: src/renderer/pages/home/overview/my_ranking/my_ranking.messages.ts:6:15
+msgid "Hide ranking"
+msgstr ""
+
 #: src/renderer/pages/replays/replay_browser/filter_toolbar/filter_toolbar.messages.ts:7:25
 msgid "Hide short games"
 msgstr ""
@@ -736,6 +751,10 @@ msgstr ""
 msgid "IP Address"
 msgstr ""
 
+#: src/renderer/pages/settings/appearance_settings/rank_display_toggle/rank_display_toggle.messages.ts:3:33
+msgid "If enabled, your current rank and rating will be displayed on the Home page."
+msgstr ""
+
 #: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:35:31
 msgid ""
 "If the failure persists, you can test this in your computer's terminal app. "
@@ -755,6 +774,10 @@ msgstr ""
 
 #: src/renderer/components/persistent_notification/persistent_notification.messages.ts:3:24
 msgid "Install update"
+msgstr ""
+
+#: src/renderer/components/persistent_notification/persistent_notification.messages.ts:5:24
+msgid "Installation failed."
 msgstr ""
 
 #: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:15:16
@@ -832,7 +855,7 @@ msgstr ""
 msgid "Let's get set up"
 msgstr ""
 
-#: src/renderer/app/header/header.messages.ts:18:18
+#: src/renderer/app/header/header.messages.ts:19:18
 msgid "Loading"
 msgstr ""
 
@@ -976,7 +999,7 @@ msgstr ""
 msgid "Nice work!"
 msgstr ""
 
-#: src/renderer/app/header/header.messages.ts:6:25
+#: src/renderer/app/header/header.messages.ts:7:25
 msgid "No Melee ISO file specified"
 msgstr ""
 
@@ -1004,7 +1027,7 @@ msgstr ""
 msgid "No folder set"
 msgstr ""
 
-#: src/renderer/app/header/header.messages.ts:11:30
+#: src/renderer/app/header/header.messages.ts:12:30
 msgid "No network connection"
 msgstr ""
 
@@ -1022,6 +1045,10 @@ msgstr ""
 
 #: src/renderer/pages/replays/replay_file_stats/replay_file_stats.messages.ts:6:26
 msgid "No stats computed"
+msgstr ""
+
+#: src/renderer/app/header/header.messages.ts:6:28
+msgid "No update available"
 msgstr ""
 
 #: src/renderer/pages/spectate/spectate_page.messages.ts:3:18
@@ -1064,7 +1091,7 @@ msgstr ""
 msgid "Offline"
 msgstr ""
 
-#: src/renderer/pages/home/overview/ranked_status/ranked_status.messages.ts:10:5
+#: src/renderer/pages/home/overview/ranked_day_status/ranked_day_status.messages.ts:10:5
 msgid ""
 "Once every 4 days, ranked play is available to all users including "
 "non-subs. Check back soon!"
@@ -1078,7 +1105,7 @@ msgstr ""
 msgid "Only English characters are allowed"
 msgstr ""
 
-#: src/renderer/app/header/header.messages.ts:10:41
+#: src/renderer/app/header/header.messages.ts:11:41
 msgid "Only logged in users can play online."
 msgstr ""
 
@@ -1136,7 +1163,7 @@ msgstr ""
 msgid "Play Button Action"
 msgstr ""
 
-#: src/renderer/app/header/header.messages.ts:13:22
+#: src/renderer/app/header/header.messages.ts:14:22
 msgid "Play offline"
 msgstr ""
 
@@ -1233,11 +1260,11 @@ msgid "Rank pending"
 msgstr ""
 
 #: src/renderer/pages/home/overview/overview.messages.ts:4:20
-#: src/renderer/pages/home/overview/ranked_status/ranked_status.messages.ts:2:20
+#: src/renderer/pages/home/overview/ranked_day_status/ranked_day_status.messages.ts:2:20
 msgid "Ranked Day"
 msgstr ""
 
-#: src/renderer/pages/home/overview/ranked_status/ranked_status.messages.ts:8:5
+#: src/renderer/pages/home/overview/ranked_day_status/ranked_day_status.messages.ts:8:5
 msgid ""
 "Ranked play is currently available for everyone. Try it now! Available once "
 "every 4 days."
@@ -1402,7 +1429,7 @@ msgstr ""
 msgid "Send verification email again"
 msgstr ""
 
-#: src/renderer/app/header/header.messages.ts:7:19
+#: src/renderer/app/header/header.messages.ts:8:19
 msgid "Settings"
 msgstr ""
 
@@ -1412,6 +1439,10 @@ msgstr ""
 
 #: src/renderer/pages/replays/replay_browser/filter_toolbar/filter_toolbar.messages.ts:6:23
 msgid "Shortest game"
+msgstr ""
+
+#: src/renderer/pages/settings/appearance_settings/rank_display_toggle/rank_display_toggle.messages.ts:2:22
+msgid "Show Ranking on Home Page"
 msgstr ""
 
 #: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:10:30
@@ -1436,6 +1467,11 @@ msgstr ""
 
 #: src/renderer/pages/quick_start/quick_start.messages.ts:4:20
 msgid "Skip setup"
+msgstr ""
+
+#: src/renderer/initialize_app.messages.ts:9:42
+#. {0} version: string
+msgid "Slippi Launcher has been updated to version {0}"
 msgstr ""
 
 #: src/renderer/pages/console_mirror/console_mirror.messages.ts:6:5
@@ -1532,7 +1568,7 @@ msgstr ""
 msgid "Started"
 msgstr ""
 
-#: src/renderer/pages/home/overview/ranked_status/ranked_status.messages.ts:6:21
+#: src/renderer/pages/home/overview/ranked_day_status/ranked_day_status.messages.ts:6:21
 msgid "Starting In"
 msgstr ""
 
@@ -1540,7 +1576,7 @@ msgstr ""
 msgid "Starting Server..."
 msgstr ""
 
-#: src/renderer/pages/home/overview/ranked_status/ranked_status.messages.ts:4:23
+#: src/renderer/pages/home/overview/ranked_day_status/ranked_day_status.messages.ts:4:23
 msgid "Starting Soon"
 msgstr ""
 
@@ -1574,7 +1610,7 @@ msgstr ""
 msgid "Submit"
 msgstr ""
 
-#: src/renderer/pages/home/overview/ranked_status/ranked_status.messages.ts:13:28
+#: src/renderer/pages/home/overview/ranked_day_status/ranked_day_status.messages.ts:13:28
 #: src/renderer/pages/settings/chat_settings/chat_settings.messages.ts:5:20
 msgid "Subscribe"
 msgstr ""
@@ -1806,7 +1842,7 @@ msgstr ""
 msgid "Version: {0}"
 msgstr ""
 
-#: src/renderer/pages/home/overview/ranked_status/ranked_status.messages.ts:11:28
+#: src/renderer/pages/home/overview/ranked_day_status/ranked_day_status.messages.ts:11:28
 msgid "View Ranked Profile"
 msgstr ""
 
@@ -1845,7 +1881,7 @@ msgstr ""
 msgid "What is Mirroring?"
 msgstr ""
 
-#: src/renderer/app/header/header.messages.ts:12:36
+#: src/renderer/app/header/header.messages.ts:13:36
 msgid "Would you like to play offline?"
 msgstr ""
 
@@ -1853,7 +1889,7 @@ msgstr ""
 msgid "Wrong email? "
 msgstr ""
 
-#: src/renderer/app/header/header.messages.ts:9:28
+#: src/renderer/app/header/header.messages.ts:10:28
 msgid "You are not logged in"
 msgstr ""
 
@@ -1862,7 +1898,7 @@ msgstr ""
 msgid "You are offline."
 msgstr ""
 
-#: src/renderer/pages/home/overview/ranked_status/ranked_status.messages.ts:12:29
+#: src/renderer/pages/home/overview/ranked_day_status/ranked_day_status.messages.ts:12:29
 msgid "You have an active subscription! Enjoy ranked play at any time!"
 msgstr ""
 
