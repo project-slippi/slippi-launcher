@@ -40,7 +40,7 @@ export type RankedProfile = {
 export type UserData = {
   playKey?: PlayKey;
   rulesAccepted: number;
-  activeSubscription?: {
+  activeSubscription: {
     level: SubscriptionLevel;
     hasGiftSub: boolean;
   };
