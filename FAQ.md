@@ -49,10 +49,6 @@ You can also optionally [overclock](https://docs.google.com/document/d/1cQ3pbKZm
 
 Download and install [GCAdapterDriver](https://secretkeys.io/gcadapterdriver/). Ask in the Slippi Discord's #mac-support channel for further help.
 
-#### High Sierra to Mojave (10.13 - 10.15)
-
-Make sure to check the "overclock" option when installing your driver. This will bump your controller poll rate up to 1000hz.
-
 ### Linux
 
 Run the following command block
@@ -85,7 +81,8 @@ If you want to change this value, first open Dolphin (if using the Launcher go t
 
 ## Can I use Widescreen (16:9) when playing Slippi Online?
 
-Yes, to enable widescreen go to the Netplay in the Launcher settings depending > `Manage Gecko Codes` > and enable the Widescreen gecko code. You can do the same for replays by going to the Playback tab instead.
+Yes, to enable widescreen go to the Netplay in the Launcher settings depending > `Manage Gecko Codes` > and enable the Widescreen gecko code. Then click `Configure Dolphin` > `Graphics` and set the Dolphin aspect ratio to `Auto` (use `Force 16:9` on the beta Dolphin build). You can do the same for replays by going to the Playback tab instead.
+
 ## Is UCF included in Slippi Online?
 
 Yes, we currently ship with UCF 0.84 and it is applied everywhere by default.
@@ -94,9 +91,9 @@ Yes, we currently ship with UCF 0.84 and it is applied everywhere by default.
 
 We do not provide a Melee NTSC 1.02 ISO and we cannot help you find one, you will need to acquire one yourself. You can look into this: (https://wiki.dolphin-emu.org/index.php?title=Ripping_Games).
 
-## Can I play Free For All with Slippi Online?
+## Can I play Free For All (FFA) with Slippi Online?
 
-No, only singles (1v1) and teams (2v2, 3v1, 2v1v1) are supported at this time. Free For All is not currently on our roadmap, but is not off the table entirely.
+Currently FFA is only supported in Party mode. Teams mode supports 2v1v1, 2v2, 3v1, 2v1, and 1v1v1.
 
 ## Some of my inputs aren't going through correctly
 
@@ -108,9 +105,11 @@ Replays are stored by default in `Documents/Slippi` on Windows and `~/Slippi` on
 
 ## Mainline Slippi Dolphin (Beta)
 
+This is a more up to date build of Dolphin with the necessary changes for Slippi Online, it is netplay compatible with the stable build. Players that use non-GC controllers or want some of the newer Dolphin features can try this build at any point without affecting the stable build, retaining your settings.
+
 ### Updated OS Requirements
 - Windows 10 or newer
-- macOS Ventura (13.0) or newer
+- macOS Sonoma (14.0) or newer
 - Ubuntu 22.04 or newer and the following packages
   - libfuse2
   - qt6-qpa-plugins
