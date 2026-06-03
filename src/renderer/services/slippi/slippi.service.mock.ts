@@ -12,7 +12,7 @@ const SHOULD_ERROR = false;
 
 const fakeUserId = "userid";
 
-type SavedUserData = Omit<UserData, "activeSubscriptionLevel"> & { savedMessages: string[] };
+type SavedUserData = Omit<UserData, "activeSubscription"> & { savedMessages: string[] };
 
 const savedMessages = [
   "ggs",
@@ -93,10 +93,10 @@ class MockSlippiBackendClient implements SlippiBackendService {
     // Mock the sub level based on the fake user's display name.
     // If the display name contains sub - make it a subscribed user.
     const userIsSub = userData?.playKey?.displayName.toLowerCase().includes("sub");
-    const activeSubscriptionLevel = generateUserSubscriptionLevel(userIsSub);
+    const activeSubscription = generateUserSubscriptionLevel(userIsSub);
     return {
       ...userData,
-      activeSubscriptionLevel,
+      activeSubscription,
     };
   }
 

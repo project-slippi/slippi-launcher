@@ -63,7 +63,7 @@ const ChatConfigSettings = React.memo(({ user }: { user: AuthUser }) => {
         messages={localMessages}
         updateMessages={setLocalMessages}
         availableMessages={availableMessages}
-        user={{ uid: user.uid, subLevel: userData?.activeSubscriptionLevel ?? "NONE" }}
+        user={{ uid: user.uid, subLevel: userData?.activeSubscription?.level ?? "NONE" }}
       />
       {footer}
     </>

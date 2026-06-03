@@ -61,7 +61,7 @@ const InternalRankedDayStatus = ({
 }) => {
   const currentLanguage = useAppStore((store) => store.currentLanguage);
   const userData = useAccount((store) => store.userData);
-  const activeSubscriptionLevel = useAccount((store) => store.userData?.activeSubscriptionLevel);
+  const activeSubscriptionLevel = useAccount((store) => store.userData?.activeSubscription?.level);
   const connectCode = userData?.playKey?.connectCode;
 
   return (

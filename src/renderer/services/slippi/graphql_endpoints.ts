@@ -38,7 +38,7 @@ type DolphinRelease = {
   version: string;
 };
 
-type SubscriptionResult = {
+export type SubscriptionResult = {
   level: SubscriptionLevel;
   hasGiftSub: Nullable<boolean>;
 };
