@@ -97,9 +97,9 @@ export function buildSections(p1: PlayerStatSummary, p2: PlayerStatSummary): Sta
       title: "Offense",
       rows: [
         simpleStat("Kills", p1.kills, p2.kills, (a, b) => a > b, String),
-        simpleStat("Damage Done", p1.totalDamage, p2.totalDamage, (a, b) => a > 0 && b > 0 && a > b),
+        simpleStat("Damage Done", p1.totalDamage, p2.totalDamage, (a, b) => a > b),
         fractionStat("Opening Conversion Rate", p1.successfulConversions, p2.successfulConversions, "higher"),
-        simpleStat("Openings / Kill", p1.openingsPerKill, p2.openingsPerKill, (a, b) => a < b),
+        simpleStat("Openings / Kill", p1.openingsPerKill, p2.openingsPerKill, (a, b) => 0 < a && a < b),
         simpleStat("Damage / Opening", p1.damagePerOpening, p2.damagePerOpening, (a, b) => a > b),
       ],
     },
