@@ -142,6 +142,8 @@ msgid ""
 "Auto-update to version {0} failed. Try manually downloading the latest "
 "version from slippi.gg."
 msgstr ""
+"Falha na atualização automática para a versão {0}. Tente baixar a versão "
+"mais recente manualmente em slippi.gg."
 
 #: src/renderer/pages/settings/advanced_app_settings/advanced_app_settings.messages.ts:3:39
 msgid "Automatically install Slippi Launcher updates when they become available."
@@ -511,7 +513,7 @@ msgstr "Baixar"
 
 #: src/renderer/components/persistent_notification/persistent_notification.messages.ts:6:27
 msgid "Download manually"
-msgstr ""
+msgstr "Baixar manualmente"
 
 #: src/renderer/components/persistent_notification/persistent_notification.messages.ts:2:44
 #. {0} version: string
@@ -748,7 +750,7 @@ msgstr "Ocultar opções avançadas"
 
 #: src/renderer/pages/home/overview/my_ranking/my_ranking.messages.ts:6:15
 msgid "Hide ranking"
-msgstr ""
+msgstr "Ocultar ranking"
 
 #: src/renderer/pages/replays/replay_browser/filter_toolbar/filter_toolbar.messages.ts:7:25
 msgid "Hide short games"
@@ -784,7 +786,7 @@ msgstr "Endereço IP"
 
 #: src/renderer/pages/settings/appearance_settings/rank_display_toggle/rank_display_toggle.messages.ts:3:33
 msgid "If enabled, your current rank and rating will be displayed on the Home page."
-msgstr ""
+msgstr "Se ativado, seu ranking e classificação atuais serão exibidos na página Início."
 
 #: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:35:31
 msgid ""
@@ -811,7 +813,7 @@ msgstr "Instalar atualização"
 
 #: src/renderer/components/persistent_notification/persistent_notification.messages.ts:5:24
 msgid "Installation failed."
-msgstr ""
+msgstr "Falha na instalação."
 
 #: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:15:16
 msgid ""
@@ -1088,7 +1090,7 @@ msgstr "Nenhuma estatística calculada"
 
 #: src/renderer/app/header/header.messages.ts:6:28
 msgid "No update available"
-msgstr ""
+msgstr "Nenhuma atualização disponível"
 
 #: src/renderer/pages/spectate/spectate_page.messages.ts:3:18
 msgid "No users are broadcasting to you"
@@ -1377,9 +1379,9 @@ msgstr "Replays"
 
 #: src/renderer/lib/dolphin/handle_dolphin_exit_code.messages.ts:3:5
 msgid ""
-"Required DLLs for launching Dolphin are missing. Check the Help section in "
-"the settings page to fix this issue."
+"Slippi Launcher has been updated to version {0}"
 msgstr ""
+"O Slippi Launcher foi atualizado para a versão {0}"
 "As DLLs necessárias para iniciar o Dolphin estão faltando. Verifique a "
 "seção de Ajuda na página de configurações para corrigir este problema."
 
@@ -1503,7 +1505,7 @@ msgstr "Jogo mais curto"
 
 #: src/renderer/pages/settings/appearance_settings/rank_display_toggle/rank_display_toggle.messages.ts:2:22
 msgid "Show Ranking on Home Page"
-msgstr ""
+msgstr "Mostrar Ranking na Página Inicial"
 
 #: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:10:30
 msgid "Show advanced options"
