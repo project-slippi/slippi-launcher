@@ -9,7 +9,7 @@ import { MyRanking } from "./my_ranking/my_ranking";
 import { NewsPreview } from "./news_preview/news_preview";
 import { OverviewMessages as Messages } from "./overview.messages";
 import styles from "./overview.module.css";
-import { RankedStatus } from "./ranked_status/ranked_status";
+import { RankedDayStatus } from "./ranked_day_status/ranked_day_status";
 
 export const HomeOverview = React.memo(function HomeOverview() {
   const [enableRankDisplay] = useEnableRankDisplay();
@@ -20,7 +20,7 @@ export const HomeOverview = React.memo(function HomeOverview() {
       <ContentBlock title={Messages.upcomingTournaments()} content={<MeleeMajorsCarousel />} />
       <div className={styles.rankedSidebar}>
         {enableRankDisplay && <AuthGuard render={() => <MyRanking />} />}
-        <ContentBlock content={<RankedStatus />} />
+        <ContentBlock content={<RankedDayStatus />} />
       </div>
     </div>
   );

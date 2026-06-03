@@ -1,4 +1,4 @@
-export const RankedStatusMessages = {
+export const RankedDayStatusMessages = {
   rankedDay: () => "Ranked Day",
   active: () => "Active",
   startingSoon: () => "Starting Soon",

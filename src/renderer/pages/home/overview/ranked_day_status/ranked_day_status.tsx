@@ -13,8 +13,8 @@ import { cssVar } from "@/styles/css_variables";
 import { ReactComponent as RankedDayActiveIcon } from "@/styles/images/ranked_day_active.svg";
 import { ReactComponent as RankedDayInactiveIcon } from "@/styles/images/ranked_day_inactive.svg";
 
-import { RankedStatusMessages as Messages } from "./ranked_status.messages";
-import styles from "./ranked_status.module.css";
+import { RankedDayStatusMessages as Messages } from "./ranked_day_status.messages";
+import styles from "./ranked_day_status.module.css";
 
 const userLocale = window.electron.bootstrap.locale;
 
@@ -50,7 +50,7 @@ const convertCodeToSlug = (code: string | undefined) => {
   return "";
 };
 
-const InternalRankedStatus = ({
+const InternalRankedDayStatus = ({
   isFullAccess,
   countdown,
   nextTime,
@@ -170,7 +170,7 @@ const SubscribeToRanked = ({ isFullAccess, uid }: { isFullAccess: boolean; uid?:
   );
 };
 
-export const RankedStatus = React.memo(function RankedStatus() {
+export const RankedDayStatus = React.memo(function RankedDayStatus() {
   const [isFullAccess, setFullAccess] = React.useState(false);
   const [countdown, setCountdown] = React.useState<string>("");
   const [nextTime, setNextTime] = React.useState<Date>(new Date());
@@ -201,5 +201,5 @@ export const RankedStatus = React.memo(function RankedStatus() {
     return () => window.clearInterval(interval);
   }, []);
 
-  return <InternalRankedStatus isFullAccess={isFullAccess} countdown={countdown} nextTime={nextTime} />;
+  return <InternalRankedDayStatus isFullAccess={isFullAccess} countdown={countdown} nextTime={nextTime} />;
 });
