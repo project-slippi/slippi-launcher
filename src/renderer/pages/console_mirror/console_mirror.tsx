@@ -14,6 +14,7 @@ import { DualPane } from "@/components/dual_pane";
 import { ExternalLink as A } from "@/components/external_link";
 import { Footer } from "@/components/footer/footer";
 import { Button } from "@/components/form/button";
+import { getConnectionsToAutoConnect } from "@/lib/auto_connect";
 import type { EditConnectionType } from "@/lib/console_connection";
 import {
   addConsoleConnection,
@@ -79,14 +80,11 @@ export const ConsoleMirror = React.memo(() => {
   // Automatically connect to saved consoles as they appear on the network.
   React.useEffect(() => {
     const availableIps = new Set(availableConsoles.map((item) => item.ip));
-    for (const conn of savedConnections) {
-      // Only connect to saved consoles that are currently broadcasting and aren't already connected.
-      if (!availableIps.has(conn.ipAddress) || consoleIsConnected(conn.ipAddress)) {
-        continue;
-      }
+    const toConnect = getConnectionsToAutoConnect({ savedConnections, availableIps, connectedConsoles });
+    for (const conn of toConnect) {
       consoleService.connectToConsoleMirror(buildMirrorConfig(conn)).catch(showError);
     }
-  }, [availableConsoles, savedConnections, consoleIsConnected, consoleService, showError]);
+  }, [availableConsoles, savedConnections, connectedConsoles, consoleService, showError]);
 
   const onCancel = () => {
     setModalOpen(false);
