@@ -6,6 +6,8 @@ type GetConnectionsToAutoConnectParams = {
   savedConnections: StoredConnection[];
   availableIps: ReadonlySet<string>;
   connectedConsoles: Record<string, Partial<ConsoleMirrorStatusUpdate>>;
+  // IPs we've already issued a connect for but haven't yet received a status update from.
+  inFlightIps: ReadonlySet<string>;
 };
 
 /**
@@ -19,10 +21,17 @@ export const getConnectionsToAutoConnect = ({
   savedConnections,
   availableIps,
   connectedConsoles,
+  inFlightIps,
 }: GetConnectionsToAutoConnectParams): StoredConnection[] => {
   return savedConnections.filter((conn) => {
     // Only connect to consoles that are currently broadcasting.
     if (!availableIps.has(conn.ipAddress)) {
+      return false;
+    }
+    // Skip consoles we've already issued a connect for but haven't heard back from yet.
+    // This avoids firing a duplicate connect before the first status update arrives
+    // (the mirror only emits status changes after the initial connection event).
+    if (inFlightIps.has(conn.ipAddress)) {
       return false;
     }
     // Skip consoles we're already connected to (or connecting/reconnecting).
