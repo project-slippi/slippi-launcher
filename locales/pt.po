@@ -7,7 +7,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "x-generator: i18next-auto-keys CLI\n"
 "Language: pt-BR\n"
-"PO-Revision-Date: 2026-05-21T12:21:37.008Z\n"
+"PO-Revision-Date: 2026-06-03T07:09:13.030Z\n"
 
 #: src/renderer/components/activate_online_form/activate_online_form.messages.ts:3:30
 msgid "2-4 uppercase English characters"
@@ -37,7 +37,7 @@ msgstr "Aceitar regras e políticas"
 msgid "Activate online play"
 msgstr "Ativar jogo online"
 
-#: src/renderer/pages/home/overview/ranked_status/ranked_status.messages.ts:3:17
+#: src/renderer/pages/home/overview/ranked_day_status/ranked_day_status.messages.ts:3:17
 msgid "Active"
 msgstr "Ativo"
 
@@ -63,7 +63,9 @@ msgstr "Avançado"
 #: src/renderer/pages/replays/replay_browser/file_selection_toolbar/file_selection_toolbar.messages.ts:3:40
 #. {0} count: number
 msgid "All {0, plural, one {# file} other {# files}} selected"
-msgstr "Todo(s) {0, plural, one {# arquivo} other {# arquivos}} selecionado(s)"
+msgstr ""
+"{0, plural, one {Todo # arquivo selecionado} other {Todos # arquivos "
+"selecionados}}"
 
 #: src/renderer/components/location_guard/location_guard.messages.ts:6:16
 msgid "Allow"
@@ -134,6 +136,15 @@ msgstr "Tem certeza de que deseja sair?"
 msgid "Are you sure?"
 msgstr "Tem certeza?"
 
+#: src/renderer/initialize_app.messages.ts:11:5
+#. {0} version: string
+msgid ""
+"Auto-update to version {0} failed. Try manually downloading the latest "
+"version from slippi.gg."
+msgstr ""
+"Falha na atualização automática para a versão {0}. Tente baixar a versão "
+"mais recente manualmente em slippi.gg."
+
 #: src/renderer/pages/settings/advanced_app_settings/advanced_app_settings.messages.ts:3:39
 msgid "Automatically install Slippi Launcher updates when they become available."
 msgstr ""
@@ -186,7 +197,7 @@ msgstr "Pode ser alterado posteriormente por um pagamento único"
 msgid "Can't find the email? Check your spam folder. Still missing? "
 msgstr "Não encontra o e-mail? Verifique sua pasta de spam. Ainda não aparece? "
 
-#: src/renderer/app/header/header.messages.ts:14:17
+#: src/renderer/app/header/header.messages.ts:15:17
 #: src/renderer/components/confirmation_modal/confirmation_modal.messages.ts:3:17
 #: src/renderer/pages/spectate/share_gameplay_block/start_broadcast_dialog.messages.ts:10:17
 msgid "Cancel"
@@ -238,7 +249,7 @@ msgstr "Verificar problemas de rede"
 msgid "Checking for updates..."
 msgstr "Verificando atualizações..."
 
-#: src/renderer/app/header/header.messages.ts:8:29
+#: src/renderer/app/header/header.messages.ts:9:29
 #: src/renderer/pages/quick_start/steps/activate_online_step/activate_online_step.messages.ts:2:29
 msgid "Choose a connect code"
 msgstr "Escolha um código de conexão"
@@ -251,7 +262,7 @@ msgstr ""
 
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:8:38
 msgid "Choose what happens when the Play button is pressed."
-msgstr "Escolha o que acontece quando o botão de Jogar épressionado."
+msgstr "Escolha o que acontece quando o botão de Jogar é pressionado."
 
 #: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:22:50
 msgid "Choose which Slippi Dolphin release to install"
@@ -308,7 +319,7 @@ msgstr "Configurar Dolphin"
 msgid "Configure {0}"
 msgstr "Configurar {0}"
 
-#: src/renderer/app/header/header.messages.ts:16:18
+#: src/renderer/app/header/header.messages.ts:17:18
 #: src/renderer/components/confirmation_modal/confirmation_modal.messages.ts:2:18
 #: src/renderer/pages/spectate/share_gameplay_block/start_broadcast_dialog.messages.ts:11:18
 msgid "Confirm"
@@ -433,7 +444,7 @@ msgstr "Desconectar"
 msgid "Disconnected"
 msgstr "Desconectado"
 
-#: src/renderer/app/header/header.messages.ts:17:22
+#: src/renderer/app/header/header.messages.ts:18:22
 #: src/renderer/components/login_form/login_form.messages.ts:5:22
 msgid "Display Name"
 msgstr "Nome de Exibição"
@@ -476,8 +487,8 @@ msgid ""
 "#windows-support channel with some context regarding the crash."
 msgstr ""
 "Dolphin encerrou inesperadamente. Por favor, vá para a seção de Ajuda na "
-"página de configurações, clique em \"Copiar logs\" e cole-osno canal "
-"#windows-support do Discord do Slippi com algum contexto sobrea falha."
+"página de configurações, clique em \"Copiar logs\" e cole-os no canal "
+"#windows-support do Discord do Slippi com algum contexto sobre a falha."
 
 #: src/renderer/app/header/user_menu/user_menu.messages.ts:17:39
 msgid "Dolphin is currently running. Close Dolphin to switch accounts"
@@ -500,6 +511,10 @@ msgstr "Baixo"
 msgid "Download"
 msgstr "Baixar"
 
+#: src/renderer/components/persistent_notification/persistent_notification.messages.ts:6:27
+msgid "Download manually"
+msgstr "Baixar manualmente"
+
 #: src/renderer/components/persistent_notification/persistent_notification.messages.ts:2:44
 #. {0} version: string
 msgid "Downloading version {0}..."
@@ -517,7 +532,7 @@ msgstr "Editar"
 msgid "Edit connection"
 msgstr "Editar conexão"
 
-#: src/renderer/app/header/header.messages.ts:15:26
+#: src/renderer/app/header/header.messages.ts:16:26
 #: src/renderer/app/header/user_menu/user_menu.messages.ts:5:26
 msgid "Edit display name"
 msgstr "Editar nome de exibição"
@@ -570,7 +585,7 @@ msgstr "Ativar Controle Remoto de Espectador"
 msgid "Enable in-game music."
 msgstr "Ativar música durante o jogo."
 
-#: src/renderer/pages/home/overview/ranked_status/ranked_status.messages.ts:5:19
+#: src/renderer/pages/home/overview/ranked_day_status/ranked_day_status.messages.ts:5:19
 msgid "Ending In"
 msgstr "Encerrando Em"
 
@@ -581,7 +596,7 @@ msgstr "Digite o ID do Espectador"
 #: src/renderer/pages/spectate/share_gameplay_block/share_gameplay_block.messages.ts:3:35
 msgid "Error connecting to Dolphin. Ensure Dolphin is running and try again."
 msgstr ""
-"Erro contectando ao Dolphin. Certifique-se de que o Dolphin está rodando e "
+"Erro conectando ao Dolphin. Certifique-se de que o Dolphin está rodando e "
 "tente novamente."
 
 #: src/renderer/pages/settings/dolphin_settings/gecko_codes/gecko_codes.messages.ts:3:53
@@ -696,7 +711,9 @@ msgstr "Esqueceu sua senha?"
 #. {1} city: string - The approximate city the user is in. e.g. Shimomeguro
 #. {2} greaterRegion: string - The greater region/state/prefecture the city is contained in. e.g. Tokyo
 msgid "Found {0, plural, one {# tournament} other {# tournaments}} near {1}, {2}."
-msgstr "Encontrado(s) {0, plural, one {# torneio} other {# torneios}} perto de {1}, {2}."
+msgstr ""
+"{0, plural, one {Encontrado # torneio} other {Encontrados # torneios}} "
+"perto de {1}, {2}."
 
 #: src/renderer/pages/settings/create.messages.ts:3:15
 msgid "Game"
@@ -731,6 +748,10 @@ msgstr "Ocultar"
 msgid "Hide advanced options"
 msgstr "Ocultar opções avançadas"
 
+#: src/renderer/pages/home/overview/my_ranking/my_ranking.messages.ts:6:15
+msgid "Hide ranking"
+msgstr "Ocultar ranking"
+
 #: src/renderer/pages/replays/replay_browser/filter_toolbar/filter_toolbar.messages.ts:7:25
 msgid "Hide short games"
 msgstr "Ocultar jogos curtos"
@@ -763,6 +784,12 @@ msgstr "Espero que você saiba o que está fazendo..."
 msgid "IP Address"
 msgstr "Endereço IP"
 
+#: src/renderer/pages/settings/appearance_settings/rank_display_toggle/rank_display_toggle.messages.ts:3:33
+msgid "If enabled, your current rank and rating will be displayed on the Home page."
+msgstr ""
+"Se ativado, seu ranking e classificação atuais serão exibidos na página "
+"Início."
+
 #: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:35:31
 msgid ""
 "If the failure persists, you can test this in your computer's terminal app. "
@@ -785,6 +812,10 @@ msgstr "Incompatível com WASAPI."
 #: src/renderer/components/persistent_notification/persistent_notification.messages.ts:3:24
 msgid "Install update"
 msgstr "Instalar atualização"
+
+#: src/renderer/components/persistent_notification/persistent_notification.messages.ts:5:24
+msgid "Installation failed."
+msgstr "Falha na instalação."
 
 #: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:15:16
 msgid ""
@@ -863,7 +894,7 @@ msgstr "Esquerda"
 msgid "Let's get set up"
 msgstr "Vamos iniciar a configuração"
 
-#: src/renderer/app/header/header.messages.ts:18:18
+#: src/renderer/app/header/header.messages.ts:19:18
 msgid "Loading"
 msgstr "Carregando"
 
@@ -1011,7 +1042,7 @@ msgstr "Próximo replay"
 msgid "Nice work!"
 msgstr "Bom trabalho!"
 
-#: src/renderer/app/header/header.messages.ts:6:25
+#: src/renderer/app/header/header.messages.ts:7:25
 msgid "No Melee ISO file specified"
 msgstr "Nenhum arquivo ISO do Melee especificado"
 
@@ -1039,7 +1070,7 @@ msgstr "Nenhuma pasta selecionada"
 msgid "No folder set"
 msgstr "Nenhuma pasta definida"
 
-#: src/renderer/app/header/header.messages.ts:11:30
+#: src/renderer/app/header/header.messages.ts:12:30
 msgid "No network connection"
 msgstr "Sem conexão de rede"
 
@@ -1058,6 +1089,10 @@ msgstr "Nenhuma conexão de console salva"
 #: src/renderer/pages/replays/replay_file_stats/replay_file_stats.messages.ts:6:26
 msgid "No stats computed"
 msgstr "Nenhuma estatística calculada"
+
+#: src/renderer/app/header/header.messages.ts:6:28
+msgid "No update available"
+msgstr "Nenhuma atualização disponível"
 
 #: src/renderer/pages/spectate/spectate_page.messages.ts:3:18
 msgid "No users are broadcasting to you"
@@ -1099,7 +1134,7 @@ msgstr "Porta do Websocket do OBS"
 msgid "Offline"
 msgstr "Offline"
 
-#: src/renderer/pages/home/overview/ranked_status/ranked_status.messages.ts:10:5
+#: src/renderer/pages/home/overview/ranked_day_status/ranked_day_status.messages.ts:10:5
 msgid ""
 "Once every 4 days, ranked play is available to all users including "
 "non-subs. Check back soon!"
@@ -1115,7 +1150,7 @@ msgstr "Ativação online necessária"
 msgid "Only English characters are allowed"
 msgstr "Apenas caracteres em inglês são permitidos"
 
-#: src/renderer/app/header/header.messages.ts:10:41
+#: src/renderer/app/header/header.messages.ts:11:41
 msgid "Only logged in users can play online."
 msgstr "Apenas usuários conectados podem jogar online."
 
@@ -1173,7 +1208,7 @@ msgstr "Jogar Todos"
 msgid "Play Button Action"
 msgstr "Ação do Botão Jogar"
 
-#: src/renderer/app/header/header.messages.ts:13:22
+#: src/renderer/app/header/header.messages.ts:14:22
 msgid "Play offline"
 msgstr "Jogar offline"
 
@@ -1272,18 +1307,18 @@ msgid ""
 "not allowed. Targeted harassment in names and codes is also not allowed."
 msgstr ""
 "Nomes e códigos racistas, homofóbicos, transfóbicos ou intolerantes não são "
-"permitidos. Assédio direcionado em nomes e códigos também não épermitido."
+"permitidos. Assédio direcionado em nomes e códigos também não é permitido."
 
 #: src/renderer/pages/home/overview/my_ranking/my_ranking.messages.ts:5:22
 msgid "Rank pending"
 msgstr "Rank pendente"
 
 #: src/renderer/pages/home/overview/overview.messages.ts:4:20
-#: src/renderer/pages/home/overview/ranked_status/ranked_status.messages.ts:2:20
+#: src/renderer/pages/home/overview/ranked_day_status/ranked_day_status.messages.ts:2:20
 msgid "Ranked Day"
 msgstr "Dia Ranqueado"
 
-#: src/renderer/pages/home/overview/ranked_status/ranked_status.messages.ts:8:5
+#: src/renderer/pages/home/overview/ranked_day_status/ranked_day_status.messages.ts:8:5
 msgid ""
 "Ranked play is currently available for everyone. Try it now! Available once "
 "every 4 days."
@@ -1350,7 +1385,7 @@ msgid ""
 "the settings page to fix this issue."
 msgstr ""
 "As DLLs necessárias para iniciar o Dolphin estão faltando. Verifique a "
-"seção de Ajuda na página de configurações para corrigir este problema."
+"seção Ajuda na página de configurações para corrigir este problema."
 
 #: src/renderer/lib/dolphin/handle_dolphin_exit_code.messages.ts:12:5
 msgid ""
@@ -1458,7 +1493,7 @@ msgstr "Selecione seu idioma preferido para o aplicativo."
 msgid "Send verification email again"
 msgstr "Enviar e-mail de verificação novamente"
 
-#: src/renderer/app/header/header.messages.ts:7:19
+#: src/renderer/app/header/header.messages.ts:8:19
 msgid "Settings"
 msgstr "Configurações"
 
@@ -1469,6 +1504,10 @@ msgstr "Compartilhe seu gameplay"
 #: src/renderer/pages/replays/replay_browser/filter_toolbar/filter_toolbar.messages.ts:6:23
 msgid "Shortest game"
 msgstr "Jogo mais curto"
+
+#: src/renderer/pages/settings/appearance_settings/rank_display_toggle/rank_display_toggle.messages.ts:2:22
+msgid "Show Ranking on Home Page"
+msgstr "Mostrar Ranking na Página Inicial"
 
 #: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:10:30
 msgid "Show advanced options"
@@ -1493,6 +1532,11 @@ msgstr "Cadastrar-se"
 #: src/renderer/pages/quick_start/quick_start.messages.ts:4:20
 msgid "Skip setup"
 msgstr "Pular configuração"
+
+#: src/renderer/initialize_app.messages.ts:9:42
+#. {0} version: string
+msgid "Slippi Launcher has been updated to version {0}"
+msgstr "O Slippi Launcher foi atualizado para a versão {0}"
 
 #: src/renderer/pages/console_mirror/console_mirror.messages.ts:6:5
 msgid ""
@@ -1596,7 +1640,7 @@ msgstr "Iniciar Servidor"
 msgid "Started"
 msgstr "Iniciado"
 
-#: src/renderer/pages/home/overview/ranked_status/ranked_status.messages.ts:6:21
+#: src/renderer/pages/home/overview/ranked_day_status/ranked_day_status.messages.ts:6:21
 msgid "Starting In"
 msgstr "Iniciando Em"
 
@@ -1604,7 +1648,7 @@ msgstr "Iniciando Em"
 msgid "Starting Server..."
 msgstr "Iniciando Servidor..."
 
-#: src/renderer/pages/home/overview/ranked_status/ranked_status.messages.ts:4:23
+#: src/renderer/pages/home/overview/ranked_day_status/ranked_day_status.messages.ts:4:23
 msgid "Starting Soon"
 msgstr "Iniciando Em Breve"
 
@@ -1638,7 +1682,7 @@ msgstr "Parado"
 msgid "Submit"
 msgstr "Enviar"
 
-#: src/renderer/pages/home/overview/ranked_status/ranked_status.messages.ts:13:28
+#: src/renderer/pages/home/overview/ranked_day_status/ranked_day_status.messages.ts:13:28
 #: src/renderer/pages/settings/chat_settings/chat_settings.messages.ts:5:20
 msgid "Subscribe"
 msgstr "Inscrever-se"
@@ -1720,8 +1764,8 @@ msgid ""
 "The port used for connecting to console. Only change this if connecting to "
 "a Console Relay. If unsure, leave it as {0}."
 msgstr ""
-"A porta usada para conectar ao console. Altere apenas estiver conectando a "
-"um Retransmissor de Console. Se não tiver certeza, deixe como {0}."
+"A porta usada para conectar ao console. Altere apenas se estiver conectando "
+"a um Retransmissor de Console. Se não tiver certeza, deixe como {0}."
 
 #: src/renderer/pages/spectate/share_gameplay_block/start_broadcast_dialog.messages.ts:3:44
 msgid "The unique viewer code of the spectator."
@@ -1823,7 +1867,7 @@ msgstr "ISO Desconhecida"
 
 #: src/renderer/pages/replays/replay_browser/replay_file/replay_file.messages.ts:2:23
 msgid "Unknown stage"
-msgstr "Fase desconhecido"
+msgstr "Fase desconhecida"
 
 #: src/renderer/pages/console_mirror/saved_connections_list/saved_connection_item.messages.ts:6:38
 #. {0} status: number
@@ -1885,7 +1929,7 @@ msgstr "Versão {0} está disponível!"
 msgid "Version: {0}"
 msgstr "Versão: {0}"
 
-#: src/renderer/pages/home/overview/ranked_status/ranked_status.messages.ts:11:28
+#: src/renderer/pages/home/overview/ranked_day_status/ranked_day_status.messages.ts:11:28
 msgid "View Ranked Profile"
 msgstr "Ver Perfil Ranqueado"
 
@@ -1916,17 +1960,19 @@ msgid ""
 "verification"
 msgstr ""
 "Visite seu e-mail, clique no link no e-mail de verificação e depois "
-"prossiga."
+"verifique."
 
 #: src/renderer/components/location_guard/location_guard.messages.ts:3:22
 msgid "We need access to your approximate location to show you nearby tournaments."
-msgstr "Precisamos de acesso à sua localização aproximada para mostrar torneios próximos a você."
+msgstr ""
+"Precisamos de acesso à sua localização aproximada para mostrar torneios "
+"próximos a você."
 
 #: src/renderer/pages/console_mirror/console_mirror.messages.ts:4:26
 msgid "What is Mirroring?"
 msgstr "O que é Espelhamento?"
 
-#: src/renderer/app/header/header.messages.ts:12:36
+#: src/renderer/app/header/header.messages.ts:13:36
 msgid "Would you like to play offline?"
 msgstr "Você gostaria de jogar offline?"
 
@@ -1934,7 +1980,7 @@ msgstr "Você gostaria de jogar offline?"
 msgid "Wrong email? "
 msgstr "E-mail errado? "
 
-#: src/renderer/app/header/header.messages.ts:9:28
+#: src/renderer/app/header/header.messages.ts:10:28
 msgid "You are not logged in"
 msgstr "Você não está conectado"
 
@@ -1943,9 +1989,15 @@ msgstr "Você não está conectado"
 msgid "You are offline."
 msgstr "Você está offline."
 
-#: src/renderer/pages/home/overview/ranked_status/ranked_status.messages.ts:12:29
+#: src/renderer/pages/home/overview/my_ranking/my_ranking.messages.ts:7:36
+msgid "You can re-enable rank display in the settings."
+msgstr "Você pode reativar a exibição do ranking nas configurações."
+
+#: src/renderer/pages/home/overview/ranked_day_status/ranked_day_status.messages.ts:12:29
 msgid "You have an active subscription! Enjoy ranked play at any time!"
-msgstr "Você tem uma assinatura ativa! Aproveite o jogo ranqueado a qualquer momento!"
+msgstr ""
+"Você tem uma assinatura ativa! Aproveite o jogo ranqueado a qualquer "
+"momento!"
 
 #: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:34:28
 msgid "You may have trouble connecting to other players."
@@ -2006,9 +2058,9 @@ msgid ""
 "Your location data will be sent to a third-party service. Slippi does NOT "
 "collect this data. You can turn this feature off again in the settings."
 msgstr ""
-"Seus dados de localização serão enviados a um serviço de terceiros. O Slippi "
-"NÃO coleta estes dados. Você pode desativar este recurso novamente nas "
-"configurações."
+"Seus dados de localização serão enviados a um serviço de terceiros. O "
+"Slippi NÃO coleta estes dados. Você pode desativar este recurso novamente "
+"nas configurações."
 
 #: src/renderer/pages/quick_start/steps/iso_selection_step/iso_selection_step.messages.ts:5:28
 msgid "or drag and drop here"
@@ -2018,39 +2070,45 @@ msgstr "ou arraste e solte aqui"
 #. {0} count: number
 #. {1} total: number
 msgid "{0, number} of {1, plural, one {# replay} other {# replays}} processed."
-msgstr "{0, number} de {1, plural, one {# replay} other {# replays}} processado(s)."
+msgstr ""
+"{0, number} de {1, plural, one {# replay processado} other {# replays "
+"processados}}."
 
 #: src/renderer/pages/replays/replay_browser/file_selection_toolbar/file_selection_toolbar.messages.ts:2:37
 #. {0} count: number
 msgid "{0, plural, one {# file} other {# files}} selected"
-msgstr "{0, plural, one {# arquivo} other {# arquivos}} selecionado(s)"
+msgstr "{0, plural, one {# arquivo selecionado} other {# arquivos selecionados}}"
 
 #: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:2:36
 #. {0} count: number
 msgid "{0, plural, one {# file} other {# files}} successfully deleted."
-msgstr "{0, plural, one {# arquivo} other {# arquivos}} excluído(s) com sucesso."
+msgstr ""
+"{0, plural, one {# arquivo excluído com sucesso} other {# arquivos "
+"excluídos com sucesso}}."
 
 #: src/renderer/pages/replays/replay_browser/file_selection_toolbar/file_selection_toolbar.messages.ts:9:37
 #. {0} count: number
 msgid "{0, plural, one {# file} other {# files}} will be deleted."
-msgstr "{0, plural, one {# arquivo} other {# arquivos}} será(ão) excluído(s)."
+msgstr ""
+"{0, plural, one {# arquivo será excluído} other {# arquivos serão "
+"excluídos}}."
 
 #: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:10:43
 #. {0} count: number
 msgid "{0, plural, one {# replay} other {# replays}} filtered."
-msgstr "{0, plural, one {# replay} other {# replays}} filtrado(s)."
+msgstr "{0, plural, one {# replay filtrado} other {# replays filtrados}}."
 
 #: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:9:40
 #. {0} count: number
 msgid "{0, plural, one {# replay} other {# replays}} found."
-msgstr "{0, plural, one {# replay} other {# replays}} encontrado(s)."
+msgstr "{0, plural, one {# replay encontrado} other {# replays encontrados}}."
 
 #: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:12:40
 #. {0} count: number
 msgid "{0, plural, one {# replay} other {# replays}} had errors."
-msgstr "{0, plural, one {# replay} other {# replays}} com erro(s)."
+msgstr "{0, plural, one {# replay com erros} other {# replays com erros}}."
 
 #: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:11:41
 #. {0} count: number
 msgid "{0, plural, one {# replay} other {# replays}} hidden."
-msgstr "{0, plural, one {# replay} other {# replays}} oculto(s)."
+msgstr "{0, plural, one {# replay oculto} other {# replays ocultos}}."
