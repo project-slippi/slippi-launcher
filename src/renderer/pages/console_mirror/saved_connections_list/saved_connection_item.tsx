@@ -1,4 +1,3 @@
-import type { MirrorConfig } from "@console/types";
 import { ConnectionStatus, Ports } from "@console/types";
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
@@ -16,6 +15,7 @@ import { lt } from "semver";
 
 import { ExternalLink as A } from "@/components/external_link";
 import { LabelledText } from "@/components/labelled_text";
+import { buildMirrorConfig } from "@/lib/console_connection";
 import { useToasts } from "@/lib/hooks/use_toasts";
 import { useServices } from "@/services";
 import { ReactComponent as WiiIcon } from "@/styles/images/wii_icon.svg";
@@ -52,29 +52,7 @@ export const SavedConnectionItem = ({
   const { showError } = useToasts();
   const { consoleService } = useServices();
   const onConnect = React.useCallback(async () => {
-    const conn = connection;
-    const config: MirrorConfig = {
-      id: conn.id,
-      ipAddress: conn.ipAddress,
-      port: conn.port ?? Ports.DEFAULT,
-      folderPath: conn.folderPath,
-      isRealtime: conn.isRealtime,
-      enableRelay: conn.enableRelay,
-      useNicknameFolders: conn.useNicknameFolders,
-      nickname,
-    };
-
-    // Add OBS config if necessary
-    if (conn.enableAutoSwitcher && conn.obsIP && conn.obsPort && conn.obsSourceName) {
-      config.autoSwitcherSettings = {
-        ip: conn.obsIP,
-        port: conn.obsPort,
-        password: conn.obsPassword,
-        sourceName: conn.obsSourceName,
-      };
-    }
-
-    await consoleService.connectToConsoleMirror(config);
+    await consoleService.connectToConsoleMirror(buildMirrorConfig(connection, nickname));
   }, [consoleService, connection, nickname]);
   const onMirror = React.useCallback(() => {
     consoleService.startMirroring(connection.ipAddress).catch(showError);
