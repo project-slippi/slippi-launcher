@@ -174,7 +174,7 @@ class SlippiBackendClient implements SlippiBackendService {
       };
     }
 
-    const activeSubscription = res.data.getUser?.activeSubscription;
+    const sub = res.data.getUser?.activeSubscription;
     const netplayProfile = res.data.getUser?.rankedNetplayProfile ?? undefined;
     const rankedNetplayProfile = mapSlippiRankedProfile(netplayProfile);
 
@@ -182,8 +182,8 @@ class SlippiBackendClient implements SlippiBackendService {
       playKey: playKeyObj,
       rulesAccepted: res.data.getUser?.rulesAccepted ?? 0,
       activeSubscription: {
-        level: activeSubscription?.level ?? "NONE",
-        hasGiftSub: !!activeSubscription?.hasGiftSub,
+        level: sub?.level ?? "NONE",
+        hasGiftSub: !!sub?.hasGiftSub,
       },
       rankedNetplayProfile,
     };
