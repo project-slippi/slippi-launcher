@@ -15,7 +15,12 @@ import { ExternalLink as A } from "@/components/external_link";
 import { Footer } from "@/components/footer/footer";
 import { Button } from "@/components/form/button";
 import type { EditConnectionType } from "@/lib/console_connection";
-import { addConsoleConnection, deleteConsoleConnection, editConsoleConnection } from "@/lib/console_connection";
+import {
+  addConsoleConnection,
+  buildMirrorConfig,
+  deleteConsoleConnection,
+  editConsoleConnection,
+} from "@/lib/console_connection";
 import { useConsoleDiscoveryStore } from "@/lib/hooks/use_console_discovery";
 import { useSettings } from "@/lib/hooks/use_settings";
 import { useToasts } from "@/lib/hooks/use_toasts";
@@ -70,6 +75,18 @@ export const ConsoleMirror = React.memo(() => {
       void consoleService.stopDiscovery();
     };
   }, [showError, consoleService]);
+
+  // Automatically connect to saved consoles as they appear on the network.
+  React.useEffect(() => {
+    const availableIps = new Set(availableConsoles.map((item) => item.ip));
+    for (const conn of savedConnections) {
+      // Only connect to saved consoles that are currently broadcasting and aren't already connected.
+      if (!availableIps.has(conn.ipAddress) || consoleIsConnected(conn.ipAddress)) {
+        continue;
+      }
+      consoleService.connectToConsoleMirror(buildMirrorConfig(conn)).catch(showError);
+    }
+  }, [availableConsoles, savedConnections, consoleIsConnected, consoleService, showError]);
 
   const onCancel = () => {
     setModalOpen(false);
