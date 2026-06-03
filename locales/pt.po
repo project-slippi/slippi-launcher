@@ -7,7 +7,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "x-generator: i18next-auto-keys CLI\n"
 "Language: pt-BR\n"
-"PO-Revision-Date: 2026-06-03T02:22:39.958Z\n"
+"PO-Revision-Date: 2026-06-03T07:09:13.030Z\n"
 
 #: src/renderer/components/activate_online_form/activate_online_form.messages.ts:3:30
 msgid "2-4 uppercase English characters"
@@ -1988,6 +1988,10 @@ msgstr "Você não está conectado"
 #: src/renderer/listeners/listeners.messages.ts:2:24
 msgid "You are offline."
 msgstr "Você está offline."
+
+#: src/renderer/pages/home/overview/my_ranking/my_ranking.messages.ts:7:36
+msgid "You can re-enable rank display in the settings."
+msgstr "Você pode reativar a exibição do ranking nas configurações."
 
 #: src/renderer/pages/home/overview/ranked_day_status/ranked_day_status.messages.ts:12:29
 msgid "You have an active subscription! Enjoy ranked play at any time!"
