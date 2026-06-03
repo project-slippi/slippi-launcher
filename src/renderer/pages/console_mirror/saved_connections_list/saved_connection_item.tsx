@@ -16,6 +16,7 @@ import { lt } from "semver";
 import { ExternalLink as A } from "@/components/external_link";
 import { LabelledText } from "@/components/labelled_text";
 import { buildMirrorConfig } from "@/lib/console_connection";
+import { useConsoleDiscoveryStore } from "@/lib/hooks/use_console_discovery";
 import { useToasts } from "@/lib/hooks/use_toasts";
 import { useServices } from "@/services";
 import { ReactComponent as WiiIcon } from "@/styles/images/wii_icon.svg";
@@ -51,13 +52,21 @@ export const SavedConnectionItem = ({
 }: SavedConnectionItemProps) => {
   const { showError } = useToasts();
   const { consoleService } = useServices();
+  const optOutOfAutoConnect = useConsoleDiscoveryStore((store) => store.optOutOfAutoConnect);
+  const allowAutoConnect = useConsoleDiscoveryStore((store) => store.allowAutoConnect);
   const onConnect = React.useCallback(async () => {
+    // Manually connecting re-opts the console into auto-connect.
+    allowAutoConnect(connection.ipAddress);
     await consoleService.connectToConsoleMirror(buildMirrorConfig(connection, nickname));
-  }, [consoleService, connection, nickname]);
+  }, [consoleService, connection, nickname, allowAutoConnect]);
   const onMirror = React.useCallback(() => {
     consoleService.startMirroring(connection.ipAddress).catch(showError);
   }, [consoleService, connection, showError]);
-  const onDisconnect = () => consoleService.disconnectFromConsole(connection.ipAddress);
+  const onDisconnect = () => {
+    // Manually disconnecting opts the console out of auto-connect for this session.
+    optOutOfAutoConnect(connection.ipAddress);
+    void consoleService.disconnectFromConsole(connection.ipAddress);
+  };
   const statusName =
     status === ConnectionStatus.DISCONNECTED && isAvailable ? Messages.available() : renderStatusName(status);
   const isConnected = status !== ConnectionStatus.DISCONNECTED;
