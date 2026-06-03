@@ -8,9 +8,25 @@ export const useConsoleDiscoveryStore = create(
     {
       connectedConsoles: {} as Record<string, Partial<ConsoleMirrorStatusUpdate>>,
       consoleItems: [] as DiscoveredConsoleInfo[],
+      // IPs the user has manually disconnected and that should not be auto-connected again
+      // this session. Kept in memory only (cleared on app restart and when auto-connect is enabled).
+      autoConnectOptOutIps: {} as Record<string, boolean>,
     },
     (set) => ({
       updateConsoleItems: (consoleItems: DiscoveredConsoleInfo[]) => set({ consoleItems }),
+      optOutOfAutoConnect: (ip: string) =>
+        set((state) =>
+          produce(state, (draft) => {
+            draft.autoConnectOptOutIps[ip] = true;
+          }),
+        ),
+      allowAutoConnect: (ip: string) =>
+        set((state) =>
+          produce(state, (draft) => {
+            delete draft.autoConnectOptOutIps[ip];
+          }),
+        ),
+      clearAutoConnectOptOuts: () => set({ autoConnectOptOutIps: {} }),
       updateConsoleStatus: ({ ip, info }: { ip: string; info: Partial<ConsoleMirrorStatusUpdate> }) =>
         set((state) =>
           produce(state, (draft) => {

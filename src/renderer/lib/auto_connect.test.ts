@@ -17,13 +17,15 @@ const makeConnection = (id: number, ipAddress: string): StoredConnection => ({
 
 type Params = Parameters<typeof getConnectionsToAutoConnect>[0];
 
-// Runs the decision with sensible empty defaults so each test only specifies what it cares about.
+// Runs the decision with sensible defaults so each test only specifies what it cares about.
 const run = (overrides: Partial<Params>): StoredConnection[] =>
   getConnectionsToAutoConnect({
+    enabled: true,
     savedConnections: [],
     availableIps: new Set<string>(),
     connectedConsoles: {} as Record<string, Partial<ConsoleMirrorStatusUpdate>>,
     inFlightIps: new Set<string>(),
+    optedOutIps: new Set<string>(),
     ...overrides,
   });
 
@@ -32,6 +34,24 @@ describe("getConnectionsToAutoConnect", () => {
     const conn = makeConnection(1, "192.168.0.5");
     const result = run({ savedConnections: [conn], availableIps: new Set(["192.168.0.5"]) });
     expect(result).toEqual([conn]);
+  });
+
+  it("returns an empty array when auto-connect is disabled, even if a console is available", () => {
+    const result = run({
+      enabled: false,
+      savedConnections: [makeConnection(1, "192.168.0.5")],
+      availableIps: new Set(["192.168.0.5"]),
+    });
+    expect(result).toEqual([]);
+  });
+
+  it("skips a console the user has opted out of (manually disconnected)", () => {
+    const result = run({
+      savedConnections: [makeConnection(1, "192.168.0.5")],
+      availableIps: new Set(["192.168.0.5"]),
+      optedOutIps: new Set(["192.168.0.5"]),
+    });
+    expect(result).toEqual([]);
   });
 
   it("skips a saved console that is not currently broadcasting on the network", () => {
