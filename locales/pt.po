@@ -7,7 +7,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "x-generator: i18next-auto-keys CLI\n"
 "Language: pt-BR\n"
-"PO-Revision-Date: 2026-06-03T00:57:43.820Z\n"
+"PO-Revision-Date: 2026-06-03T02:22:39.958Z\n"
 
 #: src/renderer/components/activate_online_form/activate_online_form.messages.ts:3:30
 msgid "2-4 uppercase English characters"
@@ -262,7 +262,7 @@ msgstr ""
 
 #: src/renderer/pages/settings/game_settings/game_settings.messages.ts:8:38
 msgid "Choose what happens when the Play button is pressed."
-msgstr "Escolha o que acontece quando o botão de Jogar épressionado."
+msgstr "Escolha o que acontece quando o botão de Jogar é pressionado."
 
 #: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:22:50
 msgid "Choose which Slippi Dolphin release to install"
@@ -487,8 +487,8 @@ msgid ""
 "#windows-support channel with some context regarding the crash."
 msgstr ""
 "Dolphin encerrou inesperadamente. Por favor, vá para a seção de Ajuda na "
-"página de configurações, clique em \"Copiar logs\" e cole-osno canal "
-"#windows-support do Discord do Slippi com algum contexto sobrea falha."
+"página de configurações, clique em \"Copiar logs\" e cole-os no canal "
+"#windows-support do Discord do Slippi com algum contexto sobre a falha."
 
 #: src/renderer/app/header/user_menu/user_menu.messages.ts:17:39
 msgid "Dolphin is currently running. Close Dolphin to switch accounts"
@@ -596,7 +596,7 @@ msgstr "Digite o ID do Espectador"
 #: src/renderer/pages/spectate/share_gameplay_block/share_gameplay_block.messages.ts:3:35
 msgid "Error connecting to Dolphin. Ensure Dolphin is running and try again."
 msgstr ""
-"Erro contectando ao Dolphin. Certifique-se de que o Dolphin está rodando e "
+"Erro conectando ao Dolphin. Certifique-se de que o Dolphin está rodando e "
 "tente novamente."
 
 #: src/renderer/pages/settings/dolphin_settings/gecko_codes/gecko_codes.messages.ts:3:53
@@ -786,7 +786,9 @@ msgstr "Endereço IP"
 
 #: src/renderer/pages/settings/appearance_settings/rank_display_toggle/rank_display_toggle.messages.ts:3:33
 msgid "If enabled, your current rank and rating will be displayed on the Home page."
-msgstr "Se ativado, seu ranking e classificação atuais serão exibidos na página Início."
+msgstr ""
+"Se ativado, seu ranking e classificação atuais serão exibidos na página "
+"Início."
 
 #: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:35:31
 msgid ""
@@ -1305,7 +1307,7 @@ msgid ""
 "not allowed. Targeted harassment in names and codes is also not allowed."
 msgstr ""
 "Nomes e códigos racistas, homofóbicos, transfóbicos ou intolerantes não são "
-"permitidos. Assédio direcionado em nomes e códigos também não épermitido."
+"permitidos. Assédio direcionado em nomes e códigos também não é permitido."
 
 #: src/renderer/pages/home/overview/my_ranking/my_ranking.messages.ts:5:22
 msgid "Rank pending"
@@ -1379,11 +1381,11 @@ msgstr "Replays"
 
 #: src/renderer/lib/dolphin/handle_dolphin_exit_code.messages.ts:3:5
 msgid ""
-"Slippi Launcher has been updated to version {0}"
+"Required DLLs for launching Dolphin are missing. Check the Help section in "
+"the settings page to fix this issue."
 msgstr ""
-"O Slippi Launcher foi atualizado para a versão {0}"
 "As DLLs necessárias para iniciar o Dolphin estão faltando. Verifique a "
-"seção de Ajuda na página de configurações para corrigir este problema."
+"seção Ajuda na página de configurações para corrigir este problema."
 
 #: src/renderer/lib/dolphin/handle_dolphin_exit_code.messages.ts:12:5
 msgid ""
@@ -1534,7 +1536,7 @@ msgstr "Pular configuração"
 #: src/renderer/initialize_app.messages.ts:9:42
 #. {0} version: string
 msgid "Slippi Launcher has been updated to version {0}"
-msgstr ""
+msgstr "O Slippi Launcher foi atualizado para a versão {0}"
 
 #: src/renderer/pages/console_mirror/console_mirror.messages.ts:6:5
 msgid ""
@@ -1762,8 +1764,8 @@ msgid ""
 "The port used for connecting to console. Only change this if connecting to "
 "a Console Relay. If unsure, leave it as {0}."
 msgstr ""
-"A porta usada para conectar ao console. Altere apenas estiver conectando a "
-"um Retransmissor de Console. Se não tiver certeza, deixe como {0}."
+"A porta usada para conectar ao console. Altere apenas se estiver conectando "
+"a um Retransmissor de Console. Se não tiver certeza, deixe como {0}."
 
 #: src/renderer/pages/spectate/share_gameplay_block/start_broadcast_dialog.messages.ts:3:44
 msgid "The unique viewer code of the spectator."
@@ -1865,7 +1867,7 @@ msgstr "ISO Desconhecida"
 
 #: src/renderer/pages/replays/replay_browser/replay_file/replay_file.messages.ts:2:23
 msgid "Unknown stage"
-msgstr "Fase desconhecido"
+msgstr "Fase desconhecida"
 
 #: src/renderer/pages/console_mirror/saved_connections_list/saved_connection_item.messages.ts:6:38
 #. {0} status: number
@@ -1958,7 +1960,7 @@ msgid ""
 "verification"
 msgstr ""
 "Visite seu e-mail, clique no link no e-mail de verificação e depois "
-"prossiga."
+"verifique."
 
 #: src/renderer/components/location_guard/location_guard.messages.ts:3:22
 msgid "We need access to your approximate location to show you nearby tournaments."
