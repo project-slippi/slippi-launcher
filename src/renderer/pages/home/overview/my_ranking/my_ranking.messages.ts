@@ -3,4 +3,5 @@ export const MyRankingMessages = {
   refresh: () => "Refresh",
   noRanking: () => "No ranking",
   rankPending: () => "Rank pending",
+  hide: () => "Hide ranking",
 };

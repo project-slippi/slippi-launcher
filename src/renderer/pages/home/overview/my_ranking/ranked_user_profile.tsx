@@ -1,6 +1,8 @@
 import { Button } from "@base-ui/react";
 import CachedIcon from "@mui/icons-material/Cached";
+import CloseIcon from "@mui/icons-material/Close";
 import CircularProgress from "@mui/material/CircularProgress";
+import Tooltip from "@mui/material/Tooltip";
 import { useMutation } from "@tanstack/react-query";
 import React from "react";
 
@@ -13,7 +15,7 @@ import { getRankIcon } from "./get_rank_icon";
 import { MyRankingMessages as Messages } from "./my_ranking.messages";
 import styles from "./ranked_user_profile.module.css";
 
-export const RankedUserProfile = ({ rankedProfile }: { rankedProfile: RankedProfile }) => {
+export const RankedUserProfile = ({ rankedProfile, onHide }: { rankedProfile: RankedProfile; onHide: () => void }) => {
   const { rating, rank } = rankedProfile;
   const { name, color } = getRankDetails(rank);
   const isUnrankedRank = isUnranked(rank);
@@ -49,6 +51,11 @@ export const RankedUserProfile = ({ rankedProfile }: { rankedProfile: RankedProf
         </div>
         <RefreshRatingButton />
       </div>
+      <Tooltip title={Messages.hide()}>
+        <Button className={styles.hideRankButton} onClick={onHide}>
+          <CloseIcon color="inherit" fontSize="small" />
+        </Button>
+      </Tooltip>
     </div>
   );
 };
