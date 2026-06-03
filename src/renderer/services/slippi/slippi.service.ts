@@ -181,7 +181,10 @@ class SlippiBackendClient implements SlippiBackendService {
     return {
       playKey: playKeyObj,
       rulesAccepted: res.data.getUser?.rulesAccepted ?? 0,
-      activeSubscription,
+      activeSubscription: {
+        level: activeSubscription?.level ?? "NONE",
+        hasGiftSub: !!activeSubscription?.hasGiftSub,
+      },
       rankedNetplayProfile,
     };
   }

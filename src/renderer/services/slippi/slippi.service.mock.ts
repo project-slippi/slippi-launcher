@@ -96,7 +96,10 @@ class MockSlippiBackendClient implements SlippiBackendService {
     const activeSubscription = generateUserSubscriptionLevel(userIsSub);
     return {
       ...userData,
-      activeSubscription,
+      activeSubscription: {
+        level: activeSubscription.level,
+        hasGiftSub: !!activeSubscription.hasGiftSub,
+      },
     };
   }
 

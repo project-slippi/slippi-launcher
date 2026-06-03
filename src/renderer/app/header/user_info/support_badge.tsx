@@ -1,11 +1,12 @@
+import { clsx } from "clsx";
 import React from "react";
 
 import styles from "./support_badge.module.css";
 
-export function SupportBadge({ tier, isVip }: { tier: "TIER1" | "TIER2" | "TIER3"; isVip: boolean }) {
+export function SupportBadge({ tier, isVip }: { tier: "TIER1" | "TIER2" | "TIER3"; isVip?: boolean }) {
   const { color, text } = React.useMemo(() => {
-    let color: string = "";
-    let text: string = "";
+    let color = "";
+    let text = "";
     if (isVip) {
       color = "#2F80ED";
       text = "VIP";
@@ -21,8 +22,11 @@ export function SupportBadge({ tier, isVip }: { tier: "TIER1" | "TIER2" | "TIER3
     return { color, text };
   }, [tier, isVip]);
 
+  // Show a border since TIER1 doesn't have a color associated
+  const showBorder = tier === "TIER1" && !isVip;
+
   return (
-    <div className={styles.tierBadge} style={{ background: color }}>
+    <div className={clsx(styles.tierBadge, showBorder && styles.border)} style={{ background: color }}>
       {text}
     </div>
   );

@@ -170,6 +170,8 @@ export const UserMenu = ({ user, handleError }: { user: AuthUser; handleError: (
           displayName={displayName}
           displayPicture={user.displayPicture}
           connectCode={userData?.playKey?.connectCode}
+          tier={userData?.activeSubscription?.level}
+          isVip={userData?.activeSubscription?.hasGiftSub}
           errorMessage={errMessage}
           loading={loading}
         />

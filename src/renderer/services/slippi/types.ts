@@ -1,6 +1,6 @@
 import type { PlayKey } from "@dolphin/types";
 
-import type { SubscriptionResult } from "./graphql_endpoints";
+import type { SubscriptionLevel } from "./graphql_endpoints";
 
 export type AvailableMessageType = {
   text: string;
@@ -38,10 +38,13 @@ export type RankedProfile = {
 };
 
 export type UserData = {
-  playKey: PlayKey | undefined;
+  playKey?: PlayKey;
   rulesAccepted: number;
-  activeSubscription: SubscriptionResult | undefined;
-  rankedNetplayProfile: RankedProfile | undefined;
+  activeSubscription?: {
+    level: SubscriptionLevel;
+    hasGiftSub: boolean;
+  };
+  rankedNetplayProfile?: RankedProfile;
 };
 
 export type ChatMessageData = {
