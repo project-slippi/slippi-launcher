@@ -77,12 +77,32 @@ export const ConsoleMirror = React.memo(() => {
     };
   }, [showError, consoleService]);
 
+  // Tracks IPs we've issued a connect for but haven't yet received a status update from,
+  // so repeated discovery updates don't fire duplicate connect attempts. A ref is used so
+  // that mutating it doesn't trigger a re-render (and in turn re-run this effect).
+  const inFlightConnectionsRef = React.useRef<Set<string>>(new Set());
+
   // Automatically connect to saved consoles as they appear on the network.
   React.useEffect(() => {
+    const inFlightIps = inFlightConnectionsRef.current;
+
+    // Once a console reports a terminal disconnected state, stop treating it as in-flight so
+    // it can be auto-connected again (e.g. after dropping off the network and returning).
+    for (const [ip, info] of Object.entries(connectedConsoles)) {
+      if (info.status === ConnectionStatus.DISCONNECTED) {
+        inFlightIps.delete(ip);
+      }
+    }
+
     const availableIps = new Set(availableConsoles.map((item) => item.ip));
-    const toConnect = getConnectionsToAutoConnect({ savedConnections, availableIps, connectedConsoles });
+    const toConnect = getConnectionsToAutoConnect({ savedConnections, availableIps, connectedConsoles, inFlightIps });
     for (const conn of toConnect) {
-      consoleService.connectToConsoleMirror(buildMirrorConfig(conn)).catch(showError);
+      inFlightIps.add(conn.ipAddress);
+      consoleService.connectToConsoleMirror(buildMirrorConfig(conn)).catch((err) => {
+        // Allow a failed attempt to be retried on a subsequent discovery update.
+        inFlightIps.delete(conn.ipAddress);
+        showError(err);
+      });
     }
   }, [availableConsoles, savedConnections, connectedConsoles, consoleService, showError]);
 
