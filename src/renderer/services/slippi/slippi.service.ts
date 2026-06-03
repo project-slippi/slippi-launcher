@@ -22,14 +22,7 @@ import {
   QUERY_GET_USER_DATA,
   QUERY_VALIDATE_USER_ID,
 } from "./graphql_endpoints";
-import type {
-  AvailableMessageType,
-  ChatMessageData,
-  RankedProfile,
-  SlippiBackendService,
-  SubscriptionLevel,
-  UserData,
-} from "./types";
+import type { AvailableMessageType, ChatMessageData, RankedProfile, SlippiBackendService, UserData } from "./types";
 
 const SLIPPI_BACKEND_URL = process.env.SLIPPI_GRAPHQL_ENDPOINT;
 
@@ -181,14 +174,17 @@ class SlippiBackendClient implements SlippiBackendService {
       };
     }
 
-    const activeSubscriptionLevel = (res.data.getUser?.activeSubscription?.level ?? "NONE") as SubscriptionLevel;
+    const sub = res.data.getUser?.activeSubscription;
     const netplayProfile = res.data.getUser?.rankedNetplayProfile ?? undefined;
     const rankedNetplayProfile = mapSlippiRankedProfile(netplayProfile);
 
     return {
       playKey: playKeyObj,
       rulesAccepted: res.data.getUser?.rulesAccepted ?? 0,
-      activeSubscriptionLevel,
+      activeSubscription: {
+        level: sub?.level ?? "NONE",
+        hasGiftSub: !!sub?.hasGiftSub,
+      },
       rankedNetplayProfile,
     };
   }

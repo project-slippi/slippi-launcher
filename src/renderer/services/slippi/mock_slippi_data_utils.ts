@@ -1,4 +1,4 @@
-import type { SubscriptionLevel } from "./types";
+import type { SubscriptionResult } from "./graphql_endpoints";
 
 export function generateMockChatMessage(count: number, isPaid = false) {
   const messages: { text: string; isPaid: boolean }[] = [];
@@ -8,6 +8,6 @@ export function generateMockChatMessage(count: number, isPaid = false) {
   return messages;
 }
 
-export function generateUserSubscriptionLevel(isSub?: boolean): SubscriptionLevel {
-  return isSub ? "TIER1" : "NONE";
+export function generateUserSubscriptionLevel(isSub?: boolean): SubscriptionResult {
+  return isSub ? { level: "TIER1", hasGiftSub: false } : { level: "NONE", hasGiftSub: false };
 }

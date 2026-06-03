@@ -1,0 +1,12 @@
+.tierBadge {
+  padding: 3px 10px;
+  text-transform: uppercase;
+  font-size: 12px;
+  border-radius: 4px;
+  font-weight: 500;
+  color: var(--off-white);
+}
+
+.border {
+  border: 1px solid var(--off-white);
+}
