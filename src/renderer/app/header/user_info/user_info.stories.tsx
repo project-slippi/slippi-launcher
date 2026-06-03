@@ -20,6 +20,30 @@ export const LoadingUserInfo = () => {
   return <UserInfo displayName="Player name" displayPicture={displayPicture} connectCode="TEST#000" loading={true} />;
 };
 
+export const TierOneUserInfo = () => {
+  return <UserInfo displayName="Player name" displayPicture={displayPicture} connectCode="TEST#000" tier="TIER1" />;
+};
+
+export const TierTwoUserInfo = () => {
+  return <UserInfo displayName="Player name" displayPicture={displayPicture} connectCode="TEST#000" tier="TIER2" />;
+};
+
+export const TierThreeUserInfo = () => {
+  return <UserInfo displayName="Player name" displayPicture={displayPicture} connectCode="TEST#000" tier="TIER3" />;
+};
+
+export const VipUserInfo = () => {
+  return (
+    <UserInfo
+      displayName="Player name"
+      displayPicture={displayPicture}
+      connectCode="TEST#000"
+      tier="TIER1"
+      isVip={true}
+    />
+  );
+};
+
 export const ErrorUserInfo = () => {
   return (
     <UserInfo
