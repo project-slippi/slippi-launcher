@@ -1898,6 +1898,10 @@ msgstr ""
 msgid "You are offline."
 msgstr ""
 
+#: src/renderer/pages/home/overview/my_ranking/my_ranking.messages.ts:7:36
+msgid "You can re-enable rank display in the settings."
+msgstr ""
+
 #: src/renderer/pages/home/overview/ranked_day_status/ranked_day_status.messages.ts:12:29
 msgid "You have an active subscription! Enjoy ranked play at any time!"
 msgstr ""
