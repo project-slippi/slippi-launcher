@@ -1,11 +1,12 @@
-import { css } from "@emotion/react";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import CircularProgress from "@mui/material/CircularProgress";
+import { clsx } from "clsx";
 import React from "react";
 
 import { UserIcon } from "@/components/user_icon";
 
 import { SupportBadge } from "./support_badge";
+import styles from "./user_info.module.css";
 
 export const UserInfo = React.memo(function UserInfo({
   displayName,
@@ -25,66 +26,21 @@ export const UserInfo = React.memo(function UserInfo({
   loading?: boolean;
 }) {
   return (
-    <div
-      css={css`
-        display: flex;
-        align-items: center;
-        color: white;
-        padding: 8px 10px;
-      `}
-    >
+    <div className={styles.root}>
       {loading ? <CircularProgress color="inherit" /> : <UserIcon imageUrl={displayPicture} size={42} />}
-      <div
-        css={css`
-          display: flex;
-          flex-direction: column;
-          align-items: flex-start;
-          margin-left: 10px;
-
-          @media (max-width: 800px) {
-            display: none;
-          }
-
-          h3 {
-            margin: 0;
-            margin-bottom: 6px;
-            font-size: 18px;
-          }
-        `}
-      >
-        <h3>{displayName}</h3>
+      <div className={styles.content}>
+        <h3 className={styles.displayName}>{displayName}</h3>
         {!loading &&
           (errorMessage ? (
-            <div
-              css={css`
-                font-weight: bold;
-                font-size: 14px;
-                color: red;
-              `}
-            >
-              {errorMessage}
-            </div>
+            <div className={clsx(styles.subtitle, styles.error)}>{errorMessage}</div>
           ) : (
-            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-              <span
-                css={css`
-                  font-weight: bold;
-                  font-size: 14px;
-                  color: var(--purple-light);
-                `}
-              >
-                {connectCode}
-              </span>
+            <div className={styles.subtitle}>
+              <span>{connectCode}</span>
               {tier !== "NONE" && <SupportBadge tier={tier} isVip={isVip} />}
             </div>
           ))}
       </div>
-      <div
-        css={css`
-          color: var(--purple-lighter);
-          margin-left: 16px;
-        `}
-      >
+      <div className={styles.expandMoreIcon}>
         <ExpandMoreIcon />
       </div>
     </div>
