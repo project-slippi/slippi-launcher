@@ -1,4 +1,4 @@
-import type { SubscriptionLevel } from "./types";
+import type { SubscriptionLevel } from "./graphql_endpoints";
 
 export function generateMockChatMessage(count: number, isPaid = false) {
   const messages: { text: string; isPaid: boolean }[] = [];

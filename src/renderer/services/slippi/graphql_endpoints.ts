@@ -21,6 +21,8 @@ export type RankedNetplayProfile = {
   dailyRegionalPlacement: Nullable<number>;
 };
 
+export type SubscriptionLevel = "NONE" | "TIER1" | "TIER2" | "TIER3";
+
 type User = {
   connectCode: Nullable<ConnectCode>;
   displayName: Nullable<string>;
@@ -28,12 +30,17 @@ type User = {
   rulesAccepted: number;
   private: Nullable<PrivateUserInfo>;
   activeChatMessages: string[];
-  activeSubscription: Nullable<{ level: string }>;
+  activeSubscription: SubscriptionResult;
   rankedNetplayProfile: Nullable<RankedNetplayProfile>;
 };
 
 type DolphinRelease = {
   version: string;
+};
+
+type SubscriptionResult = {
+  level: SubscriptionLevel;
+  hasGiftSub: Nullable<boolean>;
 };
 
 export const QUERY_VALIDATE_USER_ID: TypedDocumentNode<
@@ -80,6 +87,7 @@ export const QUERY_GET_USER_DATA: TypedDocumentNode<
       }
       activeSubscription {
         level
+        hasGiftSub
       }
       rankedNetplayProfile {
         id
@@ -123,7 +131,7 @@ export const QUERY_GET_RANKED_NETPLAY_PROFILE: TypedDocumentNode<
 
 export const QUERY_CHAT_MESSAGE_DATA: TypedDocumentNode<
   {
-    getUser: Nullable<{ fbUid: string; activeSubscription: Nullable<{ level: string }>; activeChatMessages: string[] }>;
+    getUser: Nullable<{ fbUid: string; activeChatMessages: string[] }>;
     getChatMessageOptions: Nullable<Nullable<AvailableMessageType>[]>;
   },
   {

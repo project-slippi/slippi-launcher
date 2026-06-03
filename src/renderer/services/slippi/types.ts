@@ -1,11 +1,11 @@
 import type { PlayKey } from "@dolphin/types";
 
+import type { SubscriptionLevel } from "./graphql_endpoints";
+
 export type AvailableMessageType = {
   text: string;
   isPaid: boolean;
 };
-
-export type SubscriptionLevel = "NONE" | "TIER1" | "TIER2" | "TIER3";
 
 export const enum Rank {
   NONE = "none",

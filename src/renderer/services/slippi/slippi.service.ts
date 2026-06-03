@@ -11,7 +11,7 @@ import type { GraphQLFormattedError } from "graphql";
 
 import type { AuthService } from "../auth/types";
 import { calculateRank } from "./calculate_rank";
-import type { RankedNetplayProfile } from "./graphql_endpoints";
+import type { RankedNetplayProfile, SubscriptionLevel } from "./graphql_endpoints";
 import {
   MUTATION_ACCEPT_RULES,
   MUTATION_INIT_NETPLAY,
@@ -22,14 +22,7 @@ import {
   QUERY_GET_USER_DATA,
   QUERY_VALIDATE_USER_ID,
 } from "./graphql_endpoints";
-import type {
-  AvailableMessageType,
-  ChatMessageData,
-  RankedProfile,
-  SlippiBackendService,
-  SubscriptionLevel,
-  UserData,
-} from "./types";
+import type { AvailableMessageType, ChatMessageData, RankedProfile, SlippiBackendService, UserData } from "./types";
 
 const SLIPPI_BACKEND_URL = process.env.SLIPPI_GRAPHQL_ENDPOINT;
 
@@ -181,7 +174,9 @@ class SlippiBackendClient implements SlippiBackendService {
       };
     }
 
-    const activeSubscriptionLevel = (res.data.getUser?.activeSubscription?.level ?? "NONE") as SubscriptionLevel;
+    const activeSubscription = res.data.getUser?.activeSubscription;
+    const activeSubscriptionLevel = activeSubscription?.level ?? ("NONE" as SubscriptionLevel);
+    console.log({ activeSubscription });
     const netplayProfile = res.data.getUser?.rankedNetplayProfile ?? undefined;
     const rankedNetplayProfile = mapSlippiRankedProfile(netplayProfile);
 
