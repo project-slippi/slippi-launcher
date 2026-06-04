@@ -1,7 +1,7 @@
 import type { StatsType } from "@slippi/slippi-js";
 import { animations as animationUtils, moves as moveUtils } from "@slippi/slippi-js";
+import { groupBy } from "common/group_by";
 
-import { groupBy } from "../table_utils";
 import type { KillEvent } from "../types";
 
 export function buildKillEvents(stats: StatsType, oppPlayerIndex: number): KillEvent[] {

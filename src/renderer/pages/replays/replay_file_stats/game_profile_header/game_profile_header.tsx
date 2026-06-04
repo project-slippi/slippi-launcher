@@ -3,11 +3,11 @@ import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import type { PlayerInfo as PlayerInfoType } from "@replays/types";
 import type { GameMode } from "@slippi/slippi-js";
+import { groupBy } from "common/group_by";
 import React from "react";
 
 import styles from "../game_profile_header.module.css";
 import { PlayerInfo } from "../player_info";
-import { groupBy } from "../table_utils";
 import { Controls } from "./controls";
 import { GameDetails } from "./game_details";
 import { GameProfileHeaderMessages as Messages } from "./game_profile_header.messages";

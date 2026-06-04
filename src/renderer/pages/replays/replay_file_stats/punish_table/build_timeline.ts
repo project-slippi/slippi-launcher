@@ -1,6 +1,6 @@
 import type { ConversionType, StatsType, StockType } from "@slippi/slippi-js";
+import { groupBy } from "common/group_by";
 
-import { groupBy } from "../table_utils";
 import type { PunishEvent, StockLossEvent, TimelineItem } from "../types";
 
 export function buildTimeline(
