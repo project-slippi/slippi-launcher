@@ -72,14 +72,14 @@ export function createSettingsPage(): { Page: React.ComponentType } {
     {
       items: [
         {
-          name: () => Messages.rulesAndPolicies(),
-          path: "rules",
-          component: <RulesAndPoliciesPage />,
-        },
-        {
           name: () => Messages.help(),
           path: "help",
           component: <HelpPage />,
+        },
+        {
+          name: () => Messages.rulesAndPolicies(),
+          path: "rules",
+          component: <RulesAndPoliciesPage />,
         },
       ],
     },
