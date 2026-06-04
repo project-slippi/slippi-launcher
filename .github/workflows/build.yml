@@ -74,6 +74,13 @@ jobs:
       - name: Install dependencies
         run: |
           npm install
+
+      # Addresses the Electron binary installation issue
+      # https://github.com/electron/electron/issues/51619#issuecomment-4521813516
+      - name: Ensure Electron binary is installed
+        run: |
+          node node_modules/electron/install.js
+          npx electron --version
       
       - name: Cache CodeSignTool
         if: matrix.os == 'windows-latest'
