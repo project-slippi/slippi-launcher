@@ -11,7 +11,6 @@ import { SlippiOnlineRules } from "@/components/slippi_online_rules/slippi_onlin
 import { refreshUserData } from "@/lib/hooks/use_account";
 import { useToasts } from "@/lib/hooks/use_toasts";
 import { useServices } from "@/services";
-import { cssVar } from "@/styles/css_variables";
 
 import { StepContainer } from "../../step_container";
 import { AcceptRulesStepMessages as Messages } from "./accept_rules_step.messages";
@@ -21,21 +20,6 @@ const classes = {
     margin-top: 32px;
     margin-bottom: 12px;
     font-weight: bold;
-  `,
-  rulesContainer: css`
-    color: ${cssVar("textSecondary")};
-    padding: 8px;
-    background-color: #00000040;
-    border-radius: 8px;
-    margin-bottom: 12px;
-  `,
-  rulesList: css`
-    margin-left: 8px;
-    margin-top: 8px;
-    display: grid;
-    grid-template-columns: auto 1fr;
-    grid-gap: 8px;
-    gap: 8px;
   `,
   policiesList: css`
     margin-left: 16px;
@@ -92,16 +76,16 @@ export const AcceptRulesStep = () => {
         }
       />
       <Typography css={classes.sectionHeader}>{Messages.privacyPolicyAndTermsOfService()}</Typography>
-      <Typography color={cssVar("textSecondary")}>{Messages.clickTheLinksBelow()}</Typography>
+      <Typography color="var(--text-secondary)">{Messages.clickTheLinksBelow()}</Typography>
       <div css={classes.policiesList}>
-        <Typography color={cssVar("textSecondary")}>●</Typography>
-        <Typography color={cssVar("textSecondary")}>
+        <Typography color="var(--text-secondary)">●</Typography>
+        <Typography color="var(--text-secondary)">
           <A css={classes.link} href="https://slippi.gg/privacy">
             {Messages.slippiPrivacyPolicy()}
           </A>
         </Typography>
-        <Typography color={cssVar("textSecondary")}>●</Typography>
-        <Typography color={cssVar("textSecondary")}>
+        <Typography color="var(--text-secondary)">●</Typography>
+        <Typography color="var(--text-secondary)">
           <A css={classes.link} href="https://slippi.gg/tos">
             {Messages.slippiTermsOfService()}
           </A>
