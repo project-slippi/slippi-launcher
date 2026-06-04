@@ -7,7 +7,8 @@ import Typography from "@mui/material/Typography";
 import { useState } from "react";
 
 import { ExternalLink as A } from "@/components/external_link";
-import { refreshUserData, useAccount } from "@/lib/hooks/use_account";
+import { SlippiOnlineRules } from "@/components/slippi_online_rules/slippi_online_rules";
+import { refreshUserData } from "@/lib/hooks/use_account";
 import { useToasts } from "@/lib/hooks/use_toasts";
 import { useServices } from "@/services";
 import { cssVar } from "@/styles/css_variables";
@@ -58,7 +59,6 @@ const classes = {
 export const AcceptRulesStep = () => {
   const { slippiBackendService } = useServices();
   const { showError } = useToasts();
-  const user = useAccount((store) => store.user);
   const [rulesChecked, setRulesChecked] = useState(false);
   const [policiesChecked, setPoliciesChecked] = useState(false);
   const [processing, setProcessing] = useState(false);
@@ -76,80 +76,59 @@ export const AcceptRulesStep = () => {
     }
   };
 
-  // TODO: Only show slippi rules if rulesAccepted is null/0 ?
-
-  let stepBody = null;
-  if (user) {
-    stepBody = (
-      <>
-        <Typography css={classes.sectionHeader}>{Messages.slippiOnlineRules()}</Typography>
-        <div css={classes.rulesContainer}>
-          <Typography>{Messages.slippiOnlineRulesDescription()}</Typography>
-          <div css={classes.rulesList}>
-            <Typography>1.</Typography>
-            <Typography>{Messages.rule1()}</Typography>
-            <Typography>2.</Typography>
-            <Typography>{Messages.rule2()}</Typography>
-            <Typography>3.</Typography>
-            <Typography>{Messages.rule3()}</Typography>
-            <Typography>4.</Typography>
-            <Typography>{Messages.rule4()}</Typography>
-          </div>
-        </div>
-        <FormControlLabel
-          label={Messages.acceptSlippiRules()}
-          control={
-            <Checkbox
-              checked={rulesChecked}
-              disabled={processing}
-              onChange={(_event, value) => setRulesChecked(value)}
-              sx={{ "& .MuiSvgIcon-root": { fontSize: 28 } }}
-            />
-          }
-        />
-        <Typography css={classes.sectionHeader}>{Messages.privacyPolicyAndTermsOfService()}</Typography>
-        <Typography color={cssVar("textSecondary")}>{Messages.clickTheLinksBelow()}</Typography>
-        <div css={classes.policiesList}>
-          <Typography color={cssVar("textSecondary")}>●</Typography>
-          <Typography color={cssVar("textSecondary")}>
-            <A css={classes.link} href="https://slippi.gg/privacy">
-              {Messages.slippiPrivacyPolicy()}
-            </A>
-          </Typography>
-          <Typography color={cssVar("textSecondary")}>●</Typography>
-          <Typography color={cssVar("textSecondary")}>
-            <A css={classes.link} href="https://slippi.gg/tos">
-              {Messages.slippiTermsOfService()}
-            </A>
-          </Typography>
-        </div>
-        <FormControlLabel
-          label={Messages.acceptPrivacyPolicyAndTos()}
-          control={
-            <Checkbox
-              checked={policiesChecked}
-              disabled={processing}
-              onChange={(_event, value) => setPoliciesChecked(value)}
-              sx={{ "& .MuiSvgIcon-root": { fontSize: 28 } }}
-            />
-          }
-        />
-        <div>
-          <Button
-            css={classes.button}
-            onClick={handleAcceptClick}
-            variant="contained"
-            disabled={!policiesChecked || !rulesChecked || processing}
-            size="large"
-          >
-            {processing ? <CircularProgress color="inherit" size={24} /> : Messages.acceptAll()}
-          </Button>
-        </div>
-      </>
-    );
-  } else {
-    stepBody = <div>{Messages.errorMissingUser()}</div>;
-  }
-
-  return <StepContainer header={Messages.acceptRulesAndPolicies()}>{stepBody}</StepContainer>;
+  return (
+    <StepContainer header={Messages.acceptRulesAndPolicies()}>
+      <Typography css={classes.sectionHeader}>{Messages.slippiOnlineRules()}</Typography>
+      <SlippiOnlineRules />
+      <FormControlLabel
+        label={Messages.acceptSlippiRules()}
+        control={
+          <Checkbox
+            checked={rulesChecked}
+            disabled={processing}
+            onChange={(_event, value) => setRulesChecked(value)}
+            sx={{ "& .MuiSvgIcon-root": { fontSize: 28 } }}
+          />
+        }
+      />
+      <Typography css={classes.sectionHeader}>{Messages.privacyPolicyAndTermsOfService()}</Typography>
+      <Typography color={cssVar("textSecondary")}>{Messages.clickTheLinksBelow()}</Typography>
+      <div css={classes.policiesList}>
+        <Typography color={cssVar("textSecondary")}>●</Typography>
+        <Typography color={cssVar("textSecondary")}>
+          <A css={classes.link} href="https://slippi.gg/privacy">
+            {Messages.slippiPrivacyPolicy()}
+          </A>
+        </Typography>
+        <Typography color={cssVar("textSecondary")}>●</Typography>
+        <Typography color={cssVar("textSecondary")}>
+          <A css={classes.link} href="https://slippi.gg/tos">
+            {Messages.slippiTermsOfService()}
+          </A>
+        </Typography>
+      </div>
+      <FormControlLabel
+        label={Messages.acceptPrivacyPolicyAndTos()}
+        control={
+          <Checkbox
+            checked={policiesChecked}
+            disabled={processing}
+            onChange={(_event, value) => setPoliciesChecked(value)}
+            sx={{ "& .MuiSvgIcon-root": { fontSize: 28 } }}
+          />
+        }
+      />
+      <div>
+        <Button
+          css={classes.button}
+          onClick={handleAcceptClick}
+          variant="contained"
+          disabled={!policiesChecked || !rulesChecked || processing}
+          size="large"
+        >
+          {processing ? <CircularProgress color="inherit" size={24} /> : Messages.acceptAll()}
+        </Button>
+      </div>
+    </StepContainer>
+  );
 };

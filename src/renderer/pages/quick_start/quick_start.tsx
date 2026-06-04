@@ -109,7 +109,16 @@ export const QuickStart = ({ allSteps: steps, currentStep, onNext, onPrev }: Qui
           <LanguageSelectorDropdown />
         </div>
       </Box>
-      <Box display="flex" flex="1" alignSelf="stretch" paddingTop="20px">
+      <Box
+        display="flex"
+        flex="1"
+        alignSelf="stretch"
+        paddingTop="20px"
+        style={{
+          overflow: "hidden",
+          overflowY: "auto",
+        }}
+      >
         {getStepContent(currentStep)}
       </Box>
       {steps.length > 1 && (
