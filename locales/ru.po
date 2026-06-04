@@ -8,7 +8,7 @@ msgstr ""
 "n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "x-generator: i18next-auto-keys CLI\n"
 "Language: ru-RU\n"
-"PO-Revision-Date: 2026-05-21T12:21:37.003Z\n"
+"PO-Revision-Date: 2026-06-04T05:47:27.973Z\n"
 
 #: src/renderer/components/activate_online_form/activate_online_form.messages.ts:3:30
 msgid "2-4 uppercase English characters"
@@ -26,11 +26,11 @@ msgstr "Письмо с подтверждением было отправлен
 msgid "A network error occurred."
 msgstr "Произошла сетевая ошибка."
 
-#: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:21:20
+#: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:4:20
 msgid "Accept All"
 msgstr "Принять"
 
-#: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:23:33
+#: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:5:33
 msgid "Accept rules and policies"
 msgstr "Принять правила и политики"
 
@@ -38,7 +38,7 @@ msgstr "Принять правила и политики"
 msgid "Activate online play"
 msgstr "Активировать онлайн"
 
-#: src/renderer/pages/home/overview/ranked_status/ranked_status.messages.ts:3:17
+#: src/renderer/pages/home/overview/ranked_day_status/ranked_day_status.messages.ts:3:17
 msgid "Active"
 msgstr "Активен"
 
@@ -82,9 +82,9 @@ msgid ""
 "tournaments. This data will be sent to a third-party service. Slippi does "
 "NOT collect this data."
 msgstr ""
-"Разрешите приложению доступ к вашему примерному местоположению для "
-"показа ближайших турниров. Эти данные будут отправлены стороннему "
-"сервису. Slippi НЕ собирает эти данные."
+"Разрешите приложению доступ к вашему примерному местоположению для показа "
+"ближайших турниров. Эти данные будут отправлены стороннему сервису. Slippi "
+"НЕ собирает эти данные."
 
 #: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:15:5
 msgid ""
@@ -108,7 +108,6 @@ msgstr ""
 msgid "Allows remote control of spectate features via WebSocket."
 msgstr "Позволяет удаленно управлять функционалом трансляций через WebSocket."
 
-#: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:22:27
 #: src/renderer/pages/quick_start/steps/verify_email_step/verify_email_step.messages.ts:12:27
 msgid "An error occurred. The application does not have a user."
 msgstr "Произошла ошибка. У приложения нет пользователя."
@@ -136,6 +135,13 @@ msgstr "Вы уверены, что хотите разлогиниться?"
 #: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:17:21
 msgid "Are you sure?"
 msgstr "Вы уверены?"
+
+#: src/renderer/initialize_app.messages.ts:11:5
+#. {0} version: string
+msgid ""
+"Auto-update to version {0} failed. Try manually downloading the latest "
+"version from slippi.gg."
+msgstr ""
 
 #: src/renderer/pages/settings/advanced_app_settings/advanced_app_settings.messages.ts:3:39
 msgid "Automatically install Slippi Launcher updates when they become available."
@@ -187,7 +193,7 @@ msgstr "Можно изменить позже за одноразовый пл�
 msgid "Can't find the email? Check your spam folder. Still missing? "
 msgstr "Не можете найти письмо? Проверьте спам-каталог. Все еще не пришло? "
 
-#: src/renderer/app/header/header.messages.ts:14:17
+#: src/renderer/app/header/header.messages.ts:15:17
 #: src/renderer/components/confirmation_modal/confirmation_modal.messages.ts:3:17
 #: src/renderer/pages/spectate/share_gameplay_block/start_broadcast_dialog.messages.ts:10:17
 msgid "Cancel"
@@ -239,7 +245,7 @@ msgstr "Проверить сетевые проблемы"
 msgid "Checking for updates..."
 msgstr "Проверка обновлений..."
 
-#: src/renderer/app/header/header.messages.ts:8:29
+#: src/renderer/app/header/header.messages.ts:9:29
 #: src/renderer/pages/quick_start/steps/activate_online_step/activate_online_step.messages.ts:2:29
 msgid "Choose a connect code"
 msgstr "Выберите коннект-код"
@@ -275,7 +281,7 @@ msgstr "Удалить файлы"
 msgid "Clear filter"
 msgstr "Сбросить фильтр"
 
-#: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:17:29
+#: src/renderer/components/slippi_usage_policy_list/slippi_usage_policy_list.messages.ts:4:29
 msgid "Click the links below to review:"
 msgstr "Кликните ссылки ниже для просмотра:"
 
@@ -309,7 +315,7 @@ msgstr "Конфигурировать Dolphin"
 msgid "Configure {0}"
 msgstr "Конфигурирация {0}"
 
-#: src/renderer/app/header/header.messages.ts:16:18
+#: src/renderer/app/header/header.messages.ts:17:18
 #: src/renderer/components/confirmation_modal/confirmation_modal.messages.ts:2:18
 #: src/renderer/pages/spectate/share_gameplay_block/start_broadcast_dialog.messages.ts:11:18
 msgid "Confirm"
@@ -434,7 +440,7 @@ msgstr "Отключиться"
 msgid "Disconnected"
 msgstr "Отключено"
 
-#: src/renderer/app/header/header.messages.ts:17:22
+#: src/renderer/app/header/header.messages.ts:18:22
 #: src/renderer/components/login_form/login_form.messages.ts:5:22
 msgid "Display Name"
 msgstr "Никнейм"
@@ -501,6 +507,10 @@ msgstr "Вниз"
 msgid "Download"
 msgstr "Скачать"
 
+#: src/renderer/components/persistent_notification/persistent_notification.messages.ts:6:27
+msgid "Download manually"
+msgstr ""
+
 #: src/renderer/components/persistent_notification/persistent_notification.messages.ts:2:44
 #. {0} version: string
 msgid "Downloading version {0}..."
@@ -518,7 +528,7 @@ msgstr "Изменить"
 msgid "Edit connection"
 msgstr "Изменить соединение"
 
-#: src/renderer/app/header/header.messages.ts:15:26
+#: src/renderer/app/header/header.messages.ts:16:26
 #: src/renderer/app/header/user_menu/user_menu.messages.ts:5:26
 msgid "Edit display name"
 msgstr "Поменять никнейм"
@@ -571,7 +581,7 @@ msgstr "Включить удаленное управление трансля�
 msgid "Enable in-game music."
 msgstr "Включить игровую музыку."
 
-#: src/renderer/pages/home/overview/ranked_status/ranked_status.messages.ts:5:19
+#: src/renderer/pages/home/overview/ranked_day_status/ranked_day_status.messages.ts:5:19
 msgid "Ending In"
 msgstr "Заканчивается через"
 
@@ -698,8 +708,8 @@ msgstr "Забыли пароль?"
 #. {2} greaterRegion: string - The greater region/state/prefecture the city is contained in. e.g. Tokyo
 msgid "Found {0, plural, one {# tournament} other {# tournaments}} near {1}, {2}."
 msgstr ""
-"{0, plural, one {Найден # турнир} few {Найдено # турнира} other {Найдено # турниров}} "
-"рядом с {1} ({2})."
+"{0, plural, one {Найден # турнир} few {Найдено # турнира} other {Найдено # "
+"турниров}} рядом с {1} ({2})."
 
 #: src/renderer/pages/settings/create.messages.ts:3:15
 msgid "Game"
@@ -734,6 +744,10 @@ msgstr "Спрятать"
 msgid "Hide advanced options"
 msgstr "Спрятать продвинутые опции"
 
+#: src/renderer/pages/home/overview/my_ranking/my_ranking.messages.ts:6:15
+msgid "Hide ranking"
+msgstr ""
+
 #: src/renderer/pages/replays/replay_browser/filter_toolbar/filter_toolbar.messages.ts:7:25
 msgid "Hide short games"
 msgstr "Спрятать короткие матчи"
@@ -746,11 +760,12 @@ msgstr "Главная"
 msgid "Home-Run Contest"
 msgstr "Home-Run Contest"
 
-#: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:4:28
+#: src/renderer/components/slippi_usage_policy_list/slippi_usage_policy_list.messages.ts:3:28
+#: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:2:28
 msgid "I accept the Slippi Online Rules"
 msgstr "Я принимаю правила Slippi Online"
 
-#: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:20:36
+#: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:3:36
 msgid "I accept the Slippi Privacy Policy and Terms of Service"
 msgstr "Я принимаю Slippi Privacy Policy и Terms of Service"
 
@@ -765,6 +780,10 @@ msgstr "Надеюсь, вы знаете что вы делаете..."
 #: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:2:20
 msgid "IP Address"
 msgstr "IP адрес"
+
+#: src/renderer/pages/settings/appearance_settings/rank_display_toggle/rank_display_toggle.messages.ts:3:33
+msgid "If enabled, your current rank and rating will be displayed on the Home page."
+msgstr ""
 
 #: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:35:31
 msgid ""
@@ -787,7 +806,11 @@ msgstr "Несовместимо с WASAPI."
 msgid "Install update"
 msgstr "Установить обновление"
 
-#: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:15:16
+#: src/renderer/components/persistent_notification/persistent_notification.messages.ts:5:24
+msgid "Installation failed."
+msgstr ""
+
+#: src/renderer/components/slippi_online_rules/slippi_online_rules.messages.ts:13:16
 msgid ""
 "Intentionally manipulating the game performance for your own gain is not "
 "allowed."
@@ -862,7 +885,7 @@ msgstr "Влево"
 msgid "Let's get set up"
 msgstr "Начнем настройку"
 
-#: src/renderer/app/header/header.messages.ts:18:18
+#: src/renderer/app/header/header.messages.ts:19:18
 msgid "Loading"
 msgstr "Загрузка"
 
@@ -885,7 +908,7 @@ msgstr "Выйти"
 msgid "Longest game"
 msgstr "Самые долгие"
 
-#: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:16:16
+#: src/renderer/components/slippi_online_rules/slippi_online_rules.messages.ts:14:16
 msgid "Macros and bots are not allowed."
 msgstr "Макросы и боты запрещены."
 
@@ -1010,7 +1033,7 @@ msgstr "Следующий реплей"
 msgid "Nice work!"
 msgstr "Отличная работа!"
 
-#: src/renderer/app/header/header.messages.ts:6:25
+#: src/renderer/app/header/header.messages.ts:7:25
 msgid "No Melee ISO file specified"
 msgstr "Не указан Melee ISO файл"
 
@@ -1038,7 +1061,7 @@ msgstr "Каталог не выбран"
 msgid "No folder set"
 msgstr "Каталог не указан"
 
-#: src/renderer/app/header/header.messages.ts:11:30
+#: src/renderer/app/header/header.messages.ts:12:30
 msgid "No network connection"
 msgstr "Нет сетевого соединения"
 
@@ -1057,6 +1080,10 @@ msgstr "Нет сохраненных консольных подключени�
 #: src/renderer/pages/replays/replay_file_stats/replay_file_stats.messages.ts:6:26
 msgid "No stats computed"
 msgstr "Нет собранных статов"
+
+#: src/renderer/app/header/header.messages.ts:6:28
+msgid "No update available"
+msgstr ""
 
 #: src/renderer/pages/spectate/spectate_page.messages.ts:3:18
 msgid "No users are broadcasting to you"
@@ -1098,7 +1125,7 @@ msgstr "OBS Websocket Port"
 msgid "Offline"
 msgstr "Оффлайн"
 
-#: src/renderer/pages/home/overview/ranked_status/ranked_status.messages.ts:10:5
+#: src/renderer/pages/home/overview/ranked_day_status/ranked_day_status.messages.ts:10:5
 msgid ""
 "Once every 4 days, ranked play is available to all users including "
 "non-subs. Check back soon!"
@@ -1112,7 +1139,7 @@ msgstr "Требуется онлайн активация"
 msgid "Only English characters are allowed"
 msgstr "Разрешены только латинские символы"
 
-#: src/renderer/app/header/header.messages.ts:10:41
+#: src/renderer/app/header/header.messages.ts:11:41
 msgid "Only logged in users can play online."
 msgstr "Залогиньтесь для игры онлайн."
 
@@ -1170,7 +1197,7 @@ msgstr "Проиграть все"
 msgid "Play Button Action"
 msgstr "Функция кнопки Играть"
 
-#: src/renderer/app/header/header.messages.ts:13:22
+#: src/renderer/app/header/header.messages.ts:14:22
 msgid "Play offline"
 msgstr "Играть оффлайн"
 
@@ -1247,7 +1274,7 @@ msgstr ""
 msgid "Previous replay"
 msgstr "Предыдущий реплей"
 
-#: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:3:41
+#: src/renderer/components/slippi_usage_policy_list/slippi_usage_policy_list.messages.ts:2:41
 msgid "Privacy Policy and Terms of Service"
 msgstr "Privacy Policy и Terms of Service"
 
@@ -1263,7 +1290,7 @@ msgstr ""
 msgid "RVZ files are currently incompatible with Slippi."
 msgstr "Файлы RVZ не совместимы со Slippi."
 
-#: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:10:5
+#: src/renderer/components/slippi_online_rules/slippi_online_rules.messages.ts:8:5
 msgid ""
 "Racist, homophobic, transphobic, or otherwise bigoted names and codes are "
 "not allowed. Targeted harassment in names and codes is also not allowed."
@@ -1277,11 +1304,11 @@ msgid "Rank pending"
 msgstr "Ожидание ранга"
 
 #: src/renderer/pages/home/overview/overview.messages.ts:4:20
-#: src/renderer/pages/home/overview/ranked_status/ranked_status.messages.ts:2:20
+#: src/renderer/pages/home/overview/ranked_day_status/ranked_day_status.messages.ts:2:20
 msgid "Ranked Day"
 msgstr "Ранкед день"
 
-#: src/renderer/pages/home/overview/ranked_status/ranked_status.messages.ts:8:5
+#: src/renderer/pages/home/overview/ranked_day_status/ranked_day_status.messages.ts:8:5
 msgid ""
 "Ranked play is currently available for everyone. Try it now! Available once "
 "every 4 days."
@@ -1399,6 +1426,11 @@ msgstr "Вправо"
 msgid "Root SLP Folder"
 msgstr "Корневой каталог SLP"
 
+#: src/renderer/pages/settings/create.messages.ts:14:27
+#: src/renderer/pages/settings/rules_and_policies_page/rules_and_policies_page.messages.ts:2:27
+msgid "Rules & Policies"
+msgstr ""
+
 #: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:36:25
 msgid "Run this command"
 msgstr "Выполните эту команду"
@@ -1453,7 +1485,7 @@ msgstr "Выберите язык приложения."
 msgid "Send verification email again"
 msgstr "Отправить email с подтверждением заново"
 
-#: src/renderer/app/header/header.messages.ts:7:19
+#: src/renderer/app/header/header.messages.ts:8:19
 msgid "Settings"
 msgstr "Настройки"
 
@@ -1464,6 +1496,10 @@ msgstr "Транслировать свои матчи"
 #: src/renderer/pages/replays/replay_browser/filter_toolbar/filter_toolbar.messages.ts:6:23
 msgid "Shortest game"
 msgstr "Самые короткие"
+
+#: src/renderer/pages/settings/appearance_settings/rank_display_toggle/rank_display_toggle.messages.ts:2:22
+msgid "Show Ranking on Home Page"
+msgstr ""
 
 #: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:10:30
 msgid "Show advanced options"
@@ -1489,6 +1525,11 @@ msgstr "Зарегистрироваться"
 msgid "Skip setup"
 msgstr "Пропустить настройку"
 
+#: src/renderer/initialize_app.messages.ts:9:42
+#. {0} version: string
+msgid "Slippi Launcher has been updated to version {0}"
+msgstr ""
+
 #: src/renderer/pages/console_mirror/console_mirror.messages.ts:6:5
 msgid ""
 "Slippi Mirroring allows for streaming replays from a console to a PC for "
@@ -1498,19 +1539,19 @@ msgstr ""
 "Slippi Mirroring позволяет транслировать реплеи с консоли на компьютер в "
 "режиме реального времени. Проверьте гайд ниже для инструкций по настройке."
 
-#: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:2:28
+#: src/renderer/components/slippi_online_rules/slippi_online_rules.messages.ts:2:28
 msgid "Slippi Online Rules"
 msgstr "Правила Slippi Online"
 
-#: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:18:30
+#: src/renderer/components/slippi_usage_policy_list/slippi_usage_policy_list.messages.ts:5:30
 msgid "Slippi Privacy Policy"
 msgstr "Slippi Privacy Policy"
 
-#: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:19:31
+#: src/renderer/components/slippi_usage_policy_list/slippi_usage_policy_list.messages.ts:6:31
 msgid "Slippi Terms of Service"
 msgstr "Slippi Terms of Service"
 
-#: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:13:5
+#: src/renderer/components/slippi_online_rules/slippi_online_rules.messages.ts:11:5
 msgid ""
 "Slippi does its best to promote fairness in terms of player matching, "
 "result reporting, etc. Attempting to circumvent these systems is not "
@@ -1587,7 +1628,7 @@ msgstr "Запустить сервер"
 msgid "Started"
 msgstr "Запущено"
 
-#: src/renderer/pages/home/overview/ranked_status/ranked_status.messages.ts:6:21
+#: src/renderer/pages/home/overview/ranked_day_status/ranked_day_status.messages.ts:6:21
 msgid "Starting In"
 msgstr "Осталось"
 
@@ -1595,7 +1636,7 @@ msgstr "Осталось"
 msgid "Starting Server..."
 msgstr "Стартует сервер..."
 
-#: src/renderer/pages/home/overview/ranked_status/ranked_status.messages.ts:4:23
+#: src/renderer/pages/home/overview/ranked_day_status/ranked_day_status.messages.ts:4:23
 msgid "Starting Soon"
 msgstr "Скоро будет!"
 
@@ -1629,7 +1670,7 @@ msgstr "Остановлен"
 msgid "Submit"
 msgstr "Применить"
 
-#: src/renderer/pages/home/overview/ranked_status/ranked_status.messages.ts:13:28
+#: src/renderer/pages/home/overview/ranked_day_status/ranked_day_status.messages.ts:13:28
 #: src/renderer/pages/settings/chat_settings/chat_settings.messages.ts:5:20
 msgid "Subscribe"
 msgstr "Подписаться"
@@ -1718,7 +1759,7 @@ msgstr ""
 msgid "The unique viewer code of the spectator."
 msgstr "Уникальный код для просмотра трансляции."
 
-#: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:6:5
+#: src/renderer/components/slippi_online_rules/slippi_online_rules.messages.ts:4:5
 msgid ""
 "These are a set of rules to follow when using Slippi. Breaking these rules "
 "may result in a suspension or ban depending on severity and frequency. This "
@@ -1875,7 +1916,7 @@ msgstr "Версия {0} теперь доступна!"
 msgid "Version: {0}"
 msgstr "Версия: {0}"
 
-#: src/renderer/pages/home/overview/ranked_status/ranked_status.messages.ts:11:28
+#: src/renderer/pages/home/overview/ranked_day_status/ranked_day_status.messages.ts:11:28
 msgid "View Ranked Profile"
 msgstr "Ранкед профиль"
 
@@ -1910,13 +1951,15 @@ msgstr ""
 
 #: src/renderer/components/location_guard/location_guard.messages.ts:3:22
 msgid "We need access to your approximate location to show you nearby tournaments."
-msgstr "Нам нужен доступ к вашему примерному местоположению, чтобы показывать ближайшие турниры."
+msgstr ""
+"Нам нужен доступ к вашему примерному местоположению, чтобы показывать "
+"ближайшие турниры."
 
 #: src/renderer/pages/console_mirror/console_mirror.messages.ts:4:26
 msgid "What is Mirroring?"
 msgstr "Что такое Slippi Mirroring?"
 
-#: src/renderer/app/header/header.messages.ts:12:36
+#: src/renderer/app/header/header.messages.ts:13:36
 msgid "Would you like to play offline?"
 msgstr "Хотите ли вы играть оффлайн?"
 
@@ -1924,7 +1967,7 @@ msgstr "Хотите ли вы играть оффлайн?"
 msgid "Wrong email? "
 msgstr "Неправильный email? "
 
-#: src/renderer/app/header/header.messages.ts:9:28
+#: src/renderer/app/header/header.messages.ts:10:28
 msgid "You are not logged in"
 msgstr "Вы не залогинены"
 
@@ -1933,7 +1976,11 @@ msgstr "Вы не залогинены"
 msgid "You are offline."
 msgstr "Вы оффлайн."
 
-#: src/renderer/pages/home/overview/ranked_status/ranked_status.messages.ts:12:29
+#: src/renderer/pages/home/overview/my_ranking/my_ranking.messages.ts:7:36
+msgid "You can re-enable rank display in the settings."
+msgstr ""
+
+#: src/renderer/pages/home/overview/ranked_day_status/ranked_day_status.messages.ts:12:29
 msgid "You have an active subscription! Enjoy ranked play at any time!"
 msgstr "У вас активная подписка! Играйте в ранкед в любое время!"
 
@@ -1996,8 +2043,8 @@ msgid ""
 "Your location data will be sent to a third-party service. Slippi does NOT "
 "collect this data. You can turn this feature off again in the settings."
 msgstr ""
-"Ваши данные о местоположении будут отправлены стороннему сервису. Slippi "
-"НЕ собирает эти данные. Вы можете отключить эту функцию в настройках."
+"Ваши данные о местоположении будут отправлены стороннему сервису. Slippi НЕ "
+"собирает эти данные. Вы можете отключить эту функцию в настройках."
 
 #: src/renderer/pages/quick_start/steps/iso_selection_step/iso_selection_step.messages.ts:5:28
 msgid "or drag and drop here"

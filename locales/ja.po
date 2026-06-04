@@ -7,7 +7,7 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0\n"
 "x-generator: i18next-auto-keys CLI\n"
 "Language: ja-JP\n"
-"PO-Revision-Date: 2026-05-21T12:21:37.013Z\n"
+"PO-Revision-Date: 2026-06-04T05:47:27.982Z\n"
 
 #: src/renderer/components/activate_online_form/activate_online_form.messages.ts:3:30
 msgid "2-4 uppercase English characters"
@@ -25,11 +25,11 @@ msgstr "確認メールを送信しました："
 msgid "A network error occurred."
 msgstr "ネットワークエラーが発生しました。"
 
-#: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:21:20
+#: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:4:20
 msgid "Accept All"
 msgstr "すべて承認"
 
-#: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:23:33
+#: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:5:33
 msgid "Accept rules and policies"
 msgstr "規約とポリシーに同意"
 
@@ -37,7 +37,7 @@ msgstr "規約とポリシーに同意"
 msgid "Activate online play"
 msgstr "オンラインプレイを有効化"
 
-#: src/renderer/pages/home/overview/ranked_status/ranked_status.messages.ts:3:17
+#: src/renderer/pages/home/overview/ranked_day_status/ranked_day_status.messages.ts:3:17
 msgid "Active"
 msgstr "開催中"
 
@@ -79,8 +79,8 @@ msgid ""
 "tournaments. This data will be sent to a third-party service. Slippi does "
 "NOT collect this data."
 msgstr ""
-"おおよその位置情報へのアクセスを許可すると、近くの大会が表示されるようになります。"
-"このデータはサードパーティサービスに送信されます。Slippiはこのデータを収集しません。"
+"おおよその位置情報へのアクセスを許可すると、近くの大会が表示されるようになります。このデータはサードパーティサービスに送信されます。Slippiはこのデ"
+"ータを収集しません。"
 
 #: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:15:5
 msgid ""
@@ -101,7 +101,6 @@ msgstr "外部プログラムがローカルエンドポイントに接続して
 msgid "Allows remote control of spectate features via WebSocket."
 msgstr "WebSocket経由で観戦機能をリモートコントロールできるようにします。"
 
-#: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:22:27
 #: src/renderer/pages/quick_start/steps/verify_email_step/verify_email_step.messages.ts:12:27
 msgid "An error occurred. The application does not have a user."
 msgstr "エラーが発生しました。アプリケーションにユーザーが存在しません。"
@@ -129,6 +128,13 @@ msgstr "ログアウトしてもよろしいですか？"
 #: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:17:21
 msgid "Are you sure?"
 msgstr "よろしいですか？"
+
+#: src/renderer/initialize_app.messages.ts:11:5
+#. {0} version: string
+msgid ""
+"Auto-update to version {0} failed. Try manually downloading the latest "
+"version from slippi.gg."
+msgstr ""
 
 #: src/renderer/pages/settings/advanced_app_settings/advanced_app_settings.messages.ts:3:39
 msgid "Automatically install Slippi Launcher updates when they become available."
@@ -180,7 +186,7 @@ msgstr "後で一回限りの支払いに変更できます"
 msgid "Can't find the email? Check your spam folder. Still missing? "
 msgstr "メールが見つかりませんか？迷惑メールフォルダを確認しましたか？それでも見つからない場合は "
 
-#: src/renderer/app/header/header.messages.ts:14:17
+#: src/renderer/app/header/header.messages.ts:15:17
 #: src/renderer/components/confirmation_modal/confirmation_modal.messages.ts:3:17
 #: src/renderer/pages/spectate/share_gameplay_block/start_broadcast_dialog.messages.ts:10:17
 msgid "Cancel"
@@ -232,7 +238,7 @@ msgstr "ネットワークの問題を確認"
 msgid "Checking for updates..."
 msgstr "アップデートを確認中..."
 
-#: src/renderer/app/header/header.messages.ts:8:29
+#: src/renderer/app/header/header.messages.ts:9:29
 #: src/renderer/pages/quick_start/steps/activate_online_step/activate_online_step.messages.ts:2:29
 msgid "Choose a connect code"
 msgstr "接続コードを選択"
@@ -266,7 +272,7 @@ msgstr "ファイルを削除"
 msgid "Clear filter"
 msgstr "フィルターをクリア"
 
-#: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:17:29
+#: src/renderer/components/slippi_usage_policy_list/slippi_usage_policy_list.messages.ts:4:29
 msgid "Click the links below to review:"
 msgstr "以下のリンクをクリックして内容を確認してください："
 
@@ -300,7 +306,7 @@ msgstr "Dolphinを設定"
 msgid "Configure {0}"
 msgstr "{0}を設定"
 
-#: src/renderer/app/header/header.messages.ts:16:18
+#: src/renderer/app/header/header.messages.ts:17:18
 #: src/renderer/components/confirmation_modal/confirmation_modal.messages.ts:2:18
 #: src/renderer/pages/spectate/share_gameplay_block/start_broadcast_dialog.messages.ts:11:18
 msgid "Confirm"
@@ -425,7 +431,7 @@ msgstr "切断"
 msgid "Disconnected"
 msgstr "未接続"
 
-#: src/renderer/app/header/header.messages.ts:17:22
+#: src/renderer/app/header/header.messages.ts:18:22
 #: src/renderer/components/login_form/login_form.messages.ts:5:22
 msgid "Display Name"
 msgstr "表示名"
@@ -488,6 +494,10 @@ msgstr "下"
 msgid "Download"
 msgstr "ダウンロード"
 
+#: src/renderer/components/persistent_notification/persistent_notification.messages.ts:6:27
+msgid "Download manually"
+msgstr ""
+
 #: src/renderer/components/persistent_notification/persistent_notification.messages.ts:2:44
 #. {0} version: string
 msgid "Downloading version {0}..."
@@ -505,7 +515,7 @@ msgstr "編集"
 msgid "Edit connection"
 msgstr "接続を編集"
 
-#: src/renderer/app/header/header.messages.ts:15:26
+#: src/renderer/app/header/header.messages.ts:16:26
 #: src/renderer/app/header/user_menu/user_menu.messages.ts:5:26
 msgid "Edit display name"
 msgstr "表示名を編集"
@@ -558,7 +568,7 @@ msgstr "観戦リモートコントロールを有効化"
 msgid "Enable in-game music."
 msgstr "ゲーム内音楽を有効化します。"
 
-#: src/renderer/pages/home/overview/ranked_status/ranked_status.messages.ts:5:19
+#: src/renderer/pages/home/overview/ranked_day_status/ranked_day_status.messages.ts:5:19
 msgid "Ending In"
 msgstr "終了まで"
 
@@ -713,6 +723,10 @@ msgstr "非表示"
 msgid "Hide advanced options"
 msgstr "詳細オプションを非表示"
 
+#: src/renderer/pages/home/overview/my_ranking/my_ranking.messages.ts:6:15
+msgid "Hide ranking"
+msgstr ""
+
 #: src/renderer/pages/replays/replay_browser/filter_toolbar/filter_toolbar.messages.ts:7:25
 msgid "Hide short games"
 msgstr "短い試合を非表示"
@@ -725,11 +739,12 @@ msgstr "ホーム"
 msgid "Home-Run Contest"
 msgstr "ホームランコンテスト"
 
-#: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:4:28
+#: src/renderer/components/slippi_usage_policy_list/slippi_usage_policy_list.messages.ts:3:28
+#: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:2:28
 msgid "I accept the Slippi Online Rules"
 msgstr "Slippiオンラインルールに同意します"
 
-#: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:20:36
+#: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:3:36
 msgid "I accept the Slippi Privacy Policy and Terms of Service"
 msgstr "Slippiプライバシーポリシーと利用規約に同意します"
 
@@ -744,6 +759,10 @@ msgstr "本当に分かっててやってるんですよね…？"
 #: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:2:20
 msgid "IP Address"
 msgstr "IPアドレス"
+
+#: src/renderer/pages/settings/appearance_settings/rank_display_toggle/rank_display_toggle.messages.ts:3:33
+msgid "If enabled, your current rank and rating will be displayed on the Home page."
+msgstr ""
 
 #: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:35:31
 msgid ""
@@ -766,7 +785,11 @@ msgstr "WASAPI 非対応です。"
 msgid "Install update"
 msgstr "アップデートをインストール"
 
-#: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:15:16
+#: src/renderer/components/persistent_notification/persistent_notification.messages.ts:5:24
+msgid "Installation failed."
+msgstr ""
+
+#: src/renderer/components/slippi_online_rules/slippi_online_rules.messages.ts:13:16
 msgid ""
 "Intentionally manipulating the game performance for your own gain is not "
 "allowed."
@@ -841,7 +864,7 @@ msgstr "左"
 msgid "Let's get set up"
 msgstr "セットアップを始めましょう"
 
-#: src/renderer/app/header/header.messages.ts:18:18
+#: src/renderer/app/header/header.messages.ts:19:18
 msgid "Loading"
 msgstr "読み込み中"
 
@@ -864,7 +887,7 @@ msgstr "ログアウト"
 msgid "Longest game"
 msgstr "長い順"
 
-#: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:16:16
+#: src/renderer/components/slippi_online_rules/slippi_online_rules.messages.ts:14:16
 msgid "Macros and bots are not allowed."
 msgstr "マクロやボットの使用は禁止されています。"
 
@@ -985,7 +1008,7 @@ msgstr "次のリプレイ"
 msgid "Nice work!"
 msgstr "おつかれさま！"
 
-#: src/renderer/app/header/header.messages.ts:6:25
+#: src/renderer/app/header/header.messages.ts:7:25
 msgid "No Melee ISO file specified"
 msgstr "スマブラDXの ISO ファイルが未指定です"
 
@@ -1013,7 +1036,7 @@ msgstr "フォルダが未選択です"
 msgid "No folder set"
 msgstr "フォルダ未設定"
 
-#: src/renderer/app/header/header.messages.ts:11:30
+#: src/renderer/app/header/header.messages.ts:12:30
 msgid "No network connection"
 msgstr "ネットワーク接続なし"
 
@@ -1032,6 +1055,10 @@ msgstr "保存された接続がありません"
 #: src/renderer/pages/replays/replay_file_stats/replay_file_stats.messages.ts:6:26
 msgid "No stats computed"
 msgstr "統計データがありません"
+
+#: src/renderer/app/header/header.messages.ts:6:28
+msgid "No update available"
+msgstr ""
 
 #: src/renderer/pages/spectate/spectate_page.messages.ts:3:18
 msgid "No users are broadcasting to you"
@@ -1073,7 +1100,7 @@ msgstr "OBS Websocketポート"
 msgid "Offline"
 msgstr "オフライン"
 
-#: src/renderer/pages/home/overview/ranked_status/ranked_status.messages.ts:10:5
+#: src/renderer/pages/home/overview/ranked_day_status/ranked_day_status.messages.ts:10:5
 msgid ""
 "Once every 4 days, ranked play is available to all users including "
 "non-subs. Check back soon!"
@@ -1087,7 +1114,7 @@ msgstr "オンライン有効化が必要です"
 msgid "Only English characters are allowed"
 msgstr "アルファベットのみ使用できます"
 
-#: src/renderer/app/header/header.messages.ts:10:41
+#: src/renderer/app/header/header.messages.ts:11:41
 msgid "Only logged in users can play online."
 msgstr "オンラインでプレイできるのはログインユーザーのみです。"
 
@@ -1145,7 +1172,7 @@ msgstr "すべて再生"
 msgid "Play Button Action"
 msgstr "再生ボタンの動作"
 
-#: src/renderer/app/header/header.messages.ts:13:22
+#: src/renderer/app/header/header.messages.ts:14:22
 msgid "Play offline"
 msgstr "オフラインでプレイ"
 
@@ -1219,7 +1246,7 @@ msgstr "ミラーリング時の遅延蓄積を防ぎます。Wiiとコンピュ
 msgid "Previous replay"
 msgstr "前のリプレイ"
 
-#: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:3:41
+#: src/renderer/components/slippi_usage_policy_list/slippi_usage_policy_list.messages.ts:2:41
 msgid "Privacy Policy and Terms of Service"
 msgstr "プライバシーポリシーと利用規約"
 
@@ -1233,7 +1260,7 @@ msgstr "提供されたISOはSlippiオンラインで動作しません。NTSC 1
 msgid "RVZ files are currently incompatible with Slippi."
 msgstr "RVZファイルは現在Slippiと互換性がありません。"
 
-#: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:10:5
+#: src/renderer/components/slippi_online_rules/slippi_online_rules.messages.ts:8:5
 msgid ""
 "Racist, homophobic, transphobic, or otherwise bigoted names and codes are "
 "not allowed. Targeted harassment in names and codes is also not allowed."
@@ -1246,11 +1273,11 @@ msgid "Rank pending"
 msgstr "順位確定待ち"
 
 #: src/renderer/pages/home/overview/overview.messages.ts:4:20
-#: src/renderer/pages/home/overview/ranked_status/ranked_status.messages.ts:2:20
+#: src/renderer/pages/home/overview/ranked_day_status/ranked_day_status.messages.ts:2:20
 msgid "Ranked Day"
 msgstr "ランクマッチデー"
 
-#: src/renderer/pages/home/overview/ranked_status/ranked_status.messages.ts:8:5
+#: src/renderer/pages/home/overview/ranked_day_status/ranked_day_status.messages.ts:8:5
 msgid ""
 "Ranked play is currently available for everyone. Try it now! Available once "
 "every 4 days."
@@ -1363,6 +1390,11 @@ msgstr "右"
 msgid "Root SLP Folder"
 msgstr "ルートSLPフォルダ"
 
+#: src/renderer/pages/settings/create.messages.ts:14:27
+#: src/renderer/pages/settings/rules_and_policies_page/rules_and_policies_page.messages.ts:2:27
+msgid "Rules & Policies"
+msgstr ""
+
 #: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:36:25
 msgid "Run this command"
 msgstr "このコマンドを実行"
@@ -1417,7 +1449,7 @@ msgstr "アプリの使用言語を選択してください。"
 msgid "Send verification email again"
 msgstr "確認メールを再送信"
 
-#: src/renderer/app/header/header.messages.ts:7:19
+#: src/renderer/app/header/header.messages.ts:8:19
 msgid "Settings"
 msgstr "設定"
 
@@ -1428,6 +1460,10 @@ msgstr "プレイを配信"
 #: src/renderer/pages/replays/replay_browser/filter_toolbar/filter_toolbar.messages.ts:6:23
 msgid "Shortest game"
 msgstr "短い順"
+
+#: src/renderer/pages/settings/appearance_settings/rank_display_toggle/rank_display_toggle.messages.ts:2:22
+msgid "Show Ranking on Home Page"
+msgstr ""
 
 #: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:10:30
 msgid "Show advanced options"
@@ -1453,6 +1489,11 @@ msgstr "新規登録"
 msgid "Skip setup"
 msgstr "セットアップをスキップ"
 
+#: src/renderer/initialize_app.messages.ts:9:42
+#. {0} version: string
+msgid "Slippi Launcher has been updated to version {0}"
+msgstr ""
+
 #: src/renderer/pages/console_mirror/console_mirror.messages.ts:6:5
 msgid ""
 "Slippi Mirroring allows for streaming replays from a console to a PC for "
@@ -1462,19 +1503,19 @@ msgstr ""
 "Slippiミラーリングを使用すると、ゲーム機からPCにリプレイをストリーミングしてリアルタイムで再生できます。セットアップ手順については、以下のミラー"
 "リングガイドを確認してください。"
 
-#: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:2:28
+#: src/renderer/components/slippi_online_rules/slippi_online_rules.messages.ts:2:28
 msgid "Slippi Online Rules"
 msgstr "Slippiオンラインルール"
 
-#: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:18:30
+#: src/renderer/components/slippi_usage_policy_list/slippi_usage_policy_list.messages.ts:5:30
 msgid "Slippi Privacy Policy"
 msgstr "Slippiプライバシーポリシー"
 
-#: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:19:31
+#: src/renderer/components/slippi_usage_policy_list/slippi_usage_policy_list.messages.ts:6:31
 msgid "Slippi Terms of Service"
 msgstr "Slippi利用規約"
 
-#: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:13:5
+#: src/renderer/components/slippi_online_rules/slippi_online_rules.messages.ts:11:5
 msgid ""
 "Slippi does its best to promote fairness in terms of player matching, "
 "result reporting, etc. Attempting to circumvent these systems is not "
@@ -1549,7 +1590,7 @@ msgstr "サーバー起動"
 msgid "Started"
 msgstr "起動済み"
 
-#: src/renderer/pages/home/overview/ranked_status/ranked_status.messages.ts:6:21
+#: src/renderer/pages/home/overview/ranked_day_status/ranked_day_status.messages.ts:6:21
 msgid "Starting In"
 msgstr "開始まで"
 
@@ -1557,7 +1598,7 @@ msgstr "開始まで"
 msgid "Starting Server..."
 msgstr "サーバー起動中..."
 
-#: src/renderer/pages/home/overview/ranked_status/ranked_status.messages.ts:4:23
+#: src/renderer/pages/home/overview/ranked_day_status/ranked_day_status.messages.ts:4:23
 msgid "Starting Soon"
 msgstr "まもなく開始"
 
@@ -1591,7 +1632,7 @@ msgstr "停止"
 msgid "Submit"
 msgstr "送信"
 
-#: src/renderer/pages/home/overview/ranked_status/ranked_status.messages.ts:13:28
+#: src/renderer/pages/home/overview/ranked_day_status/ranked_day_status.messages.ts:13:28
 #: src/renderer/pages/settings/chat_settings/chat_settings.messages.ts:5:20
 msgid "Subscribe"
 msgstr "サブスク登録"
@@ -1678,7 +1719,7 @@ msgstr "ゲーム機への接続に使用するポートです。コンソール
 msgid "The unique viewer code of the spectator."
 msgstr "観戦者の一意の視聴者コードです。"
 
-#: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:6:5
+#: src/renderer/components/slippi_online_rules/slippi_online_rules.messages.ts:4:5
 msgid ""
 "These are a set of rules to follow when using Slippi. Breaking these rules "
 "may result in a suspension or ban depending on severity and frequency. This "
@@ -1831,7 +1872,7 @@ msgstr "バージョン {0} が利用可能です！"
 msgid "Version: {0}"
 msgstr "バージョン：{0}"
 
-#: src/renderer/pages/home/overview/ranked_status/ranked_status.messages.ts:11:28
+#: src/renderer/pages/home/overview/ranked_day_status/ranked_day_status.messages.ts:11:28
 msgid "View Ranked Profile"
 msgstr "ランクプロフィールを表示"
 
@@ -1870,7 +1911,7 @@ msgstr "近くの大会を表示するには、おおよその位置情報への
 msgid "What is Mirroring?"
 msgstr "ミラーリングとは？"
 
-#: src/renderer/app/header/header.messages.ts:12:36
+#: src/renderer/app/header/header.messages.ts:13:36
 msgid "Would you like to play offline?"
 msgstr "オフラインでプレイしますか？"
 
@@ -1878,7 +1919,7 @@ msgstr "オフラインでプレイしますか？"
 msgid "Wrong email? "
 msgstr "メールアドレスが違いますか？ "
 
-#: src/renderer/app/header/header.messages.ts:9:28
+#: src/renderer/app/header/header.messages.ts:10:28
 msgid "You are not logged in"
 msgstr "ログインしていません"
 
@@ -1887,7 +1928,11 @@ msgstr "ログインしていません"
 msgid "You are offline."
 msgstr "オフラインです。"
 
-#: src/renderer/pages/home/overview/ranked_status/ranked_status.messages.ts:12:29
+#: src/renderer/pages/home/overview/my_ranking/my_ranking.messages.ts:7:36
+msgid "You can re-enable rank display in the settings."
+msgstr ""
+
+#: src/renderer/pages/home/overview/ranked_day_status/ranked_day_status.messages.ts:12:29
 msgid "You have an active subscription! Enjoy ranked play at any time!"
 msgstr "サブスクリプションが有効です！いつでもランクマッチをお楽しみいただけます！"
 
@@ -1941,9 +1986,7 @@ msgstr "接続コードはプレイヤーがあなたと直接接続するため
 msgid ""
 "Your location data will be sent to a third-party service. Slippi does NOT "
 "collect this data. You can turn this feature off again in the settings."
-msgstr ""
-"あなたの位置情報はサードパーティサービスに送信されます。Slippiはこのデータを収集しません。"
-"この機能は設定で再度オフにできます。"
+msgstr "あなたの位置情報はサードパーティサービスに送信されます。Slippiはこのデータを収集しません。この機能は設定で再度オフにできます。"
 
 #: src/renderer/pages/quick_start/steps/iso_selection_step/iso_selection_step.messages.ts:5:28
 msgid "or drag and drop here"

@@ -7,7 +7,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "x-generator: i18next-auto-keys CLI\n"
 "Language: pt-BR\n"
-"PO-Revision-Date: 2026-06-03T07:09:13.030Z\n"
+"PO-Revision-Date: 2026-06-04T05:47:27.978Z\n"
 
 #: src/renderer/components/activate_online_form/activate_online_form.messages.ts:3:30
 msgid "2-4 uppercase English characters"
@@ -25,11 +25,11 @@ msgstr "Um e-mail de confirmação foi enviado para:"
 msgid "A network error occurred."
 msgstr "Ocorreu um erro de rede."
 
-#: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:21:20
+#: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:4:20
 msgid "Accept All"
 msgstr "Aceitar Tudo"
 
-#: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:23:33
+#: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:5:33
 msgid "Accept rules and policies"
 msgstr "Aceitar regras e políticas"
 
@@ -107,7 +107,6 @@ msgstr ""
 msgid "Allows remote control of spectate features via WebSocket."
 msgstr "Permite o controle remoto de recursos de espectador via WebSocket."
 
-#: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:22:27
 #: src/renderer/pages/quick_start/steps/verify_email_step/verify_email_step.messages.ts:12:27
 msgid "An error occurred. The application does not have a user."
 msgstr "Ocorreu um erro. O aplicativo não tem um usuário."
@@ -285,7 +284,7 @@ msgstr "Limpar arquivos"
 msgid "Clear filter"
 msgstr "Limpar filtro"
 
-#: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:17:29
+#: src/renderer/components/slippi_usage_policy_list/slippi_usage_policy_list.messages.ts:4:29
 msgid "Click the links below to review:"
 msgstr "Clique nos links abaixo para revisar:"
 
@@ -764,11 +763,12 @@ msgstr "Início"
 msgid "Home-Run Contest"
 msgstr "Home-Run Contest"
 
-#: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:4:28
+#: src/renderer/components/slippi_usage_policy_list/slippi_usage_policy_list.messages.ts:3:28
+#: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:2:28
 msgid "I accept the Slippi Online Rules"
 msgstr "Eu aceito as Regras do Slippi Online"
 
-#: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:20:36
+#: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:3:36
 msgid "I accept the Slippi Privacy Policy and Terms of Service"
 msgstr "Eu aceito a Política de Privacidade e os Termos de Serviço do Slippi"
 
@@ -817,7 +817,7 @@ msgstr "Instalar atualização"
 msgid "Installation failed."
 msgstr "Falha na instalação."
 
-#: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:15:16
+#: src/renderer/components/slippi_online_rules/slippi_online_rules.messages.ts:13:16
 msgid ""
 "Intentionally manipulating the game performance for your own gain is not "
 "allowed."
@@ -917,7 +917,7 @@ msgstr "Sair"
 msgid "Longest game"
 msgstr "Jogo mais longo"
 
-#: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:16:16
+#: src/renderer/components/slippi_online_rules/slippi_online_rules.messages.ts:14:16
 msgid "Macros and bots are not allowed."
 msgstr "Macros e bots não são permitidos."
 
@@ -1285,7 +1285,7 @@ msgstr ""
 msgid "Previous replay"
 msgstr "Replay anterior"
 
-#: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:3:41
+#: src/renderer/components/slippi_usage_policy_list/slippi_usage_policy_list.messages.ts:2:41
 msgid "Privacy Policy and Terms of Service"
 msgstr "Política de Privacidade e Termos de Serviço"
 
@@ -1301,7 +1301,7 @@ msgstr ""
 msgid "RVZ files are currently incompatible with Slippi."
 msgstr "Arquivos RVZ são atualmente incompatíveis com o Slippi."
 
-#: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:10:5
+#: src/renderer/components/slippi_online_rules/slippi_online_rules.messages.ts:8:5
 msgid ""
 "Racist, homophobic, transphobic, or otherwise bigoted names and codes are "
 "not allowed. Targeted harassment in names and codes is also not allowed."
@@ -1439,6 +1439,11 @@ msgstr "Direita"
 msgid "Root SLP Folder"
 msgstr "Pasta SLP Raiz"
 
+#: src/renderer/pages/settings/create.messages.ts:14:27
+#: src/renderer/pages/settings/rules_and_policies_page/rules_and_policies_page.messages.ts:2:27
+msgid "Rules & Policies"
+msgstr ""
+
 #: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:36:25
 msgid "Run this command"
 msgstr "Execute este comando"
@@ -1548,19 +1553,19 @@ msgstr ""
 "para reprodução em tempo real. Confira o Guia de Espelhamento abaixo para "
 "instruções de configuração."
 
-#: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:2:28
+#: src/renderer/components/slippi_online_rules/slippi_online_rules.messages.ts:2:28
 msgid "Slippi Online Rules"
 msgstr "Regras do Slippi Online"
 
-#: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:18:30
+#: src/renderer/components/slippi_usage_policy_list/slippi_usage_policy_list.messages.ts:5:30
 msgid "Slippi Privacy Policy"
 msgstr "Política de Privacidade do Slippi"
 
-#: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:19:31
+#: src/renderer/components/slippi_usage_policy_list/slippi_usage_policy_list.messages.ts:6:31
 msgid "Slippi Terms of Service"
 msgstr "Termos de Serviço do Slippi"
 
-#: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:13:5
+#: src/renderer/components/slippi_online_rules/slippi_online_rules.messages.ts:11:5
 msgid ""
 "Slippi does its best to promote fairness in terms of player matching, "
 "result reporting, etc. Attempting to circumvent these systems is not "
@@ -1771,7 +1776,7 @@ msgstr ""
 msgid "The unique viewer code of the spectator."
 msgstr "O código único de visualização do espectador."
 
-#: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:6:5
+#: src/renderer/components/slippi_online_rules/slippi_online_rules.messages.ts:4:5
 msgid ""
 "These are a set of rules to follow when using Slippi. Breaking these rules "
 "may result in a suspension or ban depending on severity and frequency. This "
