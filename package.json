@@ -45,6 +45,9 @@
   "browserslist": [
     "chrome 132"
   ],
+  "overrides": {
+    "yauzl": "^3.3.1"
+  },
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged --quiet"

@@ -13,10 +13,10 @@ jobs:
         os: [ubuntu-latest, windows-latest, macOS-latest]
     steps:
       - name: Wait for build job - ${{ matrix.os }}
-        uses: lewagon/wait-on-check-action@v1.3.4
+        uses: lewagon/wait-on-check-action@v1.7.0
         with:
           ref: ${{ github.event.release.target_commitish }}
-          check-name: 'Test on node 20.x and ${{ matrix.os }}'
+          check-name: 'Test on node 24.x and ${{ matrix.os }}'
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           wait-interval: 10
           allowed-conclusions: success
@@ -27,7 +27,7 @@ jobs:
     needs: wait-for-builds
     steps:
       - name: Download latest artifacts
-        uses: dawidd6/action-download-artifact@v11
+        uses: dawidd6/action-download-artifact@v21
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           workflow: build.yml
