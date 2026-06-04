@@ -1,7 +1,4 @@
 export const SlippiOnlineRulesMessages = {
-  slippiOnlineRules: () => "Slippi Online Rules",
-  privacyPolicyAndTermsOfService: () => "Privacy Policy and Terms of Service",
-  acceptSlippiRules: () => "I accept the Slippi Online Rules",
   slippiOnlineRulesDescription: () =>
     "These are a set of rules to follow when using Slippi. " +
     "Breaking these rules may result in a suspension or ban depending on severity and frequency. " +
@@ -14,11 +11,4 @@ export const SlippiOnlineRulesMessages = {
     "Attempting to circumvent these systems is not allowed.",
   rule3: () => "Intentionally manipulating the game performance for your own gain is not allowed.",
   rule4: () => "Macros and bots are not allowed.",
-  clickTheLinksBelow: () => "Click the links below to review:",
-  slippiPrivacyPolicy: () => "Slippi Privacy Policy",
-  slippiTermsOfService: () => "Slippi Terms of Service",
-  acceptPrivacyPolicyAndTos: () => "I accept the Slippi Privacy Policy and Terms of Service",
-  acceptAll: () => "Accept All",
-  errorMissingUser: () => "An error occurred. The application does not have a user.",
-  acceptRulesAndPolicies: () => "Accept rules and policies",
 };
