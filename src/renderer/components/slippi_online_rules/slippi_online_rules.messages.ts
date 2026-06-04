@@ -1,4 +1,5 @@
 export const SlippiOnlineRulesMessages = {
+  slippiOnlineRules: () => "Slippi Online Rules",
   slippiOnlineRulesDescription: () =>
     "These are a set of rules to follow when using Slippi. " +
     "Breaking these rules may result in a suspension or ban depending on severity and frequency. " +

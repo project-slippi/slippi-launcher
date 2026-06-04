@@ -1,0 +1,19 @@
+.sectionHeader {
+  margin-top: 32px;
+  margin-bottom: 12px;
+  font-weight: bold;
+}
+
+.policiesList {
+  margin-left: 16px;
+  margin-top: 8px;
+  margin-bottom: 8px;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 8px 14px;
+  gap: 8px 14px;
+}
+
+.link {
+  color: #b984bb;
+}
