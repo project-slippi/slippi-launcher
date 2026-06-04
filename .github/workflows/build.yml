@@ -67,9 +67,9 @@ jobs:
             ~/.cache/electron
             ~/Library/Caches/electron
             ${{ runner.os == 'Windows' && '~/AppData/Local/electron/Cache' || '' }}
-          key: ${{ runner.os }}-electron-${{ hashFiles('package-lock.json', 'release/app/package-lock.json') }}
+          key: ${{ runner.os }}-electron-${{ matrix.node-version }}-${{ hashFiles('package-lock.json', 'release/app/package-lock.json') }}
           restore-keys: |
-            ${{ runner.os }}-electron-
+            ${{ runner.os }}-electron-${{ matrix.node-version }}-
 
       - name: Install dependencies
         run: |
