@@ -1,0 +1,9 @@
+.playFromHere:hover {
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.directionArrow {
+  color: #2ecc40;
+  font-size: 24px;
+}

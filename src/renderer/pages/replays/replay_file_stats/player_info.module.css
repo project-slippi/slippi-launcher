@@ -1,0 +1,47 @@
+.outer {
+  margin: 0 10px;
+  display: flex;
+  font-size: 22px;
+}
+
+.iconContainer {
+  display: flex;
+}
+
+.iconContainer img {
+  align-self: center;
+  width: 32px;
+  margin-right: 8px;
+}
+
+.infoContainer {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.nameRow {
+  display: flex;
+  align-items: center;
+  font-size: 18px;
+}
+
+.portBadge {
+  display: inline-block;
+  color: var(--gray-dark);
+  font-weight: bold;
+  padding: 2px 6px;
+  font-size: 12px;
+  border-radius: 100px;
+  margin-left: 5px;
+}
+
+.connectCodeRow {
+  color: rgb(255 255 255 / 60%);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.slippiLink:hover {
+  opacity: 0.7;
+}

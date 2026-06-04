@@ -1,5 +1,3 @@
-import { css } from "@emotion/react";
-import styled from "@emotion/styled";
 import ErrorIcon from "@mui/icons-material/Error";
 import FolderIcon from "@mui/icons-material/Folder";
 import HelpIcon from "@mui/icons-material/Help";
@@ -7,53 +5,26 @@ import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import type { FileResult } from "@replays/types";
-import { GameMode } from "@slippi/slippi-js";
+import { frameToGameTimer, GameMode, stages as stageUtils } from "@slippi/slippi-js";
 import { useQuery } from "@tanstack/react-query";
+import React from "react";
 
 import { BasicFooter } from "@/components/footer/footer";
 import { LoadingScreen } from "@/components/loading_screen/loading_screen";
 import { IconMessage } from "@/components/message";
 import { useDolphinActions } from "@/lib/dolphin/use_dolphin_actions";
 import { useMousetrap } from "@/lib/hooks/use_mousetrap";
+import { convertFrameCountToDurationString } from "@/lib/time";
 import { getStageImage } from "@/lib/utils";
 import { useServices } from "@/services";
-import { cssVar } from "@/styles/css_variables";
-import { withFont } from "@/styles/with_font";
 
 import { GameProfile } from "./game_profile";
 import { GameProfileHeader } from "./game_profile_header/game_profile_header";
+import { GameProfileHeaderMessages as HeaderMessages } from "./game_profile_header/game_profile_header.messages";
 import { HomeRunProfile } from "./home_run_profile";
 import { ReplayFileStatsMessages as Messages } from "./replay_file_stats.messages";
+import styles from "./replay_file_stats.module.css";
 import { TargetTestProfile } from "./target_test_profile";
-
-const Outer = styled.div<{
-  backgroundImage?: any;
-}>`
-  position: relative;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  &::before {
-    z-index: -1;
-    position: absolute;
-    height: 100%;
-    width: 100%;
-    content: "";
-    background-size: cover;
-    background-position: center center;
-    background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.6) 0 100%),
-      ${(p) => (p.backgroundImage ? `url("${p.backgroundImage}")` : "")};
-    box-shadow: inset 0 0 2000px rgba(255, 255, 255, 0.2);
-    filter: blur(10px);
-  }
-`;
-
-const Content = styled.div`
-  display: flex;
-  flex: 1;
-  overflow: auto;
-`;
 
 type ReplayFileStatsProps = {
   filePath: string;
@@ -68,9 +39,9 @@ type ReplayFileStatsProps = {
 
 export const ReplayFileStats = (props: ReplayFileStatsProps) => {
   const { filePath } = props;
-
   const { dolphinService, replayService } = useServices();
   const { viewReplays } = useDolphinActions(dolphinService);
+
   const gameStatsQuery = useQuery({
     queryKey: ["loadStatsQuery", filePath],
     queryFn: async () => {
@@ -88,7 +59,12 @@ export const ReplayFileStats = (props: ReplayFileStatsProps) => {
   });
 
   const loading = gameStatsQuery.isLoading && stadiumStatsQuery.isLoading;
-  const error = gameStatsQuery.error as any;
+  const errorMessage =
+    gameStatsQuery.error instanceof Error
+      ? gameStatsQuery.error.message
+      : gameStatsQuery.error
+      ? String(gameStatsQuery.error)
+      : null;
 
   const file = gameStatsQuery.data?.file ?? props.file;
   const numPlayers = file?.game.players.length;
@@ -116,16 +92,10 @@ export const ReplayFileStats = (props: ReplayFileStatsProps) => {
 
   // We only want to show this full-screen error if we don't have a
   // file in the prop. i.e. the SLP manually opened.
-  if (!props.file && error) {
+  if (!props.file && errorMessage) {
     return (
       <IconMessage Icon={ErrorIcon}>
-        <div
-          css={css`
-            max-width: 800px;
-            word-break: break-word;
-            text-align: center;
-          `}
-        >
+        <div className={styles.errorContainer}>
           <h2>{Messages.weCouldntOpenThatFile()}</h2>
           <Button color="secondary" onClick={props.onClose}>
             {Messages.goBack()}
@@ -142,71 +112,85 @@ export const ReplayFileStats = (props: ReplayFileStatsProps) => {
   const { game } = file;
   const stageImage = game.stageId != null ? getStageImage(game.stageId) : undefined;
 
+  let stageName = HeaderMessages.unknown();
+  try {
+    stageName = stageUtils.getStageName(game.stageId != null ? game.stageId : 0);
+  } catch (err) {
+    console.error(err);
+  }
+
+  const platform = game.consoleNickname || game.platform || HeaderMessages.unknown();
+  const startAtDisplay = new Date(game.startTime ? Date.parse(game.startTime) : 0);
+  const lastFrame = game.lastFrame ?? gameStats?.lastFrame;
+  // Sometimes metadata doesn't exist and won't have the last frame
+  // but we might have the stats computed which contains the real last frame.
+  // In that situation, we should use that lastFrame not the metadata one.
+  const duration =
+    lastFrame != null
+      ? game.mode === GameMode.TARGET_TEST
+        ? frameToGameTimer(lastFrame, {
+            startingTimerSeconds: game.startingTimerSeconds,
+            timerType: game.timerType,
+          })
+        : convertFrameCountToDurationString(lastFrame, "long")
+      : HeaderMessages.unknown();
+
+  const stadiumDistance = stadiumStats?.type === "home-run-contest" ? stadiumStats.distance : undefined;
+  const stadiumUnits = stadiumStats?.type === "home-run-contest" ? stadiumStats.units : undefined;
+
   return (
-    <Outer backgroundImage={stageImage}>
+    <div
+      className={styles.outer}
+      style={{ "--bg-image": stageImage ? `url("${stageImage}")` : "none" } as React.CSSProperties}
+    >
       <GameProfileHeader
-        {...props}
-        file={file}
-        disabled={loading}
-        stats={gameStatsQuery.data?.stats}
-        stadiumStats={stadiumStatsQuery.data?.stadiumStats}
+        players={file.game.players}
+        isTeams={file.game.isTeams}
+        index={props.index}
+        total={props.total}
+        gameDetails={{
+          stageName,
+          platform,
+          startAtDisplay,
+          duration,
+          gameMode: game.mode ?? GameMode.VS,
+          distance: stadiumDistance,
+          units: stadiumUnits,
+        }}
+        onNext={props.onNext}
+        onPrev={props.onPrev}
         onPlay={props.onPlay}
+        onClose={props.onClose}
+        disabled={loading}
       />
-      <Content>
+      <div className={styles.content}>
         {!file || loading ? (
           <LoadingScreen message={Messages.crunchingNumbers()} />
-        ) : game.mode == GameMode.TARGET_TEST ? (
+        ) : game.mode === GameMode.TARGET_TEST ? (
           <TargetTestProfile file={file} stats={stadiumStats} />
-        ) : game.mode == GameMode.HOME_RUN_CONTEST ? (
+        ) : game.mode === GameMode.HOME_RUN_CONTEST ? (
           <HomeRunProfile file={file} stats={stadiumStats} />
         ) : numPlayers !== 2 ? (
           <IconMessage Icon={ErrorIcon} label={Messages.gameStatsForTeamBattlesIsUnsupported()} />
-        ) : error ? (
-          <IconMessage Icon={ErrorIcon} label={`Error: ${error.message ?? JSON.stringify(error, null, 2)}`} />
+        ) : errorMessage ? (
+          <IconMessage Icon={ErrorIcon} label={`Error: ${errorMessage}`} />
         ) : gameStats ? (
           <GameProfile file={file} stats={gameStats} onPlay={viewReplays} />
         ) : (
           <IconMessage Icon={HelpIcon} label={Messages.noStatsComputed()} />
         )}
-      </Content>
+      </div>
       <BasicFooter>
         <Tooltip title={Messages.revealLocation()}>
           <IconButton onClick={handleRevealLocation} size="small">
-            <FolderIcon
-              css={css`
-                color: ${cssVar("purpleLight")};
-              `}
-            />
+            <FolderIcon className={styles.folderIcon} />
           </IconButton>
         </Tooltip>
-        <div
-          css={css`
-            display: flex;
-            flex-direction: column;
-            margin-left: 10px;
-            padding-right: 20px;
-          `}
-        >
-          <div
-            css={css`
-              font-size: 11px;
-              font-weight: bold;
-              margin-bottom: 4px;
-              text-transform: uppercase;
-              font-family: ${withFont("Maven Pro")};
-            `}
-          >
-            {Messages.currentFile()}
-          </div>
-          <div
-            css={css`
-              color: white;
-            `}
-          >
-            {filePath}
-          </div>
+        <div className={styles.filePathContainer}>
+          <div className={styles.fileLabel}>{Messages.currentFile()}</div>
+          <div className={styles.filePathText}>{filePath}</div>
         </div>
       </BasicFooter>
-    </Outer>
+    </div>
   );
 };
