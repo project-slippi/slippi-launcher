@@ -142,6 +142,8 @@ msgid ""
 "Auto-update to version {0} failed. Try manually downloading the latest "
 "version from slippi.gg."
 msgstr ""
+"Автоматическое обновление до версии {0} неуспешно. Попробуйте вручную "
+"скачать последнюю версию с сайта slippi.gg."
 
 #: src/renderer/pages/settings/advanced_app_settings/advanced_app_settings.messages.ts:3:39
 msgid "Automatically install Slippi Launcher updates when they become available."
@@ -509,7 +511,7 @@ msgstr "Скачать"
 
 #: src/renderer/components/persistent_notification/persistent_notification.messages.ts:6:27
 msgid "Download manually"
-msgstr ""
+msgstr "Скачать вручную"
 
 #: src/renderer/components/persistent_notification/persistent_notification.messages.ts:2:44
 #. {0} version: string
@@ -567,7 +569,7 @@ msgstr "Включить музыку"
 
 #: src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:13:31
 msgid "Enable Netplay Replays"
-msgstr "Включить реплеи онлайна"
+msgstr "Сохранять реплеи"
 
 #: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:7:29
 msgid "Enable Real-time Mode"
@@ -746,7 +748,7 @@ msgstr "Спрятать продвинутые опции"
 
 #: src/renderer/pages/home/overview/my_ranking/my_ranking.messages.ts:6:15
 msgid "Hide ranking"
-msgstr ""
+msgstr "Спрятать ранк"
 
 #: src/renderer/pages/replays/replay_browser/filter_toolbar/filter_toolbar.messages.ts:7:25
 msgid "Hide short games"
@@ -783,7 +785,7 @@ msgstr "IP адрес"
 
 #: src/renderer/pages/settings/appearance_settings/rank_display_toggle/rank_display_toggle.messages.ts:3:33
 msgid "If enabled, your current rank and rating will be displayed on the Home page."
-msgstr ""
+msgstr "Если включено, показывает ваш текущий ранк и рейтинг на домашней странице."
 
 #: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:35:31
 msgid ""
@@ -808,7 +810,7 @@ msgstr "Установить обновление"
 
 #: src/renderer/components/persistent_notification/persistent_notification.messages.ts:5:24
 msgid "Installation failed."
-msgstr ""
+msgstr "Установка неуспешна."
 
 #: src/renderer/components/slippi_online_rules/slippi_online_rules.messages.ts:13:16
 msgid ""
@@ -1083,7 +1085,7 @@ msgstr "Нет собранных статов"
 
 #: src/renderer/app/header/header.messages.ts:6:28
 msgid "No update available"
-msgstr ""
+msgstr "Нет доступных обновлений"
 
 #: src/renderer/pages/spectate/spectate_page.messages.ts:3:18
 msgid "No users are broadcasting to you"
@@ -1154,7 +1156,7 @@ msgstr "Открыть каталог настроек"
 #: src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:15:60
 #. {0} currentDate: string
 msgid "Organize into monthly subfolders (e.g. {0})."
-msgstr "Организовать по папкам по месяцам (например, {0})."
+msgstr "Организовать по подкаталогам по месяцам (например, {0})."
 
 #: src/renderer/pages/home/home_page.messages.ts:2:19
 msgid "Overview"
@@ -1429,7 +1431,7 @@ msgstr "Корневой каталог SLP"
 #: src/renderer/pages/settings/create.messages.ts:14:27
 #: src/renderer/pages/settings/rules_and_policies_page/rules_and_policies_page.messages.ts:2:27
 msgid "Rules & Policies"
-msgstr ""
+msgstr "Правила и политики"
 
 #: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:36:25
 msgid "Run this command"
@@ -1446,7 +1448,7 @@ msgstr "Сохранить"
 
 #: src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:14:42
 msgid "Save replays for netplay games to the Root SLP Folder."
-msgstr "Сохранять реплеи сетевых игр в корневую SLP папку."
+msgstr "Сохранять реплеи сетевых игр в корневой SLP каталог."
 
 #: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:6:34
 msgid "Save replays to subfolders based on console nickname"
@@ -1499,7 +1501,7 @@ msgstr "Самые короткие"
 
 #: src/renderer/pages/settings/appearance_settings/rank_display_toggle/rank_display_toggle.messages.ts:2:22
 msgid "Show Ranking on Home Page"
-msgstr ""
+msgstr "Показывать ранк на домашней странице"
 
 #: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:10:30
 msgid "Show advanced options"
@@ -1528,7 +1530,7 @@ msgstr "Пропустить настройку"
 #: src/renderer/initialize_app.messages.ts:9:42
 #. {0} version: string
 msgid "Slippi Launcher has been updated to version {0}"
-msgstr ""
+msgstr "Slippi Launcher был обновлен до версии {0}"
 
 #: src/renderer/pages/console_mirror/console_mirror.messages.ts:6:5
 msgid ""
@@ -1978,7 +1980,7 @@ msgstr "Вы оффлайн."
 
 #: src/renderer/pages/home/overview/my_ranking/my_ranking.messages.ts:7:36
 msgid "You can re-enable rank display in the settings."
-msgstr ""
+msgstr "Показ ранка можно включить обратно в настройках."
 
 #: src/renderer/pages/home/overview/ranked_day_status/ranked_day_status.messages.ts:12:29
 msgid "You have an active subscription! Enjoy ranked play at any time!"
