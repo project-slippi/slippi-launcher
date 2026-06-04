@@ -11,4 +11,5 @@ export const SettingsCreateMessages = {
   appearance: () => "Appearance",
   advanced: () => "Advanced",
   help: () => "Help",
+  rulesAndPolicies: () => "Rules & Policies",
 };

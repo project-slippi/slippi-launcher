@@ -7,6 +7,7 @@ import { PlaybackDolphinSettings } from "./dolphin_settings/playback_dolphin_set
 import { GameSettings } from "./game_settings/game_settings";
 import { HelpPage } from "./help_page/help_page";
 import { ReplaySettings } from "./replay_settings/replay_settings";
+import { RulesAndPoliciesPage } from "./rules_and_policies_page/rules_and_policies_page";
 import { SettingsPage } from "./settings_page";
 import { SpectateSettings } from "./spectate_settings/spectate_settings";
 import type { SettingSection } from "./types";
@@ -74,6 +75,11 @@ export function createSettingsPage(): { Page: React.ComponentType } {
           name: () => Messages.help(),
           path: "help",
           component: <HelpPage />,
+        },
+        {
+          name: () => Messages.rulesAndPolicies(),
+          path: "rules",
+          component: <RulesAndPoliciesPage />,
         },
       ],
     },

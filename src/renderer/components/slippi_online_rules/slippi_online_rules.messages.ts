@@ -1,0 +1,15 @@
+export const SlippiOnlineRulesMessages = {
+  slippiOnlineRules: () => "Slippi Online Rules",
+  slippiOnlineRulesDescription: () =>
+    "These are a set of rules to follow when using Slippi. " +
+    "Breaking these rules may result in a suspension or ban depending on severity and frequency. " +
+    "This is not an exhaustive list, we reserve the right to suspend or ban an account for any reason.",
+  rule1: () =>
+    "Racist, homophobic, transphobic, or otherwise bigoted names and codes are not allowed. " +
+    "Targeted harassment in names and codes is also not allowed.",
+  rule2: () =>
+    "Slippi does its best to promote fairness in terms of player matching, result reporting, etc. " +
+    "Attempting to circumvent these systems is not allowed.",
+  rule3: () => "Intentionally manipulating the game performance for your own gain is not allowed.",
+  rule4: () => "Macros and bots are not allowed.",
+};
