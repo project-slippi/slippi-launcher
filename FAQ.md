@@ -89,7 +89,7 @@ Yes, we currently ship with UCF 0.84 and it is applied everywhere by default.
 
 ## Where can I find a Melee ISO?
 
-We do not provide a Melee NTSC 1.02 ISO and we cannot help you find one, you will need to acquire one yourself. You can look into this: (https://wiki.dolphin-emu.org/index.php?title=Ripping_Games).
+We do not provide a Melee NTSC 1.02 ISO and we cannot help you find one, you will need to acquire one yourself. You can look into this: <https://wiki.dolphin-emu.org/index.php?title=Ripping_Games>
 
 ## Can I play Free For All (FFA) with Slippi Online?
 
