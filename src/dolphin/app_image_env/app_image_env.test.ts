@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { getDolphinProcessEnv } from "./appimage_env";
+import { getDolphinProcessEnv } from "./app_image_env";
 
 const ORIGINAL_PLATFORM = process.platform;
 

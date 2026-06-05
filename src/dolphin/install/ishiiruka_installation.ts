@@ -1,4 +1,4 @@
-import { getDolphinProcessEnv } from "@dolphin/appimage_env";
+import { getDolphinProcessEnv } from "@dolphin/app_image_env/app_image_env";
 import type { SyncedDolphinSettings } from "@dolphin/config/config";
 import { addGamePath, getSlippiIshiiSettings, setSlippiIshiiSettings } from "@dolphin/config/config";
 import { IniFile } from "@dolphin/config/ini_file";

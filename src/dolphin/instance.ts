@@ -11,7 +11,7 @@ import { unlink, writeFile } from "node:fs/promises";
 import path from "path";
 import { fileExists } from "utils/file_exists";
 
-import { getDolphinProcessEnv } from "./appimage_env";
+import { getDolphinProcessEnv } from "./app_image_env/app_image_env";
 import type { ReplayCommunication } from "./types";
 
 const log = electronLog.scope("dolphin/instance");
