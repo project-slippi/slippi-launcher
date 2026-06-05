@@ -1,5 +1,7 @@
 import { spawn } from "child_process";
 
+import { getDolphinProcessEnv } from "../appimage_env";
+
 /**
  * Execute a command and return its output
  * @param command The command to execute
@@ -8,7 +10,7 @@ import { spawn } from "child_process";
  */
 export async function executeCommand(command: string, args: string[]): Promise<string> {
   return new Promise((resolve, reject) => {
-    const child = spawn(command, args);
+    const child = spawn(command, args, { env: getDolphinProcessEnv() });
     let stdout = "";
     let stderr = "";
 
