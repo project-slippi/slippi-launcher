@@ -1,10 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { getDolphinProcessEnv } from "./app_image_env";
+import { sanitizeAppImageEnv } from "./app_image_env";
 
 const ORIGINAL_PLATFORM = process.platform;
 
-describe("getDolphinProcessEnv", () => {
+describe("sanitizeAppImageEnv", () => {
   beforeEach(() => {
     Object.defineProperty(process, "platform", { value: "linux" });
   });
@@ -16,7 +16,7 @@ describe("getDolphinProcessEnv", () => {
 
   it("returns process.env unchanged on non-Linux platforms", () => {
     Object.defineProperty(process, "platform", { value: "darwin" });
-    const env = getDolphinProcessEnv();
+    const env = sanitizeAppImageEnv();
     expect(env).toBe(process.env);
   });
 
@@ -26,7 +26,7 @@ describe("getDolphinProcessEnv", () => {
     vi.stubEnv("ARGV0", "/tmp/.mount_SlippiXXX/SlippiLauncher.AppImage");
     vi.stubEnv("OWD", "/tmp");
     vi.stubEnv("PATH", "/usr/bin");
-    const env = getDolphinProcessEnv();
+    const env = sanitizeAppImageEnv();
     expect(env).not.toHaveProperty("APPDIR");
     expect(env).not.toHaveProperty("APPIMAGE");
     expect(env).not.toHaveProperty("ARGV0");
@@ -38,7 +38,7 @@ describe("getDolphinProcessEnv", () => {
     const appDir = "/tmp/.mount_SlippiXXX";
     vi.stubEnv("APPDIR", appDir);
     vi.stubEnv("LD_LIBRARY_PATH", `${appDir}/usr/lib:/usr/local/lib:/usr/lib`);
-    const env = getDolphinProcessEnv();
+    const env = sanitizeAppImageEnv();
     expect(env.LD_LIBRARY_PATH).toEqual("/usr/local/lib:/usr/lib");
   });
 
@@ -46,20 +46,20 @@ describe("getDolphinProcessEnv", () => {
     const appDir = "/tmp/.mount_SlippiXXX";
     vi.stubEnv("APPDIR", appDir);
     vi.stubEnv("QT_PLUGIN_PATH", `${appDir}/usr/plugins:/usr/lib/qt/plugins`);
-    const env = getDolphinProcessEnv();
+    const env = sanitizeAppImageEnv();
     expect(env.QT_PLUGIN_PATH).toEqual("/usr/lib/qt/plugins");
   });
 
   it("filters paths matching /tmp/.mount_ pattern even without APPDIR", () => {
     vi.stubEnv("LD_LIBRARY_PATH", "/tmp/.mount_OtherApp/usr/lib:/usr/lib");
-    const env = getDolphinProcessEnv();
+    const env = sanitizeAppImageEnv();
     expect(env.LD_LIBRARY_PATH).toEqual("/usr/lib");
   });
 
   it("preserves legitimate path entries", () => {
     vi.stubEnv("APPDIR", "/tmp/.mount_SlippiXXX");
     vi.stubEnv("LD_LIBRARY_PATH", "/usr/lib:/usr/local/lib:/home/user/lib");
-    const env = getDolphinProcessEnv();
+    const env = sanitizeAppImageEnv();
     expect(env.LD_LIBRARY_PATH).toEqual("/usr/lib:/usr/local/lib:/home/user/lib");
   });
 
@@ -72,7 +72,7 @@ describe("getDolphinProcessEnv", () => {
     vi.stubEnv("QT_QPA_PLATFORM_PLUGIN_PATH", `${appDir}/usr/plugins/platforms`);
     vi.stubEnv("QML2_IMPORT_PATH", `${appDir}/usr/qml`);
     vi.stubEnv("XDG_DATA_DIRS", `${appDir}/usr/share:/usr/share`);
-    const env = getDolphinProcessEnv();
+    const env = sanitizeAppImageEnv();
     expect(env.PATH).toEqual("/usr/bin");
     expect(env.LD_LIBRARY_PATH).toEqual("/usr/lib");
     expect(env.QT_PLUGIN_PATH).toEqual("/usr/lib/qt/plugins");
@@ -83,7 +83,7 @@ describe("getDolphinProcessEnv", () => {
 
   it("handles missing APPDIR gracefully", () => {
     vi.stubEnv("LD_LIBRARY_PATH", "/usr/lib");
-    const env = getDolphinProcessEnv();
+    const env = sanitizeAppImageEnv();
     expect(env.LD_LIBRARY_PATH).toEqual("/usr/lib");
   });
 
@@ -91,7 +91,7 @@ describe("getDolphinProcessEnv", () => {
     const appDir = "/tmp/.mount_SlippiXXX";
     vi.stubEnv("APPDIR", appDir);
     vi.stubEnv("QT_PLUGIN_PATH", `${appDir}/usr/plugins`);
-    const env = getDolphinProcessEnv();
+    const env = sanitizeAppImageEnv();
     expect(env).not.toHaveProperty("QT_PLUGIN_PATH");
   });
 });

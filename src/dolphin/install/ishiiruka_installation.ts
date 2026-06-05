@@ -1,4 +1,4 @@
-import { getDolphinProcessEnv } from "@dolphin/app_image_env/app_image_env";
+import { sanitizeAppImageEnv } from "@dolphin/app_image_env/app_image_env";
 import type { SyncedDolphinSettings } from "@dolphin/config/config";
 import { addGamePath, getSlippiIshiiSettings, setSlippiIshiiSettings } from "@dolphin/config/config";
 import { IniFile } from "@dolphin/config/ini_file";
@@ -233,7 +233,7 @@ export class IshiirukaDolphinInstallation implements DolphinInstallation {
   async getDolphinVersion(): Promise<string | undefined> {
     try {
       const dolphinPath = await this.findDolphinExecutable();
-      const dolphinEnv = getDolphinProcessEnv();
+      const dolphinEnv = sanitizeAppImageEnv();
       const dolphinVersionOut = await executeCommand(dolphinPath, ["--version"], { env: dolphinEnv });
       const match = dolphinVersionOut.match(semverRegex);
       return match?.[0];

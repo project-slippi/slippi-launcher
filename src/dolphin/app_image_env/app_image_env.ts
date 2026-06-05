@@ -50,7 +50,7 @@ function filterPathVar(val: string | undefined, appDir: string): string | undefi
   return filtered.length > 0 ? filtered.join(":") : undefined;
 }
 
-export function getDolphinProcessEnv(): NodeJS.ProcessEnv {
+export function sanitizeAppImageEnv(): NodeJS.ProcessEnv {
   if (process.platform !== "linux") {
     return process.env;
   }
