@@ -1,16 +1,18 @@
 import { spawn } from "child_process";
 
-import { getDolphinProcessEnv } from "../appimage_env";
-
 /**
  * Execute a command and return its output
  * @param command The command to execute
  * @param args The arguments to pass to the command
  * @returns The output of the command
  */
-export async function executeCommand(command: string, args: string[]): Promise<string> {
+export async function executeCommand(
+  command: string,
+  args: string[],
+  options?: { env?: NodeJS.ProcessEnv },
+): Promise<string> {
   return new Promise((resolve, reject) => {
-    const child = spawn(command, args, { env: getDolphinProcessEnv() });
+    const child = spawn(command, args, { env: options?.env });
     let stdout = "";
     let stderr = "";
 

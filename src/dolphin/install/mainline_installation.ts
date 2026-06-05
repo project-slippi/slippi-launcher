@@ -1,3 +1,4 @@
+import { getDolphinProcessEnv } from "@dolphin/appimage_env";
 import type { SyncedDolphinSettings } from "@dolphin/config/config";
 import { addGamePath, getSlippiMainlineSettings, setSlippiMainlineSettings } from "@dolphin/config/config";
 import { IniFile } from "@dolphin/config/ini_file";
@@ -242,7 +243,8 @@ export class MainlineDolphinInstallation implements DolphinInstallation {
   async getDolphinVersion(): Promise<string | undefined> {
     try {
       const dolphinPath = await this.findDolphinExecutable();
-      const dolphinVersionOut = await executeCommand(dolphinPath, ["--version"]);
+      const dolphinEnv = getDolphinProcessEnv();
+      const dolphinVersionOut = await executeCommand(dolphinPath, ["--version"], { env: dolphinEnv });
       const match = dolphinVersionOut.match(semverRegex);
       return match?.[0];
     } catch (err) {
