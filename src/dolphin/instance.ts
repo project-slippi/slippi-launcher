@@ -11,6 +11,7 @@ import { unlink, writeFile } from "node:fs/promises";
 import path from "path";
 import { fileExists } from "utils/file_exists";
 
+import { sanitizeAppImageEnv } from "./app_image_env/app_image_env";
 import type { ReplayCommunication } from "./types";
 
 const log = electronLog.scope("dolphin/instance");
@@ -102,7 +103,9 @@ export class DolphinInstance extends EventEmitter {
             maxBuffer: 1000 * 1000 * 100,
           });
         } else {
-          child = spawn(executablePath, params);
+          child = spawn(executablePath, params, {
+            env: sanitizeAppImageEnv(),
+          });
         }
 
         child.once("spawn", () => {

@@ -6,9 +6,13 @@ import { spawn } from "child_process";
  * @param args The arguments to pass to the command
  * @returns The output of the command
  */
-export async function executeCommand(command: string, args: string[]): Promise<string> {
+export async function executeCommand(
+  command: string,
+  args: string[],
+  options?: { env?: NodeJS.ProcessEnv },
+): Promise<string> {
   return new Promise((resolve, reject) => {
-    const child = spawn(command, args);
+    const child = spawn(command, args, { env: options?.env });
     let stdout = "";
     let stderr = "";
 
