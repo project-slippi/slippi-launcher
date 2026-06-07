@@ -66,6 +66,8 @@ export const ipc_saveGeckoCodes = makeEndpoint.main(
   <SuccessPayload>_,
 );
 
+export const ipc_installVcRedist = makeEndpoint.main("installVcRedist", <EmptyPayload>_, <{ exitCode: number }>_);
+
 // Events
 
 export const ipc_dolphinEvent = makeEndpoint.renderer("dolphin_dolphinEvent", <DolphinEvent>_);

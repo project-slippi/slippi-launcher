@@ -8,6 +8,7 @@ import {
   setDolphinVersion,
   updateNetplayDownloadProgress,
 } from "@/lib/dolphin/use_dolphin_store";
+import { useAppStore } from "@/lib/hooks/use_app_store";
 import type { NotificationService } from "@/services/notification/types";
 
 import { ListenersMessages as Messages } from "./listeners.messages";
@@ -23,6 +24,12 @@ export function installDolphinListeners({
 
   dolphinService.onEvent(DolphinEventType.CLOSED, ({ dolphinType, exitCode }) => {
     setDolphinOpened(dolphinType, false);
+
+    // Check if it exited due to missing VC++ Redistributable
+    if (exitCode === 0xc0000135 || exitCode === 0xc000007b) {
+      useAppStore.getState().setVcRedistDialogOpen(true);
+      return;
+    }
 
     // Check if it exited cleanly
     const errMsg = handleDolphinExitCode(exitCode);

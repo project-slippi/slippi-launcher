@@ -101,6 +101,7 @@ export type DolphinEventMap = {
 export type DolphinEvent = DolphinEventMap[DolphinEventType];
 
 export interface DolphinService {
+  installVcRedist(): Promise<number>;
   downloadDolphin(dolphinType: DolphinLaunchType): Promise<void>;
   configureDolphin(dolphinType: DolphinLaunchType): Promise<void>;
   softResetDolphin(dolphinType: DolphinLaunchType): Promise<void>;
