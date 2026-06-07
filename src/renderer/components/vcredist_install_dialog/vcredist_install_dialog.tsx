@@ -9,6 +9,8 @@ import React from "react";
 
 import { useAppStore } from "@/lib/hooks/use_app_store";
 
+import { VcRedistInstallDialogMessages as Messages } from "./vcredist_install_dialog.messages";
+
 export const VcRedistInstallDialog = () => {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
@@ -48,27 +50,25 @@ export const VcRedistInstallDialog = () => {
       fullWidth={true}
       fullScreen={fullScreen}
     >
-      <DialogTitle>Missing Required DLLs</DialogTitle>
+      <DialogTitle>{Messages.dialogTitle()}</DialogTitle>
       <DialogContent>
-        <p>Slippi Dolphin requires the Microsoft Visual C++ Redistributable. Would you like to install it now?</p>
-        {installing && <p>Installing... This may take a few minutes.</p>}
-        {result && !result.success && (
-          <p>Installation failed (error code {result.exitCode ?? "unknown"}). You may need to install it manually.</p>
-        )}
-        {result && result.success && <p>Installation completed successfully.</p>}
+        <p>{Messages.description()}</p>
+        {installing && <p>{Messages.installing()}</p>}
+        {result && !result.success && <p>{Messages.installFailed(`${result.exitCode ?? "unknown"}`)}</p>}
+        {result && result.success && <p>{Messages.installSuccess()}</p>}
       </DialogContent>
       <DialogActions>
         <Button onClick={handleClose} color="secondary" disabled={installing}>
-          Close
+          {Messages.cancel()}
         </Button>
         {!result?.success && (
           <Button onClick={handleInstall} color="primary" disabled={installing}>
-            {installing ? "Installing..." : "Install"}
+            {installing ? Messages.installingButton() : Messages.install()}
           </Button>
         )}
         {result?.success && (
           <Button onClick={handleClose} color="primary">
-            Done
+            {Messages.done()}
           </Button>
         )}
       </DialogActions>
