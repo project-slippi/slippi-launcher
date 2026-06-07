@@ -8,6 +8,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import React from "react";
 
 import { useAppStore } from "@/lib/hooks/use_app_store";
+import { useServices } from "@/services";
 
 import { VcRedistInstallDialogMessages as Messages } from "./vcredist_install_dialog.messages";
 
@@ -15,6 +16,7 @@ export const VcRedistInstallDialog = () => {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
   const open = useAppStore((state) => state.isVcRedistDialogOpen);
+  const { dolphinService } = useServices();
 
   const [installing, setInstalling] = React.useState(false);
   const [result, setResult] = React.useState<{ success: boolean; exitCode?: number } | null>(null);
@@ -31,7 +33,7 @@ export const VcRedistInstallDialog = () => {
     setInstalling(true);
     setResult(null);
     try {
-      const exitCode = await window.electron.dolphin.installVcRedist();
+      const exitCode = await dolphinService.installVcRedist();
       setResult({ success: exitCode === 0, exitCode });
     } catch {
       setResult({ success: false });
