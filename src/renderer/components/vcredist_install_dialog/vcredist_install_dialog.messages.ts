@@ -7,6 +7,5 @@ export const VcRedistInstallDialogMessages = {
   installSuccess: () => "Installation completed successfully. You can now relaunch Slippi Dolphin.",
   cancel: () => "Cancel",
   install: () => "Install",
-  installingButton: () => "Installing...",
   done: () => "Done",
 };

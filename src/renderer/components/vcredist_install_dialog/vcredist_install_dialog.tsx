@@ -65,7 +65,7 @@ export const VcRedistInstallDialog = () => {
         </Button>
         {!result?.success && (
           <Button onClick={handleInstall} color="primary" disabled={installing}>
-            {installing ? Messages.installingButton() : Messages.install()}
+            {Messages.install()}
           </Button>
         )}
         {result?.success && (
