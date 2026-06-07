@@ -9,7 +9,7 @@ import React from "react";
 
 import { useAppStore } from "@/lib/hooks/use_app_store";
 
-export const InstallVcRedistDialog = () => {
+export const VcRedistInstallDialog = () => {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
   const open = useAppStore((state) => state.isVcRedistDialogOpen);

@@ -6,9 +6,9 @@ import { LoginDialog } from "@/app/header/login_dialog";
 import type { MenuItem } from "@/app/header/main_menu";
 import { AdDialog } from "@/components/ad_dialog";
 import { AuthGuard } from "@/components/auth_guard";
-import { InstallVcRedistDialog } from "@/components/install_vcredist_dialog/install_vcredist_dialog";
 import { LoginNotice } from "@/components/login_notice/login_notice";
 import { PersistentNotification } from "@/components/persistent_notification/persistent_notification";
+import { VcRedistInstallDialog } from "@/components/vcredist_install_dialog/vcredist_install_dialog";
 import type { AuthUser } from "@/services/auth/types";
 
 type PrivateMenuItem = MenuItem & {
@@ -55,7 +55,7 @@ export const App = React.memo(({ menuItems }: { menuItems: readonly MainMenuItem
       <LoginDialog />
       <PersistentNotification />
       <AdDialog />
-      <InstallVcRedistDialog />
+      <VcRedistInstallDialog />
     </div>
   );
 });
