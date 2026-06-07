@@ -11,7 +11,6 @@ export const useAppStore = create(
       updateReady: false,
       isOnline: navigator.onLine,
       currentLanguage: getSystemLanguage(),
-      isVcRedistDialogOpen: false,
     },
     (set) => ({
       setUpdateVersion: (updateVersion: string) => set({ updateVersion }),
@@ -19,7 +18,6 @@ export const useAppStore = create(
       setUpdateReady: (updateReady: boolean) => set({ updateReady }),
       setIsOnline: (isOnline: boolean) => set({ isOnline }),
       setCurrentLanguage: (currentLanguage: string) => set({ currentLanguage }),
-      setVcRedistDialogOpen: (isVcRedistDialogOpen: boolean) => set({ isVcRedistDialogOpen }),
     }),
   ),
 );

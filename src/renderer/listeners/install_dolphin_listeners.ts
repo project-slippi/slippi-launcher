@@ -1,5 +1,6 @@
 import { type DolphinService, DolphinEventType, DolphinLaunchType } from "@dolphin/types";
 
+import { useVcRedistDialog } from "@/components/vcredist_install_dialog/use_vcredist_dialog";
 import { handleDolphinExitCode } from "@/lib/dolphin/handle_dolphin_exit_code";
 import {
   DolphinStatus,
@@ -8,7 +9,6 @@ import {
   setDolphinVersion,
   updateNetplayDownloadProgress,
 } from "@/lib/dolphin/use_dolphin_store";
-import { useAppStore } from "@/lib/hooks/use_app_store";
 import type { NotificationService } from "@/services/notification/types";
 
 import { ListenersMessages as Messages } from "./listeners.messages";
@@ -27,7 +27,7 @@ export function installDolphinListeners({
 
     // Check if it exited due to missing VC++ Redistributable
     if (exitCode === 0xc0000135 || exitCode === 0xc000007b) {
-      useAppStore.getState().setVcRedistDialogOpen(true);
+      useVcRedistDialog.getState().openDialog();
       return;
     }
 

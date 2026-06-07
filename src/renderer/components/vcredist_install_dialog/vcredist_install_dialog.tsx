@@ -7,7 +7,7 @@ import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import React from "react";
 
-import { useAppStore } from "@/lib/hooks/use_app_store";
+import { useVcRedistDialog } from "@/components/vcredist_install_dialog/use_vcredist_dialog";
 import { useServices } from "@/services";
 
 import { VcRedistInstallDialogMessages as Messages } from "./vcredist_install_dialog.messages";
@@ -15,7 +15,7 @@ import { VcRedistInstallDialogMessages as Messages } from "./vcredist_install_di
 export const VcRedistInstallDialog = () => {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
-  const open = useAppStore((state) => state.isVcRedistDialogOpen);
+  const open = useVcRedistDialog((state) => state.open);
   const { dolphinService } = useServices();
 
   const [installing, setInstalling] = React.useState(false);
@@ -26,7 +26,7 @@ export const VcRedistInstallDialog = () => {
       return;
     }
     setResult(null);
-    useAppStore.getState().setVcRedistDialogOpen(false);
+    useVcRedistDialog.getState().closeDialog();
   };
 
   const handleInstall = async () => {
