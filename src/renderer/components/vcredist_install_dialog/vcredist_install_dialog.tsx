@@ -33,7 +33,7 @@ export const VcRedistInstallDialog = () => {
     setInstalling(true);
     setResult(null);
     try {
-      const exitCode = await dolphinService.installVcRedist();
+      const { exitCode } = await dolphinService.installVcRedist();
       setResult({ success: exitCode === 0, exitCode });
     } catch {
       setResult({ success: false });

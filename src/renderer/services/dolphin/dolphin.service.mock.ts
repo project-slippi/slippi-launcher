@@ -100,8 +100,8 @@ class MockDolphinClient implements DolphinService {
   }
 
   @delayAndMaybeError(SHOULD_ERROR)
-  async installVcRedist(): Promise<number> {
-    return 0;
+  async installVcRedist(): Promise<{ exitCode: number }> {
+    return { exitCode: 0 };
   }
 
   onEvent<T extends DolphinEventType>(eventType: T, handle: (event: DolphinEventMap[T]) => void): () => void {

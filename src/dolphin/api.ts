@@ -27,9 +27,9 @@ import type {
 } from "./types";
 
 const dolphinApi: DolphinService = {
-  async installVcRedist(): Promise<number> {
+  async installVcRedist(): Promise<{ exitCode: number }> {
     const { result } = await ipc_installVcRedist.renderer!.trigger({});
-    return result.exitCode;
+    return { exitCode: result.exitCode };
   },
   async downloadDolphin(dolphinType: DolphinLaunchType) {
     await ipc_downloadDolphin.renderer!.trigger({ dolphinType });
