@@ -26,10 +26,6 @@ const handleWindowsExitCode = (exitCode: number): string | undefined => {
       // returned when selecting update in game
       return undefined;
     }
-    case 0xc0000135:
-    case 0xc000007b: {
-      return Messages.requiredDllsMissing();
-    }
     case 0xc0000409: {
       return Messages.dolphinCrashed();
     }
