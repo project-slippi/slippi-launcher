@@ -1,5 +1,5 @@
-import { execFile } from "node:child_process";
-import path from "node:path";
+// import { execFile } from "node:child_process";
+// import path from "node:path";
 
 export async function installVcRedist() {
   // This only makes sense on Windows
@@ -7,6 +7,7 @@ export async function installVcRedist() {
     return 0;
   }
 
+  /*
   const scriptPath = path.join(process.resourcesPath, "include", "ensure_vcredist.ps1");
 
   return new Promise<number>((resolve) => {
@@ -24,4 +25,7 @@ export async function installVcRedist() {
       },
     );
   });
+  */
+
+  return 0;
 }
