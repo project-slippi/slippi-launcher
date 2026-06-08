@@ -7,6 +7,12 @@ import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import React from "react";
 
+import { ExternalLink as A } from "@/components/external_link";
+
+import styles from "./rosetta_install_dialog.module.css";
+
+const APPLE_SLA_URL = "https://www.apple.com/legal/sla/";
+
 import { useServices } from "@/services";
 
 import { RosettaInstallDialogMessages as Messages } from "./rosetta_install_dialog.messages";
@@ -55,6 +61,12 @@ export const RosettaInstallDialog = () => {
       <DialogTitle>{Messages.dialogTitle()}</DialogTitle>
       <DialogContent>
         <p>{Messages.description()}</p>
+        <p className={styles.appleSlaDescription}>
+          <span>{Messages.appleLicenseDescription()}</span>
+          <A className={styles.appleSlaLink} href={APPLE_SLA_URL}>
+            {APPLE_SLA_URL}
+          </A>
+        </p>
         {installing && <p>{Messages.installing()}</p>}
         {result && !result.success && <p>{Messages.installFailed(`${result.exitCode ?? "unknown"}`)}</p>}
         {result && result.success && <p>{Messages.installSuccess()}</p>}
@@ -65,7 +77,7 @@ export const RosettaInstallDialog = () => {
         </Button>
         {!result?.success && (
           <Button onClick={handleInstall} color="primary" disabled={installing}>
-            {Messages.install()}
+            {Messages.agreeAndInstall()}
           </Button>
         )}
         {result?.success && (

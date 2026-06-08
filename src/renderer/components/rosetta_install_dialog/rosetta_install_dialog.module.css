@@ -1,0 +1,12 @@
+.appleSlaDescription {
+  font-size: 14px;
+}
+
+.appleSlaLink {
+  margin-left: 4px;
+  color: var(--purple-lighter);
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
