@@ -23,8 +23,8 @@ export const useConsoleDiscoveryStore = create(
             draft.connectedConsoles[ip].nickname = info.nickname ?? existing?.nickname;
             draft.connectedConsoles[ip].status = info.status ?? existing?.status;
             draft.connectedConsoles[ip].isMirroring = info.isMirroring ?? existing?.isMirroring;
-            draft.connectedConsoles[ip].filename = info.filename;
-            draft.connectedConsoles[ip].nintendontVersion = info.nintendontVersion;
+            draft.connectedConsoles[ip].filename = info.filename ?? existing?.filename;
+            draft.connectedConsoles[ip].nintendontVersion = info.nintendontVersion ?? existing?.nintendontVersion;
           }),
         ),
     }),
