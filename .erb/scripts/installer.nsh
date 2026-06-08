@@ -8,6 +8,7 @@
 
 !define GC_INSTALLER "gc-driver-install.exe"
 !define VCREDIST_INSTALLER "vc_redist.x64.exe"
+!define VCREDIST_URL "https://aka.ms/vs/17/release/vc_redist.x64.exe"
 
 ; Whether to install GC adapter drivers
 var GCDriverChoice
@@ -141,11 +142,17 @@ var VCRedistChoice
 
   ; Check if we should install VC++ Redistributable
   ${If} $VCRedistChoice == INSTALL
-    DetailPrint "Installing Visual C++ Redistributable..."
-    File /oname=$PLUGINSDIR\${VCREDIST_INSTALLER} "${BUILD_RESOURCES_DIR}\${VCREDIST_INSTALLER}"
-    ExecWait '"$PLUGINSDIR\${VCREDIST_INSTALLER}" /install /passive /norestart' $0
-    ${If} $0 != 0
-      MessageBox MB_ICONEXCLAMATION "Visual C++ Redistributable installation failed (error code $0).$\n$\nYou may need to install it manually from:$\nhttps://aka.ms/vs/17/release/vc_redist.x64.exe"
+    DetailPrint "Downloading Visual C++ Redistributable..."
+    inetc::get /USERAGENT "SlippiLauncher" "${VCREDIST_URL}" "$PLUGINSDIR\${VCREDIST_INSTALLER}" /END
+    Pop $0
+    ${If} $0 != "OK"
+      MessageBox MB_ICONEXCLAMATION "Failed to download Visual C++ Redistributable.$\n$\nYou may need to install it manually from:$\n${VCREDIST_URL}"
+    ${Else}
+      DetailPrint "Installing Visual C++ Redistributable..."
+      ExecWait '"$PLUGINSDIR\${VCREDIST_INSTALLER}" /install /passive /norestart' $1
+      ${If} $1 != 0
+        MessageBox MB_ICONEXCLAMATION "Visual C++ Redistributable installation failed (error code $1).$\n$\nYou may need to install it manually from:$\n${VCREDIST_URL}"
+      ${EndIf}
     ${EndIf}
   ${EndIf}
 !macroend
