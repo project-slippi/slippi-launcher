@@ -1,5 +1,9 @@
 import { execFile } from "node:child_process";
 
+const INSTALL_ROSETTA_SCRIPT = `
+  do shell script "/usr/sbin/softwareupdate --install-rosetta --agree-to-license" with administrator privileges
+`;
+
 export async function installRosettaElevated(): Promise<number> {
   // This only makes sense on macOS
   if (process.platform !== "darwin") {
@@ -7,11 +11,7 @@ export async function installRosettaElevated(): Promise<number> {
   }
 
   return new Promise<number>((resolve) => {
-    const script = `
-      do shell script "/usr/sbin/softwareupdate --install-rosetta --agree-to-license" with administrator privileges
-    `;
-
-    execFile("/usr/bin/osascript", ["-e", script], (err) => {
+    execFile("/usr/bin/osascript", ["-e", INSTALL_ROSETTA_SCRIPT], (err) => {
       if (err) {
         const code = typeof err.code === "number" ? err.code : 1;
         resolve(code);
