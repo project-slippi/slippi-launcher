@@ -79,6 +79,16 @@ jobs:
       # https://github.com/electron/electron/issues/51619#issuecomment-4521813516
       - name: Ensure Electron binary is installed
         run: node node_modules/electron/install.js
+
+      - name: Download VC++ Redistributable
+        if: matrix.os == 'windows-latest'
+        shell: powershell
+        run: |
+          $url = "https://aka.ms/vs/17/release/vc_redist.x64.exe"
+          $out = "assets/vc_redist.x64.exe"
+          if (!(Test-Path $out)) {
+            Invoke-WebRequest -Uri $url -OutFile $out
+          }
       
       - name: Cache CodeSignTool
         if: matrix.os == 'windows-latest'

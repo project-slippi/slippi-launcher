@@ -7,6 +7,7 @@
 ; because their docs aren't all encompassing.
 
 !define GC_INSTALLER "gc-driver-install.exe"
+!define VCREDIST_INSTALLER "vc_redist.x64.exe"
 
 ; Whether to install GC adapter drivers
 var GCDriverChoice
@@ -141,8 +142,8 @@ var VCRedistChoice
   ; Check if we should install VC++ Redistributable
   ${If} $VCRedistChoice == INSTALL
     DetailPrint "Installing Visual C++ Redistributable..."
-    File /oname=$PLUGINSDIR\ensure_vcredist.ps1 "${BUILD_RESOURCES_DIR}\ensure_vcredist.ps1"
-    ExecWait 'powershell.exe -ExecutionPolicy Bypass -File "$PLUGINSDIR\ensure_vcredist.ps1"' $0
+    File /oname=$PLUGINSDIR\${VCREDIST_INSTALLER} "${BUILD_RESOURCES_DIR}\${VCREDIST_INSTALLER}"
+    ExecWait '"$PLUGINSDIR\${VCREDIST_INSTALLER}" /install /passive /norestart' $0
     ${If} $0 != 0
       MessageBox MB_ICONEXCLAMATION "Visual C++ Redistributable installation failed (error code $0).$\n$\nYou may need to install it manually from:$\nhttps://aka.ms/vs/17/release/vc_redist.x64.exe"
     ${EndIf}
