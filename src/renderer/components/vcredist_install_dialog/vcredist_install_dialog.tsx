@@ -7,10 +7,14 @@ import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import React from "react";
 
+import { ExternalLink as A } from "@/components/external_link";
 import { useServices } from "@/services";
 
 import { useVcRedistDialog } from "./use_vcredist_dialog";
 import { VcRedistInstallDialogMessages as Messages } from "./vcredist_install_dialog.messages";
+import styles from "./vcredist_install_dialog.module.css";
+
+const VCREDIST_INSTALLER_URL = "https://aka.ms/vs/17/release/vc_redist.x64.exe";
 
 export const VcRedistInstallDialog = () => {
   const theme = useTheme();
@@ -54,23 +58,25 @@ export const VcRedistInstallDialog = () => {
     >
       <DialogTitle>{Messages.dialogTitle()}</DialogTitle>
       <DialogContent>
-        <p>{Messages.description()}</p>
+        {result == null && <p>{Messages.description()}</p>}
         {installing && <p>{Messages.installing()}</p>}
-        {result && !result.success && <p>{Messages.installFailed(`${result.exitCode ?? "unknown"}`)}</p>}
+        {result && !result.success && (
+          <p className={styles.installFailedContainer}>
+            <span>{Messages.installFailed(`${result.exitCode ?? "unknown"}`)}</span>
+            <A className={styles.vcredistLink} href={VCREDIST_INSTALLER_URL}>
+              {VCREDIST_INSTALLER_URL}
+            </A>
+          </p>
+        )}
         {result && result.success && <p>{Messages.installSuccess()}</p>}
       </DialogContent>
       <DialogActions>
         <Button onClick={handleClose} color="secondary" disabled={installing}>
-          {Messages.cancel()}
+          {Messages.close()}
         </Button>
-        {!result?.success && (
+        {result == null && (
           <Button onClick={handleInstall} color="primary" disabled={installing}>
             {Messages.install()}
-          </Button>
-        )}
-        {result?.success && (
-          <Button onClick={handleClose} color="primary">
-            {Messages.done()}
           </Button>
         )}
       </DialogActions>

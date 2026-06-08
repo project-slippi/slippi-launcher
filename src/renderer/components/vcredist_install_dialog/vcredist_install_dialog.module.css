@@ -1,0 +1,8 @@
+.vcredistLink {
+  margin-left: 4px;
+  color: var(--purple-lighter);
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
