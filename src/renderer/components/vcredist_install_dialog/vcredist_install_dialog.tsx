@@ -7,9 +7,9 @@ import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import React from "react";
 
-import { useVcRedistDialog } from "@/components/vcredist_install_dialog/use_vcredist_dialog";
 import { useServices } from "@/services";
 
+import { useVcRedistDialog } from "./use_vcredist_dialog";
 import { VcRedistInstallDialogMessages as Messages } from "./vcredist_install_dialog.messages";
 
 export const VcRedistInstallDialog = () => {
