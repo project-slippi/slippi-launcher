@@ -2,12 +2,12 @@ import type { FileResult } from "@replays/types";
 import { Frames } from "@slippi/slippi-js";
 import compareFunc from "compare-func";
 
-export enum ReplaySortOption {
+export const enum ReplaySortOption {
   DATE = "DATE",
   GAME_DURATION = "GAME_DURATION",
 }
 
-export enum SortDirection {
+export const enum SortDirection {
   ASC = "ASC",
   DESC = "DESC",
 }

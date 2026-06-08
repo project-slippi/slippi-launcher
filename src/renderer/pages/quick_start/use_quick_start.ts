@@ -8,7 +8,7 @@ import { useSettings, useSettingsStore } from "@/lib/hooks/use_settings";
 import type { AuthUser } from "@/services/auth/types";
 import type { UserData } from "@/services/slippi/types";
 
-export enum QuickStartStep {
+export const enum QuickStartStep {
   LOGIN = "LOGIN",
   VERIFY_EMAIL = "VERIFY_EMAIL",
   ACCEPT_RULES = "ACCEPT_RULES",

@@ -9,21 +9,21 @@ export type NewsItem = {
   body?: string;
 };
 
-export enum IsoValidity {
+export const enum IsoValidity {
   VALID = "VALID",
   UNKNOWN = "UNKNOWN",
   INVALID = "INVALID",
   UNVALIDATED = "UNVALIDATED",
 }
 
-export enum NatType {
+export const enum NatType {
   UNKNOWN = "UNKNOWN",
   NORMAL = "NORMAL",
   SYMMETRIC = "SYMMETRIC",
   FAILED = "FAILED",
 }
 
-export enum Presence {
+export const enum Presence {
   UNKNOWN = "UNKNOWN",
   ABSENT = "ABSENT",
   PRESENT = "PRESENT",

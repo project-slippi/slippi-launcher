@@ -18,7 +18,7 @@ export type StartBroadcastConfig = {
   name?: string;
 };
 
-export enum BroadcastEvent {
+export const enum BroadcastEvent {
   SLIPPI_STATUS_CHANGE = "SLIPPI_STATUS_CHANGE",
   DOLPHIN_STATUS_CHANGE = "DOLPHIN_STATUS_CHANGE",
   ERROR = "ERROR",
@@ -26,7 +26,7 @@ export enum BroadcastEvent {
   RECONNECT = "RECONNECT",
 }
 
-export enum SpectateEvent {
+export const enum SpectateEvent {
   ERROR = "ERROR",
   BROADCAST_LIST_UPDATE = "BROADCAST_LIST_UPDATE",
   NEW_FILE = "NEW_FILE",

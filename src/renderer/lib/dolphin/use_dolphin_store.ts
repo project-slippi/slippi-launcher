@@ -2,7 +2,7 @@ import { DolphinLaunchType } from "@dolphin/types";
 import { unstable_batchedUpdates } from "react-dom";
 import { create } from "zustand";
 
-export enum DolphinStatus {
+export const enum DolphinStatus {
   UNKNOWN = "UNKNOWN",
   READY = "READY",
   DOWNLOADING = "DOWNLOADING",

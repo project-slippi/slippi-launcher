@@ -1,12 +1,12 @@
 // Re-export the ConnectionStatus type from slippi-js/node so that the renderer can use it
-export enum ConnectionStatus {
+export const enum ConnectionStatus {
   DISCONNECTED = 0,
   CONNECTING = 1,
   CONNECTED = 2,
   RECONNECT_WAIT = 3,
 }
 
-export enum Ports {
+export const enum Ports {
   DEFAULT = 51441,
   LEGACY = 666,
   RELAY_START = 53741,
@@ -46,7 +46,7 @@ export type DiscoveredConsoleInfo = {
   firstFound: string;
 };
 
-export enum MirrorEvent {
+export const enum MirrorEvent {
   LOG = "LOG",
   ERROR = "ERROR",
   NEW_FILE = "NEW_FILE",

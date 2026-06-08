@@ -24,12 +24,12 @@ export type ReplayQueueItem = {
   gameStation?: string;
 };
 
-export enum DolphinLaunchType {
+export const enum DolphinLaunchType {
   NETPLAY = "netplay",
   PLAYBACK = "playback",
 }
 
-export enum DolphinUseType {
+export const enum DolphinUseType {
   PLAYBACK = "playback",
   SPECTATE = "spectate",
   CONFIG = "config",
@@ -44,7 +44,7 @@ export type PlayKey = {
   latestVersion?: string;
 };
 
-export enum DolphinEventType {
+export const enum DolphinEventType {
   CLOSED = "CLOSED",
   DOWNLOAD_START = "DOWNLOAD_START",
   DOWNLOAD_PROGRESS = "DOWNLOAD_PROGRESS",
