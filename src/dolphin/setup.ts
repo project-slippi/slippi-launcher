@@ -22,7 +22,7 @@ import {
 } from "./ipc";
 import type { DolphinManager } from "./manager";
 import { deletePlayKeyFile, writePlayKeyFile } from "./playkey";
-import { installRosettaWithPrompt } from "./rosetta/install_rosetta";
+import { installRosettaElevated } from "./rosetta/install_rosetta";
 import { DolphinLaunchType } from "./types";
 import { fetchGeckoCodes, saveGeckoCodes, updateBootToCssCode } from "./util";
 
@@ -128,7 +128,7 @@ export default function setupDolphinIpc({ dolphinManager }: { dolphinManager: Do
   });
 
   ipc_installRosetta.main!.handle(async () => {
-    const exitCode = await installRosettaWithPrompt();
+    const exitCode = await installRosettaElevated();
     return { exitCode };
   });
 

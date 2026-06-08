@@ -1,6 +1,6 @@
 import { execFile } from "node:child_process";
 
-export async function installRosettaWithPrompt() {
+export async function installRosettaElevated() {
   return new Promise<number>((resolve) => {
     const script = `
       do shell script "/usr/sbin/softwareupdate --install-rosetta --agree-to-license" with administrator privileges
