@@ -55,9 +55,9 @@ var VCRedistChoice
     ${NSD_CreateRadioButton} 0 70u 100% 10u "Also install GameCube adapter drivers (optional)"
     pop $2
     ${If} $GCDriverChoice == INSTALL
-        ${NSD_Check} $2
+        ${NSD_Check} $2 ; Select install drivers
     ${Else}
-        ${NSD_Check} $1
+        ${NSD_Check} $1 ; Select skip by default
     ${EndIf}
     ${NSD_CreateLabel} 0 0 100% 30u "Would you like to also install GameCube adapter drivers? This would allow you to use GameCube controllers with a compatible adapter (in Switch/Wii U mode) on your PC. Skip this if you already have GameCube adapter drivers installed."
     pop $3
@@ -67,12 +67,15 @@ var VCRedistChoice
   Function PageGCDriverLeave
     ${NSD_GetState} $1 $0
     ${If} $0 = ${BST_CHECKED}
+      ; Skip was selected
       StrCpy $GCDriverChoice SKIP
     ${Else}
       ${NSD_GetState} $2 $0
       ${If} $0 = ${BST_CHECKED}
+        ; Install was selected
         StrCpy $GCDriverChoice INSTALL
       ${Else}
+        ; Nothing was selected
       ${EndIf}
     ${EndIf}
   FunctionEnd
