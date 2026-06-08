@@ -1,5 +1,6 @@
-import { type DolphinService, DolphinEventType, DolphinLaunchType } from "@dolphin/types";
+import { type DolphinService, DolphinErrorType, DolphinEventType, DolphinLaunchType } from "@dolphin/types";
 
+import { useRosettaDialog } from "@/components/rosetta_install_dialog/use_rosetta_dialog";
 import { handleDolphinExitCode } from "@/lib/dolphin/handle_dolphin_exit_code";
 import {
   DolphinStatus,
@@ -30,6 +31,7 @@ export function installDolphinListeners({
       showError(errMsg);
     }
   });
+
   dolphinService.onEvent(DolphinEventType.DOWNLOAD_START, (event) => {
     setDolphinStatus(event.dolphinType, DolphinStatus.DOWNLOADING);
   });
@@ -45,9 +47,18 @@ export function installDolphinListeners({
     setDolphinVersion(event.dolphinVersion, event.dolphinType);
   });
 
-  dolphinService.onEvent(DolphinEventType.NETWORK_ERROR, (event) => {
-    const preludeMessage = !navigator.onLine ? Messages.youAreOffline() : Messages.networkError();
-    showWarning(`${preludeMessage} ${Messages.someFunctionalityUnavailable()}`);
-    setDolphinStatus(event.dolphinType, DolphinStatus.READY);
+  dolphinService.onEvent(DolphinEventType.ERROR, (event) => {
+    switch (event.errorType) {
+      case DolphinErrorType.NETWORK_ERROR: {
+        const preludeMessage = !navigator.onLine ? Messages.youAreOffline() : Messages.networkError();
+        showWarning(`${preludeMessage} ${Messages.someFunctionalityUnavailable()}`);
+        setDolphinStatus(event.dolphinType, DolphinStatus.READY);
+        break;
+      }
+      case DolphinErrorType.ROSETTA_REQUIRED: {
+        useRosettaDialog.getState().openDialog();
+        break;
+      }
+    }
   });
 }
