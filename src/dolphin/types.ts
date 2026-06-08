@@ -52,7 +52,7 @@ export const enum DolphinEventType {
   ERROR = "ERROR",
 }
 
-export enum DolphinErrorType {
+export const enum DolphinErrorType {
   NETWORK_ERROR = "NETWORK_ERROR",
   ROSETTA_REQUIRED = "ROSETTA_REQUIRED",
 }
