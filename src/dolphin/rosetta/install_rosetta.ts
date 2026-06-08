@@ -1,9 +1,9 @@
 import { execFile } from "node:child_process";
 
-export async function installRosettaElevated() {
+export async function installRosettaElevated(): Promise<number> {
   // This only makes sense on macOS
   if (process.platform !== "darwin") {
-    return;
+    return 0;
   }
 
   return new Promise<number>((resolve) => {
