@@ -3,7 +3,8 @@ export const VcRedistInstallDialogMessages = {
   description: () =>
     "Slippi Dolphin requires the Microsoft Visual C++ Redistributable. Would you like to install it now?",
   installing: () => "Installing... This may take a few minutes.",
-  installFailed: (errorCode: string) => `Installation failed (error code {0}). Please install it manually from:`,
+  /** @noTranslate */
+  installFailed: () => `Installation failed. Please install it manually from:`,
   installSuccess: () => "Installation completed successfully. You can now relaunch Slippi Dolphin.",
   close: () => "Close",
   install: () => "Install",

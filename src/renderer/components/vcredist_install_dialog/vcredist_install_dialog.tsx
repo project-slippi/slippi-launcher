@@ -23,7 +23,7 @@ export const VcRedistInstallDialog = () => {
   const { dolphinService } = useServices();
 
   const [installing, setInstalling] = React.useState(false);
-  const [result, setResult] = React.useState<{ success: boolean; exitCode?: number } | null>(null);
+  const [result, setResult] = React.useState<{ success: boolean } | null>(null);
 
   const handleClose = () => {
     if (installing) {
@@ -38,7 +38,7 @@ export const VcRedistInstallDialog = () => {
     setResult(null);
     try {
       const { exitCode } = await dolphinService.installVcRedist();
-      setResult({ success: exitCode === 0, exitCode });
+      setResult({ success: exitCode === 0 });
     } catch {
       setResult({ success: false });
     }
@@ -62,7 +62,7 @@ export const VcRedistInstallDialog = () => {
         {installing && <p>{Messages.installing()}</p>}
         {result && !result.success && (
           <p className={styles.installFailedContainer}>
-            <span>{Messages.installFailed(`${result.exitCode ?? "unknown"}`)}</span>
+            <span>{Messages.installFailed()}</span>
             <A className={styles.vcredistLink} href={VCREDIST_INSTALLER_URL}>
               {VCREDIST_INSTALLER_URL}
             </A>
