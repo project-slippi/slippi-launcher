@@ -8,6 +8,7 @@ import {
   ipc_downloadDolphin,
   ipc_fetchGeckoCodes,
   ipc_hardResetDolphin,
+  ipc_installVcRedist,
   ipc_launchNetplayDolphin,
   ipc_openDolphinSettingsFolder,
   ipc_removePlayKeyFile,
@@ -26,6 +27,10 @@ import type {
 } from "./types";
 
 const dolphinApi: DolphinService = {
+  async installVcRedist(): Promise<{ exitCode: number }> {
+    const { result } = await ipc_installVcRedist.renderer!.trigger({});
+    return { exitCode: result.exitCode };
+  },
   async downloadDolphin(dolphinType: DolphinLaunchType) {
     await ipc_downloadDolphin.renderer!.trigger({ dolphinType });
   },

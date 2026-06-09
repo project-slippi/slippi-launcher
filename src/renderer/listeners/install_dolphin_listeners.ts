@@ -1,5 +1,6 @@
 import { type DolphinService, DolphinEventType, DolphinLaunchType } from "@dolphin/types";
 
+import { useVcRedistDialog } from "@/components/vcredist_install_dialog/use_vcredist_dialog";
 import { handleDolphinExitCode } from "@/lib/dolphin/handle_dolphin_exit_code";
 import {
   DolphinStatus,
@@ -23,6 +24,12 @@ export function installDolphinListeners({
 
   dolphinService.onEvent(DolphinEventType.CLOSED, ({ dolphinType, exitCode }) => {
     setDolphinOpened(dolphinType, false);
+
+    // Check if it exited due to missing VC++ Redistributable
+    if (exitCode === 0xc0000135 || exitCode === 0xc000007b) {
+      useVcRedistDialog.getState().openDialog();
+      return;
+    }
 
     // Check if it exited cleanly
     const errMsg = handleDolphinExitCode(exitCode);

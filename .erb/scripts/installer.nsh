@@ -7,9 +7,13 @@
 ; because their docs aren't all encompassing.
 
 !define GC_INSTALLER "gc-driver-install.exe"
+!define VCREDIST_INSTALLER "vc_redist.x64.exe"
+!define VCREDIST_URL "https://aka.ms/vs/17/release/vc_redist.x64.exe"
 
-; The result of whether we should install drivers or not
-var InstallType
+; Whether to install GC adapter drivers
+var GCDriverChoice
+; Whether to install VC++ Redistributable
+var VCRedistChoice
 
 !macro customHeader
   ShowInstDetails show
@@ -25,8 +29,21 @@ var InstallType
 !macroend
 
 !macro customPageAfterChangeDir
-  Page custom InstTypePageCreate InstTypePageLeave
-  Function InstTypePageCreate
+
+  ; ============================================================
+  ; Custom Install Pages
+  ;
+  ; To add a new page:
+  ;   1. Declare a variable:         var MyFeatureChoice
+  ;   2. Add:                        Page custom Page<Name>Create Page<Name>Leave
+  ;   3. Implement Create function:  show/hide guard + nsDialogs UI
+  ;   4. Implement Leave function:   store choice in $MyFeatureChoice
+  ;   5. Consume in customInstall:   ${If} $MyFeatureChoice == INSTALL ... ${EndIf}
+  ; ============================================================
+
+  ; ---- Page: GameCube Adapter Drivers ----
+  Page custom PageGCDriverCreate PageGCDriverLeave
+  Function PageGCDriverCreate
     ${If} ${isUpdated}
       Abort
     ${EndIf}
@@ -37,7 +54,7 @@ var InstallType
     pop $1
     ${NSD_CreateRadioButton} 0 70u 100% 10u "Also install GameCube adapter drivers (optional)"
     pop $2
-    ${If} $InstallType == INSTALL
+    ${If} $GCDriverChoice == INSTALL
         ${NSD_Check} $2 ; Select install drivers
     ${Else}
         ${NSD_Check} $1 ; Select skip by default
@@ -47,21 +64,55 @@ var InstallType
     nsDialogs::Show
   FunctionEnd
 
-  Function InstTypePageLeave
+  Function PageGCDriverLeave
     ${NSD_GetState} $1 $0
     ${If} $0 = ${BST_CHECKED}
       ; Skip was selected
-      StrCpy $InstallType SKIP
+      StrCpy $GCDriverChoice SKIP
     ${Else}
       ${NSD_GetState} $2 $0
       ${If} $0 = ${BST_CHECKED}
         ; Install was selected
-        StrCpy $InstallType INSTALL
+        StrCpy $GCDriverChoice INSTALL
       ${Else}
         ; Nothing was selected
       ${EndIf}
     ${EndIf}
   FunctionEnd
+
+  ; ---- Page: Visual C++ Redistributable ----
+  Page custom PageVCRedistCreate PageVCRedistLeave
+  Function PageVCRedistCreate
+    ${If} ${isUpdated}
+      Abort
+    ${EndIf}
+    SetRegView 64
+    ReadRegDword $0 HKLM "SOFTWARE\Microsoft\VisualStudio\14.0\VC\Runtimes\x64" "Installed"
+    ${If} $0 == 1
+      Abort
+    ${EndIf}
+    !insertmacro MUI_HEADER_TEXT "Visual C++ Redistributable" ""
+    nsDialogs::Create /NOUNLOAD 1018
+    Pop $0
+    ${NSD_CreateRadioButton} 0 50u 100% 10u "Install Visual C++ Redistributable (recommended)"
+    pop $1
+    ${NSD_CreateRadioButton} 0 70u 100% 10u "Skip"
+    pop $2
+    ${NSD_Check} $1
+    ${NSD_CreateLabel} 0 0 100% 30u "Slippi Dolphin requires the Microsoft Visual C++ Redistributable. Would you like to install it now?"
+    pop $3
+    nsDialogs::Show
+  FunctionEnd
+
+  Function PageVCRedistLeave
+    ${NSD_GetState} $1 $0
+    ${If} $0 = ${BST_CHECKED}
+      StrCpy $VCRedistChoice INSTALL
+    ${Else}
+      StrCpy $VCRedistChoice SKIP
+    ${EndIf}
+  FunctionEnd
+
 !macroend
 
 !macro customInstall
@@ -86,10 +137,26 @@ var InstallType
   ${EndIf}
 
   ; Check if we should also install the GC drivers
-  ${If} $InstallType == INSTALL
+  ${If} $GCDriverChoice == INSTALL
     ; Automatically run gamecube adapter driver installer
     File /oname=$PLUGINSDIR\${GC_INSTALLER} "${BUILD_RESOURCES_DIR}\${GC_INSTALLER}"
     ExecShellWait "" "$PLUGINSDIR\${GC_INSTALLER}" SW_HIDE
+  ${EndIf}
+
+  ; Check if we should install VC++ Redistributable
+  ${If} $VCRedistChoice == INSTALL
+    DetailPrint "Downloading Visual C++ Redistributable..."
+    inetc::get /USERAGENT "SlippiLauncher" "${VCREDIST_URL}" "$PLUGINSDIR\${VCREDIST_INSTALLER}" /END
+    Pop $0
+    ${If} $0 != "OK"
+      MessageBox MB_ICONEXCLAMATION "Failed to download Visual C++ Redistributable.$\n$\nYou may need to install it manually from:$\n${VCREDIST_URL}"
+    ${Else}
+      DetailPrint "Installing Visual C++ Redistributable..."
+      ExecWait '"$PLUGINSDIR\${VCREDIST_INSTALLER}" /install /passive /norestart' $1
+      ${If} $1 != 0
+        MessageBox MB_ICONEXCLAMATION "Visual C++ Redistributable installation failed (error code $1).$\n$\nYou may need to install it manually from:$\n${VCREDIST_URL}"
+      ${EndIf}
+    ${EndIf}
   ${EndIf}
 !macroend
 

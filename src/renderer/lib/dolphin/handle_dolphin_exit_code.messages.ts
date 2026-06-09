@@ -1,6 +1,4 @@
 export const HandleDolphinExitCodeMessages = {
-  requiredDllsMissing: () =>
-    "Required DLLs for launching Dolphin are missing. Check the Help section in the settings page to fix this issue.",
   dolphinCrashed: () =>
     'Dolphin has crashed. Please go to the Help section of the settings page, click "Copy logs", and paste them in the Slippi Discord\'s #windows-support channel with some context regarding the crash.',
   tryDifferentVideoBackend: () =>

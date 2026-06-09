@@ -4,6 +4,7 @@ import isEqual from "lodash/isEqual";
 import { readFile } from "node:fs/promises";
 import { fileExists } from "utils/file_exists";
 
+import { installVcRedist } from "./install_vcredist";
 import {
   ipc_checkPlayKeyExists,
   ipc_configureDolphin,
@@ -11,6 +12,7 @@ import {
   ipc_downloadDolphin,
   ipc_fetchGeckoCodes,
   ipc_hardResetDolphin,
+  ipc_installVcRedist,
   ipc_launchNetplayDolphin,
   ipc_openDolphinSettingsFolder,
   ipc_removePlayKeyFile,
@@ -123,6 +125,11 @@ export default function setupDolphinIpc({ dolphinManager }: { dolphinManager: Do
     const installation = dolphinManager.getInstallation(dolphinType);
     await saveGeckoCodes(installation, geckoCodes);
     return { success: true };
+  });
+
+  ipc_installVcRedist.main!.handle(async () => {
+    const exitCode = await installVcRedist();
+    return { exitCode };
   });
 
   return { dolphinManager };

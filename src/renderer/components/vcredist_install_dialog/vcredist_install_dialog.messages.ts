@@ -1,0 +1,11 @@
+export const VcRedistInstallDialogMessages = {
+  dialogTitle: () => "Missing Required DLLs",
+  description: () =>
+    "Slippi Dolphin requires the Microsoft Visual C++ Redistributable. Would you like to install it now?",
+  installing: () => "Installing... This may take a few minutes.",
+  /** @noTranslate */
+  installFailed: () => `Installation failed. Please install it manually from:`,
+  installSuccess: () => "Installation completed successfully. You can now relaunch Slippi Dolphin.",
+  close: () => "Close",
+  install: () => "Install",
+};
