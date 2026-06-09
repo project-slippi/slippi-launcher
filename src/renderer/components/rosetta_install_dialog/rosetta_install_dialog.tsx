@@ -25,7 +25,7 @@ export const RosettaInstallDialog = () => {
   const { dolphinService } = useServices();
 
   const [installing, setInstalling] = React.useState(false);
-  const [result, setResult] = React.useState<{ success: boolean; exitCode?: number } | null>(null);
+  const [result, setResult] = React.useState<{ success: boolean } | null>(null);
 
   const handleClose = () => {
     if (installing) {
@@ -40,7 +40,7 @@ export const RosettaInstallDialog = () => {
     setResult(null);
     try {
       const { exitCode } = await dolphinService.installRosetta();
-      setResult({ success: exitCode === 0, exitCode });
+      setResult({ success: exitCode === 0 });
     } catch {
       setResult({ success: false });
     }
@@ -68,7 +68,7 @@ export const RosettaInstallDialog = () => {
           </A>
         </p>
         {installing && <p>{Messages.installing()}</p>}
-        {result && !result.success && <p>{Messages.installFailed(`${result.exitCode ?? "unknown"}`)}</p>}
+        {result && !result.success && <p>{Messages.installFailed()}</p>}
         {result && result.success && <p>{Messages.installSuccess()}</p>}
       </DialogContent>
       <DialogActions>

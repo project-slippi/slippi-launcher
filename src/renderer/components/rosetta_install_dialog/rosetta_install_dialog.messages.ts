@@ -2,8 +2,8 @@ export const RosettaInstallDialogMessages = {
   dialogTitle: () => "Rosetta Required",
   description: () => "Slippi Dolphin requires Rosetta on Apple Silicon Macs. Would you like to install it now?",
   installing: () => "Installing... This may take a few minutes.",
-  installFailed: (errorCode: string) =>
-    `Rosetta installation failed (error code {0}). You may need to install it manually.`,
+  installFailed: () =>
+    `Rosetta installation failed. To manually install, open the Terminal app and run "softwareupdate --install-rosetta".`,
   installSuccess: () => "Installation completed successfully. You can now relaunch Slippi Dolphin.",
   cancel: () => "Cancel",
   appleLicenseDescription: () =>
