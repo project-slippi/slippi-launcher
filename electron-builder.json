@@ -65,10 +65,7 @@
   "win": {
     "target": ["nsis"],
     "icon": "assets/icon.ico",
-    "publisherName": "Slippi LLC",
-    "sign": ".erb/scripts/windows-sign.js",
-    "signDlls": true,
-    "signingHashAlgorithms": ["sha256"]
+    "signAndEditExecutable": true
   },
   "nsis": {
     "artifactName": "Slippi-Launcher-Setup-${version}.${ext}",
