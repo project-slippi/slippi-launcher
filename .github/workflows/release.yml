@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macOS-latest]
+        os: [ubuntu-latest, windows-2022, macOS-latest]
     steps:
       - name: Wait for build job - ${{ matrix.os }}
         uses: lewagon/wait-on-check-action@v1.7.0
