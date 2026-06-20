@@ -6,6 +6,8 @@ const MINUTE = 60 * SECOND;
 
 const EXPIRES_IN = 15 * MINUTE;
 
+const MAX_RELEASES_TO_FETCH = 5;
+
 export type GithubReleaseInfo = {
   id: number;
   name: string;
@@ -44,7 +46,7 @@ export async function getLatestRelease(owner: string, repo: string): Promise<Git
 }
 
 export async function getAllReleases(owner: string, repo: string): Promise<GithubReleaseInfo[]> {
-  const url = `https://api.github.com/repos/${owner}/${repo}/releases`;
+  const url = `https://api.github.com/repos/${owner}/${repo}/releases?per_page=${MAX_RELEASES_TO_FETCH}`;
 
   const data = await cachedFetch(url);
 
