@@ -13,7 +13,7 @@ const cache = new TimeExpiryCache<string, IpApiResponse>(EXPIRES_IN_MS);
 // Note that this only supports HTTP only for free
 // Rate limit is 45 requests per minute
 // We're gonna cache it for an hour so we don't hit the rate limit
-const API = "http://ip-api.com/json/76.66.132.22";
+const API = "http://ip-api.com/json";
 
 type IpApiResponse = {
   status: string;
