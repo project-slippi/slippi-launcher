@@ -48,7 +48,7 @@ const MAX_ACCOUNTS = 5;
 
 class MultiAccountClient implements MultiAccountService {
   private _accountsSubject = new Subject<{
-    accounts: StoredAccount[];
+    accounts: readonly StoredAccount[];
     activeId: string | null;
   }>();
   private _onAccountsChanged = multicast(this._accountsSubject);
@@ -241,7 +241,7 @@ class MultiAccountClient implements MultiAccountService {
     this._accountsSubject.next({
       // Deep clone the array and their objects to prevent external modification.
       // e.g. using the array in a zustand store with immer causes the same objects to be frozen since the reference is the same.
-      accounts: this._accounts.map((acc) => ({ ...acc })),
+      accounts: this._accounts.map((acc) => ({ ...acc, lastActive: new Date(acc.lastActive) })),
       activeId: this._activeAccountId,
     });
   }
@@ -495,7 +495,7 @@ class MultiAccountClient implements MultiAccountService {
   /**
    * Get all stored accounts
    */
-  getAccounts(): StoredAccount[] {
+  getAccounts(): readonly StoredAccount[] {
     // Return sorted by last active (most recent first)
     return [...this._accounts].sort((a, b) => b.lastActive.getTime() - a.lastActive.getTime());
   }
@@ -521,7 +521,9 @@ class MultiAccountClient implements MultiAccountService {
   /**
    * Subscribe to accounts list changes
    */
-  onAccountsChange(onChange: (data: { accounts: StoredAccount[]; activeId: string | null }) => void): () => void {
+  onAccountsChange(
+    onChange: (data: { accounts: readonly StoredAccount[]; activeId: string | null }) => void,
+  ): () => void {
     const subscription = this._onAccountsChanged.subscribe(onChange);
     return () => {
       subscription.unsubscribe();

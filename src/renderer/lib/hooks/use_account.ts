@@ -17,7 +17,7 @@ export const useAccount = create(
       displayName: "",
       emailVerificationSent: false,
       // Multi-account state
-      accounts: [] as StoredAccount[],
+      accounts: [] as readonly StoredAccount[],
       activeAccountId: null as string | null,
     },
     (set, get) => ({
@@ -51,7 +51,7 @@ export const useAccount = create(
           }),
         ),
       // Multi-account actions
-      setAccounts: (accounts: StoredAccount[]) => set({ accounts }),
+      setAccounts: (accounts: readonly StoredAccount[]) => set({ accounts }),
       setActiveAccountId: (activeAccountId: string | null) => set({ activeAccountId }),
     }),
   ),

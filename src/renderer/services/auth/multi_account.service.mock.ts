@@ -38,7 +38,7 @@ const testUsers = [
 
 class MockMultiAccountClient implements MultiAccountService {
   private _accountsSubject = new Subject<{
-    accounts: StoredAccount[];
+    accounts: readonly StoredAccount[];
     activeId: string | null;
   }>();
   private _onAccountsChanged = multicast(this._accountsSubject);
@@ -236,7 +236,9 @@ class MockMultiAccountClient implements MultiAccountService {
     return this._authInstances.get(this._activeAccountId) ?? null;
   }
 
-  onAccountsChange(onChange: (data: { accounts: StoredAccount[]; activeId: string | null }) => void): () => void {
+  onAccountsChange(
+    onChange: (data: { accounts: readonly StoredAccount[]; activeId: string | null }) => void,
+  ): () => void {
     const subscription = this._onAccountsChanged.subscribe(onChange);
     return () => {
       subscription.unsubscribe();

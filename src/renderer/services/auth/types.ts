@@ -43,7 +43,7 @@ export interface MultiAccountService {
   addAccount(email: string, password: string): Promise<StoredAccount>;
   removeAccount(accountId: string): Promise<void>;
   switchAccount(accountId: string): Promise<void>;
-  getAccounts(): StoredAccount[];
+  getAccounts(): readonly StoredAccount[];
   getActiveAccountId(): string | null;
   saveAccounts(): Promise<void>;
 
@@ -51,5 +51,7 @@ export interface MultiAccountService {
   getActiveAuth(): Auth | null; // Returns firebase Auth instance
 
   // Notifications
-  onAccountsChange(onChange: (data: { accounts: StoredAccount[]; activeId: string | null }) => void): () => void;
+  onAccountsChange(
+    onChange: (data: { accounts: readonly StoredAccount[]; activeId: string | null }) => void,
+  ): () => void;
 }
