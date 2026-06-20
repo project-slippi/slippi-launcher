@@ -25,7 +25,7 @@ jobs:
       matrix:
         node-version: [24.x]
         python: ["3.11"]
-        os: [ubuntu-latest, windows-latest, macOS-latest]
+        os: [ubuntu-latest, windows-2022, macOS-latest]
 
     steps:
       - name: Use Python ${{ matrix.python }}
@@ -81,7 +81,7 @@ jobs:
         run: node node_modules/electron/install.js
       
       - name: Cache CodeSignTool
-        if: matrix.os == 'windows-latest'
+        if: matrix.os == 'windows-2022'
         uses: actions/cache@v5
         with:
           path: |
@@ -90,7 +90,7 @@ jobs:
       - name: Download CodeSignTool
         env:
           ES_USERNAME: ${{ secrets.ES_USERNAME }}
-        if: matrix.os == 'windows-latest' && env.ES_USERNAME != null
+        if: matrix.os == 'windows-2022' && env.ES_USERNAME != null
         working-directory: ${{ github.workspace }}
         shell: powershell
         run: |
@@ -104,7 +104,7 @@ jobs:
       - name: Load Windows signing secrets
         env:
           ES_USERNAME: ${{ secrets.ES_USERNAME }}
-        if: matrix.os == 'windows-latest' && (env.ES_USERNAME != null || env.IS_PR == 'true')
+        if: matrix.os == 'windows-2022' && (env.ES_USERNAME != null || env.IS_PR == 'true')
         shell: bash
         run: |
           # Enable signing if: (1) PR with enable-codesigning label, OR (2) not a PR and release commit
