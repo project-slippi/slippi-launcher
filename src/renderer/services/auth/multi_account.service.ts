@@ -239,7 +239,9 @@ class MultiAccountClient implements MultiAccountService {
    */
   private _notifyAccountsChanged(): void {
     this._accountsSubject.next({
-      accounts: [...this._accounts],
+      // Deep clone the array and their objects to prevent external modification.
+      // e.g. using the array in a zustand store with immer causes the same objects to be frozen since the reference is the same.
+      accounts: this._accounts.map((acc) => ({ ...acc })),
       activeId: this._activeAccountId,
     });
   }
