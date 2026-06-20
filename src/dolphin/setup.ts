@@ -11,6 +11,7 @@ import {
   ipc_downloadDolphin,
   ipc_fetchGeckoCodes,
   ipc_hardResetDolphin,
+  ipc_installRosetta,
   ipc_launchNetplayDolphin,
   ipc_openDolphinSettingsFolder,
   ipc_removePlayKeyFile,
@@ -21,6 +22,7 @@ import {
 } from "./ipc";
 import type { DolphinManager } from "./manager";
 import { deletePlayKeyFile, writePlayKeyFile } from "./playkey";
+import { installRosettaElevated } from "./rosetta/install_rosetta";
 import { DolphinLaunchType } from "./types";
 import { fetchGeckoCodes, saveGeckoCodes, updateBootToCssCode } from "./util";
 
@@ -123,6 +125,11 @@ export default function setupDolphinIpc({ dolphinManager }: { dolphinManager: Do
     const installation = dolphinManager.getInstallation(dolphinType);
     await saveGeckoCodes(installation, geckoCodes);
     return { success: true };
+  });
+
+  ipc_installRosetta.main!.handle(async () => {
+    const exitCode = await installRosettaElevated();
+    return { exitCode };
   });
 
   return { dolphinManager };

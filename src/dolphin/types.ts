@@ -49,7 +49,12 @@ export const enum DolphinEventType {
   DOWNLOAD_START = "DOWNLOAD_START",
   DOWNLOAD_PROGRESS = "DOWNLOAD_PROGRESS",
   DOWNLOAD_COMPLETE = "DOWNLOAD_COMPLETE",
+  ERROR = "ERROR",
+}
+
+export const enum DolphinErrorType {
   NETWORK_ERROR = "NETWORK_ERROR",
+  ROSETTA_REQUIRED = "ROSETTA_REQUIRED",
 }
 
 export type DolphinNetplayClosedEvent = {
@@ -86,8 +91,15 @@ export type DolphinDownloadCompleteEvent = {
 };
 
 export type DolphinNetworkErrorEvent = {
-  type: DolphinEventType.NETWORK_ERROR;
+  type: DolphinEventType.ERROR;
+  errorType: DolphinErrorType.NETWORK_ERROR;
   dolphinType: DolphinLaunchType;
+};
+
+export type DolphinRosettaRequiredEvent = {
+  type: DolphinEventType.ERROR;
+  errorType: DolphinErrorType.ROSETTA_REQUIRED;
+  dolphinType?: DolphinLaunchType;
 };
 
 export type DolphinEventMap = {
@@ -95,12 +107,13 @@ export type DolphinEventMap = {
   [DolphinEventType.DOWNLOAD_START]: DolphinDownloadStartEvent;
   [DolphinEventType.DOWNLOAD_PROGRESS]: DolphinDownloadProgressEvent;
   [DolphinEventType.DOWNLOAD_COMPLETE]: DolphinDownloadCompleteEvent;
-  [DolphinEventType.NETWORK_ERROR]: DolphinNetworkErrorEvent;
+  [DolphinEventType.ERROR]: DolphinNetworkErrorEvent | DolphinRosettaRequiredEvent;
 };
 
 export type DolphinEvent = DolphinEventMap[DolphinEventType];
 
 export interface DolphinService {
+  installRosetta(): Promise<{ exitCode: number }>;
   downloadDolphin(dolphinType: DolphinLaunchType): Promise<void>;
   configureDolphin(dolphinType: DolphinLaunchType): Promise<void>;
   softResetDolphin(dolphinType: DolphinLaunchType): Promise<void>;

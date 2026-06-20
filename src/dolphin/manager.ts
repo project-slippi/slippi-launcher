@@ -12,9 +12,9 @@ import { fileExists } from "utils/file_exists";
 import { type DolphinVersionResponse, fetchLatestVersion } from "./install/fetch_latest_version";
 import { IshiirukaDolphinInstallation } from "./install/ishiiruka_installation";
 import { MainlineDolphinInstallation } from "./install/mainline_installation";
-import { DolphinInstance, PlaybackDolphinInstance } from "./instance";
+import { DolphinInstance, MacOsRosettaRequiredError, PlaybackDolphinInstance } from "./instance";
 import type { DolphinEvent, DolphinInstallation, ReplayCommunication } from "./types";
-import { DolphinEventType, DolphinLaunchType } from "./types";
+import { DolphinErrorType, DolphinEventType, DolphinLaunchType } from "./types";
 
 const log = electronLog.scope("dolphin/manager");
 
@@ -116,7 +116,18 @@ export class DolphinManager {
       this.playbackDolphinInstances.set(id, playbackInstance);
     }
 
-    await playbackInstance.play(replayComm);
+    try {
+      await playbackInstance.play(replayComm);
+    } catch (err) {
+      if (err instanceof MacOsRosettaRequiredError) {
+        this.eventSubject.next({
+          type: DolphinEventType.ERROR,
+          errorType: DolphinErrorType.ROSETTA_REQUIRED,
+          dolphinType: DolphinLaunchType.PLAYBACK,
+        });
+      }
+      throw err;
+    }
   }
 
   async launchNetplayDolphin() {
@@ -153,7 +164,18 @@ export class DolphinManager {
       throw err;
     });
 
-    await dolphinInstance.start();
+    try {
+      await dolphinInstance.start();
+    } catch (err) {
+      if (err instanceof MacOsRosettaRequiredError) {
+        this.eventSubject.next({
+          type: DolphinEventType.ERROR,
+          errorType: DolphinErrorType.ROSETTA_REQUIRED,
+          dolphinType: DolphinLaunchType.NETPLAY,
+        });
+      }
+      throw err;
+    }
     this.netplayDolphinInstance = dolphinInstance;
   }
 
@@ -340,7 +362,8 @@ export class DolphinManager {
 
   private _onOffline(dolphinType: DolphinLaunchType) {
     this.eventSubject.next({
-      type: DolphinEventType.NETWORK_ERROR,
+      type: DolphinEventType.ERROR,
+      errorType: DolphinErrorType.NETWORK_ERROR,
       dolphinType,
     });
   }

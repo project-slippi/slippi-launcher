@@ -66,6 +66,8 @@ export const ipc_saveGeckoCodes = makeEndpoint.main(
   <SuccessPayload>_,
 );
 
+export const ipc_installRosetta = makeEndpoint.main("installRosetta", <EmptyPayload>_, <{ exitCode: number }>_);
+
 // Events
 
 export const ipc_dolphinEvent = makeEndpoint.renderer("dolphin_dolphinEvent", <DolphinEvent>_);
