@@ -22,7 +22,7 @@ export const NewsDualPane = React.memo(function NewsDualPane({
   selectedNewsId,
   onSelectedNewsIdChange,
 }: {
-  posts: NewsItem[];
+  posts: readonly NewsItem[];
   selectedNewsId: string | null;
   onSelectedNewsIdChange: (id: string | null) => void;
 }) {

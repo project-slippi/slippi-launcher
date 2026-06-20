@@ -1,12 +1,7 @@
-export type NewsItem = {
-  id: string;
-  source: "bluesky" | "medium" | "github";
-  title: string;
-  permalink: string;
-  publishedAt: Date;
-  subtitle?: string;
-  imageUrl?: string;
-  body?: string;
+import type { BaseNewsItem, SourceId } from "main/content_management/news_feed/types";
+
+export type NewsItem = BaseNewsItem & {
+  source: SourceId;
 };
 
 export const enum IsoValidity {

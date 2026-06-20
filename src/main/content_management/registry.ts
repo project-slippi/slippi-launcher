@@ -11,15 +11,15 @@ export type ContentManagementServiceDefinition = {
   };
   fetchNearestTournaments: {
     params: { location: { lat: number; lng: number }; radiusKms?: number };
-    result: SmashMapEvent[];
+    result: readonly SmashMapEvent[];
   };
   fetchUpcomingMeleeMajors: {
     params: Record<string, never>;
-    result: MeleeMajorsTournament[];
+    result: readonly MeleeMajorsTournament[];
   };
   fetchNewsFeed: {
     params: Record<string, never>;
-    result: NewsItem[];
+    result: readonly NewsItem[];
   };
 };
 
