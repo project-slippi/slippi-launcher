@@ -12,7 +12,7 @@ const log = electronLog.scope("news_feed");
 class NewsFeedAggregator {
   private sources: NewsSource[] = [];
 
-  register(source: NewsSource) {
+  addSource(source: NewsSource) {
     this.sources.push(source);
   }
 
@@ -42,9 +42,9 @@ class NewsFeedAggregator {
 }
 
 const newsFeedAggregator = new NewsFeedAggregator();
-newsFeedAggregator.register(new MediumNewsSource());
-newsFeedAggregator.register(new GithubNewsSource(["Ishiiruka", "slippi-launcher", "dolphin"]));
-newsFeedAggregator.register(new BlueskyNewsSource());
+newsFeedAggregator.addSource(new MediumNewsSource());
+newsFeedAggregator.addSource(new GithubNewsSource());
+newsFeedAggregator.addSource(new BlueskyNewsSource());
 
 export async function fetchNewsFeedData(): Promise<readonly NewsItem[]> {
   return newsFeedAggregator.fetch();

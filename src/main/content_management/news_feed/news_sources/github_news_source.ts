@@ -1,19 +1,19 @@
 import log from "electron-log";
-import { getAllReleases } from "main/fetch_cross_origin/github";
+import { getPreviousReleases } from "main/fetch_cross_origin/github";
 
 import type { BaseNewsItem, NewsSource } from "../types";
 
 export class GithubNewsSource implements NewsSource {
   readonly id = "github" as const;
 
-  constructor(private repos: readonly string[]) {}
+  private readonly repos = ["Ishiiruka", "slippi-launcher", "dolphin"] as const;
 
   async fetch(): Promise<readonly BaseNewsItem[]> {
     const start = Date.now();
     log.info(`Fetching Github releases for ${this.repos.join(", ")}...`);
     const allReleases = await Promise.allSettled(
       this.repos.map(async (repo) => {
-        const releases = await getAllReleases("project-slippi", repo);
+        const releases = await getPreviousReleases("project-slippi", repo);
         return releases.map((release): BaseNewsItem => {
           return {
             id: `gh-${repo}-${release.id}`,

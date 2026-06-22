@@ -36,7 +36,7 @@ const inflightRequests = new Map<string, Promise<GithubReleaseInfo[] | ApiRateLi
 export async function getLatestRelease(owner: string, repo: string): Promise<GithubReleaseInfo> {
   // We can re-use api calls by returning the first item in all releases
   // since it already returns the newest release first.
-  const data = await getAllReleases(owner, repo);
+  const data = await getPreviousReleases(owner, repo);
 
   if (data.length > 0) {
     return data[0];
@@ -45,7 +45,7 @@ export async function getLatestRelease(owner: string, repo: string): Promise<Git
   throw new Error(`No releases found for ${owner}/${repo}`);
 }
 
-export async function getAllReleases(owner: string, repo: string): Promise<GithubReleaseInfo[]> {
+export async function getPreviousReleases(owner: string, repo: string): Promise<GithubReleaseInfo[]> {
   const url = `https://api.github.com/repos/${owner}/${repo}/releases?per_page=${MAX_RELEASES_TO_FETCH}`;
 
   const data = await cachedFetch(url);
