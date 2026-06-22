@@ -1,5 +1,6 @@
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import Button from "@mui/material/Button";
+import CircularProgress from "@mui/material/CircularProgress";
 import Typography from "@mui/material/Typography";
 import { useQuery } from "@tanstack/react-query";
 import { type UserLocationInfo } from "main/fetch_cross_origin/ip_api";
@@ -49,18 +50,34 @@ export const LocationGuard = ({
 const LocationGuardImpl = ({ render }: { render: (locationInfo: UserLocationInfo) => React.ReactNode }) => {
   const currentLanguage = useAppStore((state) => state.currentLanguage);
   const { contentManagementService } = useServices();
-  const { data, isLoading, error } = useQuery({
+  const { data, isLoading, error, refetch } = useQuery({
     queryKey: ["geoLocationQuery", currentLanguage],
     queryFn: async () => await contentManagementService.fetchCurrentLocation(currentLanguage),
     staleTime: 5 * 60 * 1000,
+    retry: false,
   });
 
-  if (isLoading || !data) {
-    return null;
+  if (isLoading) {
+    return (
+      <div className={styles.container}>
+        <CircularProgress color="inherit" />
+      </div>
+    );
   }
 
   if (error instanceof Error) {
-    return <div>{Messages.error(error.message)}</div>;
+    return (
+      <div className={styles.container}>
+        <p>{Messages.error(error.message)}</p>
+        <Button color="secondary" onClick={() => refetch()}>
+          {Messages.retry()}
+        </Button>
+      </div>
+    );
+  }
+
+  if (!data) {
+    return null;
   }
 
   return <>{render(data)}</>;

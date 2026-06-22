@@ -5,4 +5,5 @@ export const LocationGuardMessages = {
     "Your location data will be sent to a third-party service. Slippi does NOT collect this data. You can turn this feature off again in the settings.",
   allow: () => "Allow",
   error: (errorMessage: string) => "Failed to fetch location information. Error: {0}",
+  retry: () => "Retry",
 };
