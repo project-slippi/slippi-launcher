@@ -3,7 +3,7 @@ import React from "react";
 import { AuthGuard } from "@/components/auth_guard";
 
 import { ContentBlock } from "./content_block/content_block";
-import { MeleeMajorsCarousel } from "./melee_majors_carousel";
+import { MeleeMajorsCarousel } from "./melee_majors_carousel/melee_majors_carousel";
 import { MyRanking } from "./my_ranking/my_ranking";
 import { NewsPreview } from "./news_preview/news_preview";
 import { OverviewMessages as Messages } from "./overview.messages";
