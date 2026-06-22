@@ -1,3 +1,4 @@
+import Newspaper from "@mui/icons-material/Newspaper";
 import Button from "@mui/material/Button";
 import React from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -8,6 +9,7 @@ import { useRouteMemory } from "@/lib/hooks/use_route_memory";
 
 import { NewsDualPane } from "./news_dual_pane/news_dual_pane";
 import { NewsFeedMessages as Messages } from "./news_feed.messages";
+import styles from "./news_feed.module.css";
 
 const NewsFeedContent = React.memo(function NewsFeedContent({
   newsId,
@@ -24,11 +26,20 @@ const NewsFeedContent = React.memo(function NewsFeedContent({
 
   if (error) {
     return (
-      <div style={{ display: "flex", alignItems: "center" }}>
-        <div style={{ marginRight: 10 }}>{Messages.failedToFetch()}</div>
+      <div className={styles.container}>
+        <p>{Messages.failedToFetch()}</p>
         <Button color="primary" variant="text" size="small" onClick={() => refetch()}>
           {Messages.tryAgain()}
         </Button>
+      </div>
+    );
+  }
+
+  if (allPosts.length === 0) {
+    return (
+      <div className={styles.container}>
+        <Newspaper style={{ fontSize: 64 }} />
+        <h3>{Messages.noNews()}</h3>
       </div>
     );
   }

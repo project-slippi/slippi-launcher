@@ -10,9 +10,15 @@ export const NewsArticleContainer = React.memo(function NewsArticleContainer({
   item,
   autoTruncate,
 }: {
-  item: NewsItem;
+  item: NewsItem | undefined;
   autoTruncate?: boolean;
 }) {
   const currentLanguage = useAppStore((store) => store.currentLanguage) as SupportedLanguage;
+
+  if (!item) {
+    // The empty news list case should be handled by the parent component so this should never happen
+    return null;
+  }
+
   return <NewsArticle item={item} currentLanguage={currentLanguage} autoTruncate={autoTruncate} />;
 });

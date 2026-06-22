@@ -43,7 +43,7 @@ export const NewsDualPane = React.memo(function NewsDualPane({
 
   // This will default to the first post if no post is selected
   const selectedPost = React.useMemo(
-    () => posts.find((p) => p.id === selectedNewsId) ?? posts[0],
+    (): NewsItem | undefined => posts.find((p) => p.id === selectedNewsId) ?? posts[0],
     [posts, selectedNewsId],
   );
   const visiblePosts = React.useMemo(() => posts.slice(0, visibleCount), [posts, visibleCount]);
@@ -74,7 +74,7 @@ export const NewsDualPane = React.memo(function NewsDualPane({
     <ListItem
       key={post.id}
       item={post}
-      selected={post.id === selectedPost.id}
+      selected={post.id === selectedPost?.id}
       isUnread={isNewsUnread(post, readStatus)}
       currentLanguage={currentLanguage}
       onClick={() => handleSelect(post)}
