@@ -14,7 +14,7 @@ import { NewsPreviewMessages as Messages } from "./news_preview.messages";
 import styles from "./news_preview.module.css";
 
 export const NewsPreview = React.memo(function NewsPreview() {
-  const { isLoading, error, data: allPosts = [] } = useNewsFeedQuery();
+  const { isLoading, error, data: allPosts = [], refetch, isFetching } = useNewsFeedQuery();
   const navigate = useNavigate();
 
   if (isLoading) {
@@ -30,6 +30,9 @@ export const NewsPreview = React.memo(function NewsPreview() {
       <Outer centered={true}>
         <Newspaper style={{ fontSize: 64 }} />
         <h3>{Messages.failedToFetchNews()}</h3>
+        <Button color="secondary" onClick={() => refetch()} disabled={isFetching}>
+          {Messages.retry()}
+        </Button>
       </Outer>
     );
   }

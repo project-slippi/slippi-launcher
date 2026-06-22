@@ -1,5 +1,6 @@
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import EventBusyIcon from "@mui/icons-material/EventBusy";
+import Button from "@mui/material/Button";
 import CircularProgress from "@mui/material/CircularProgress";
 import { clsx } from "clsx";
 
@@ -15,7 +16,7 @@ import styles from "./melee_majors_carousel.module.css";
 const LIMIT = 4;
 
 export const MeleeMajorsCarousel = () => {
-  const { isLoading, error, data } = useMeleeMajorsQuery();
+  const { isLoading, error, data, refetch, isFetching } = useMeleeMajorsQuery();
   const currentLanguage = useAppStore((store) => store.currentLanguage) as SupportedLanguage;
 
   const now = Date.now();
@@ -33,6 +34,9 @@ export const MeleeMajorsCarousel = () => {
       <div className={clsx(styles.centered, styles.column)}>
         <EventBusyIcon style={{ fontSize: 64 }} />
         <h3>{Messages.failedToFetchMeleeMajors()}</h3>
+        <Button color="secondary" onClick={() => refetch()} disabled={isFetching}>
+          {Messages.retry()}
+        </Button>
       </div>
     );
   }
