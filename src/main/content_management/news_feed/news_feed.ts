@@ -1,51 +1,18 @@
-import { partition } from "@common/partition";
 import type { NewsItem } from "@common/types";
-import electronLog from "electron-log";
 
+import { NewsAggregator } from "./news_aggregator";
 import { BlueskyNewsSource } from "./news_sources/bluesky_news_source";
 import { GithubNewsSource } from "./news_sources/github_news_source";
 import { MediumNewsSource } from "./news_sources/medium_news_source";
-import type { NewsSource } from "./types";
 
-const log = electronLog.scope("news_feed");
+// Only show news items published within the last year
+const NEWS_CUTOFF_DAYS = 365;
 
-class NewsFeedAggregator {
-  private sources: NewsSource[] = [];
-
-  addSource(source: NewsSource) {
-    this.sources.push(source);
-  }
-
-  async fetch(): Promise<readonly NewsItem[]> {
-    const totalStart = Date.now();
-    const newsPromises: Promise<NewsItem[]>[] = [];
-    log.info("Fetching news feed data...");
-    this.sources.forEach((source) => {
-      newsPromises.push(
-        source.fetch().then((items) => items.map((item): NewsItem => ({ ...item, source: source.id }))),
-      );
-    });
-    const [allNews, failedNews] = partition<PromiseFulfilledResult<NewsItem[]>, PromiseRejectedResult>(
-      await Promise.allSettled(newsPromises),
-      (newsPromise) => newsPromise.status === "fulfilled",
-    );
-
-    // Log out the reason for the failed news promises
-    failedNews.forEach((newsPromise) => {
-      log.error(newsPromise.reason);
-    });
-
-    log.info(`Total fetchNewsFeedData completed in ${Date.now() - totalStart}ms`);
-
-    return allNews.flatMap((news) => news.value).sort((a, b) => b.publishedAt.getTime() - a.publishedAt.getTime());
-  }
-}
-
-const newsFeedAggregator = new NewsFeedAggregator();
-newsFeedAggregator.addSource(new MediumNewsSource());
-newsFeedAggregator.addSource(new GithubNewsSource());
-newsFeedAggregator.addSource(new BlueskyNewsSource());
+const newsAggregator = new NewsAggregator(NEWS_CUTOFF_DAYS);
+newsAggregator.addSource(new MediumNewsSource());
+newsAggregator.addSource(new GithubNewsSource());
+newsAggregator.addSource(new BlueskyNewsSource());
 
 export async function fetchNewsFeedData(): Promise<readonly NewsItem[]> {
-  return newsFeedAggregator.fetch();
+  return newsAggregator.fetch();
 }
