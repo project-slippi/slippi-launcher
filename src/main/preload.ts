@@ -11,7 +11,7 @@ import { isSubdirectory } from "utils/is_subdirectory";
 
 import commonApi from "./api";
 import type { AppBootstrap } from "./bootstrap";
-import contentManagementApi from "./content_management/content_management_api";
+import { contentManagementApi } from "./content_management/content_management_api";
 
 const bootstrap = ipcRenderer.sendSync("getAppBootstrapSync") as AppBootstrap;
 
