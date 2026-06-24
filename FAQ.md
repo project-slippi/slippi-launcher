@@ -111,6 +111,5 @@ This is a more up to date build of Dolphin with the necessary changes for Slippi
 - Windows 10 or newer
 - macOS Sonoma (14.0) or newer
 - Ubuntu 22.04 or newer and the following packages
+  - libfuse2
   - qt6-qpa-plugins
-
-> **Note:** If using the `.deb` package, `libfuse2` is not required. AppImage users may need to install `libfuse2` on Ubuntu 24.04+ (`sudo apt install libfuse2`).
