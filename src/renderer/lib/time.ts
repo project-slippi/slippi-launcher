@@ -70,12 +70,7 @@ export function getLocale(language: SupportedLanguage): Locale | undefined {
 }
 
 export function formatDateRange(startDate: Date, endDate: Date, timezone: string, locale: SupportedLanguage): string {
-  const startFormatter = new Intl.DateTimeFormat(locale, {
-    month: "short",
-    day: "numeric",
-    timeZone: timezone,
-  });
-  const endFormatter = new Intl.DateTimeFormat(locale, {
+  const dayMonthFormatter = new Intl.DateTimeFormat(locale, {
     month: "short",
     day: "numeric",
     timeZone: timezone,
@@ -85,8 +80,8 @@ export function formatDateRange(startDate: Date, endDate: Date, timezone: string
     timeZone: timezone,
   });
 
-  const startStr = startFormatter.format(startDate);
-  const endStr = endFormatter.format(endDate);
+  const startStr = dayMonthFormatter.format(startDate);
+  const endStr = dayMonthFormatter.format(endDate);
   const startYear = yearFormatter.format(startDate);
   const endYear = yearFormatter.format(endDate);
 
