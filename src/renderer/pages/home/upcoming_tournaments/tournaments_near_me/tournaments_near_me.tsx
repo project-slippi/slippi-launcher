@@ -236,7 +236,7 @@ export const TournamentsNearMe = ({ locationInfo }: { locationInfo: UserLocation
             type="button"
             variant="contained"
             LinkComponent={ExternalLink}
-            href={`https://smash-map.com/map?lat=${locationInfo.lat}&lng=${locationInfo.lon}&zoom=12`}
+            href={`https://smash-map.com/map?lat=${locationInfo.lat}&lng=${locationInfo.lon}&zoom=12&games=1`}
             className={styles.actionButton}
           >
             {Messages.exploreEventsMap()}
