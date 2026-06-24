@@ -12,10 +12,12 @@ import { IconMessage } from "@/components/message";
 import { generateDisplayPicture } from "@/lib/display_picture";
 import { useEnableSpectateRemoteControl } from "@/lib/hooks/use_settings";
 
+import { AutoRefreshToggle } from "./auto_refresh_toggle/auto_refresh_toggle";
 import { Footer } from "./footer/footer";
 import { ShareGameplayBlock } from "./share_gameplay_block/share_gameplay_block";
 import { SpectateItem } from "./spectate_item";
 import { SpectatePageMessages as Messages } from "./spectate_page.messages";
+import styles from "./spectate_page.module.css";
 import { SpectateRemoteControlBlockContainer } from "./spectate_remote_control_block/spectate_remote_control_block.container";
 import { SpectatorIdBlock } from "./spectator_id_block/spectator_id_block";
 
@@ -59,9 +61,12 @@ export const SpectatePage = React.memo(
               >
                 <h1>{Messages.spectate()}</h1>
                 <div>
-                  <Button startIcon={<SyncIcon />} onClick={onRefreshBroadcasts}>
-                    {Messages.refresh()}
-                  </Button>
+                  <div className={styles.refreshRow}>
+                    <Button startIcon={<SyncIcon />} onClick={onRefreshBroadcasts}>
+                      {Messages.refresh()}
+                    </Button>
+                    <AutoRefreshToggle onRefreshBroadcasts={onRefreshBroadcasts} />
+                  </div>
                   <div
                     css={css`
                       padding-top: 20px;
