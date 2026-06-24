@@ -82,7 +82,7 @@
     "createStartMenuShortcut": true
   },
   "linux": {
-    "target": ["AppImage", "deb"],
+    "target": ["AppImage"],
     "category": "Game",
     "icon": "assets/icons/",
     "desktop": {
@@ -93,9 +93,6 @@
   },
   "appImage": {
     "artifactName": "Slippi-Launcher-${version}-x86_64.${ext}"
-  },
-  "deb": {
-    "artifactName": "Slippi-Launcher-${version}-amd64.${ext}"
   },
   "protocols": [
     {
