@@ -1,6 +1,4 @@
 import { css } from "@emotion/react";
-import Paper from "@mui/material/Paper";
-import { alpha } from "@mui/material/styles";
 import faqMarkdown from "raw-loader!@/../../FAQ.md";
 import React from "react";
 
@@ -11,11 +9,7 @@ import { SupportBox } from "./support_box/support_box";
 
 export const HelpPage = React.memo(() => {
   return (
-    <div
-      css={css`
-        padding-bottom: 80px;
-      `}
-    >
+    <div>
       <div
         css={css`
           padding-top: 10px;
@@ -25,16 +19,14 @@ export const HelpPage = React.memo(() => {
         <SupportBox />
       </div>
       <h1>{Messages.faq()}</h1>
-      <Paper sx={{ backgroundColor: (theme) => alpha(theme.palette.background.paper, 0.85) }}>
+      <div
+        css={css`
+          padding-bottom: 40px;
+        `}
+      >
         <MarkdownContent
           content={faqMarkdown}
           css={css`
-            border-radius: 10px;
-            padding-top: 10px;
-            padding-bottom: 50px;
-            padding-left: 20px;
-            padding-right: 20px;
-
             * {
               color: #bbb;
             }
@@ -55,7 +47,7 @@ export const HelpPage = React.memo(() => {
             }
           `}
         />
-      </Paper>
+      </div>
     </div>
   );
 });
