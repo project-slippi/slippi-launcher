@@ -25,10 +25,7 @@ export function createSpectatePage({ broadcastService }: CreateSpectatePageArgs)
         userId={user.uid}
         watchBroadcast={watchBroadcast}
         broadcasts={currentBroadcasts}
-        onRefreshBroadcasts={() => {
-          console.log("calling refresh broadcasts");
-          refreshBroadcasts();
-        }}
+        onRefreshBroadcasts={refreshBroadcasts}
       />
     );
   });
