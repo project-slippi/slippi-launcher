@@ -32,7 +32,7 @@ export const LabelledText = ({ label, children, className }: React.PropsWithChil
       </div>
       <div
         css={css`
-          color: white;
+          color: var(--off-white);
         `}
       >
         {children}

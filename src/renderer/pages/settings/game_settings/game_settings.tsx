@@ -106,7 +106,7 @@ const ValidationContainer = styled.div`
   display: flex;
   align-items: center;
   margin-right: 10px;
-  color: white;
+  color: var(--off-white);
   &.invalid {
     color: ${({ theme }) => theme.palette.error.main};
   }

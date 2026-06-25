@@ -112,7 +112,7 @@
   border-radius: 999px;
   font-size: 11pt;
   font-weight: bold;
-  color: white;
+  color: var(--off-white);
   margin-bottom: 8px;
 }
 
@@ -148,7 +148,7 @@
   border-radius: 999px;
   font-size: 11pt;
   font-weight: bold;
-  color: white;
+  color: var(--off-white);
   margin-bottom: 8px;
 }
 
@@ -156,7 +156,7 @@
   margin: 0;
   font-size: 28pt;
   font-weight: bold;
-  color: white;
+  color: var(--off-white);
   text-shadow: 0 2px 4px rgb(0 0 0 / 30%);
 }
 

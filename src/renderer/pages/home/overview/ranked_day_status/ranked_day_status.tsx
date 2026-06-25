@@ -132,7 +132,7 @@ const AlreadySubscribed = ({ connectCode }: { connectCode: string }) => {
       <div className={styles.buttonContainer}>
         <Button
           variant="contained"
-          sx={{ color: "white", fontSize: "12px", fontWeight: "medium", textTransform: "uppercase" }}
+          sx={{ color: "var(--off-white)", fontSize: "12px", fontWeight: "medium", textTransform: "uppercase" }}
           color="secondary"
           fullWidth={true}
           LinkComponent={ExternalLink}
@@ -156,7 +156,7 @@ const SubscribeToRanked = ({ isFullAccess, uid }: { isFullAccess: boolean; uid?:
         <div className={styles.buttonContainer}>
           <Button
             variant="contained"
-            sx={{ color: "white", fontSize: "12px", fontWeight: "medium", textTransform: "uppercase" }}
+            sx={{ color: "var(--off-white)", fontSize: "12px", fontWeight: "medium", textTransform: "uppercase" }}
             color="secondary"
             fullWidth={true}
             LinkComponent={ExternalLink}

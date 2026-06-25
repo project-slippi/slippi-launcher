@@ -45,7 +45,7 @@ export const HelpPage = React.memo(() => {
             h4,
             h5,
             h6 {
-              color: white;
+              color: var(--off-white);
             }
 
             h2:not(:first-of-type) {

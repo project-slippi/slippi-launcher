@@ -42,7 +42,7 @@ const Container = styled.div`
       radius: 25,
       dashOffset: 50,
     })}
-  color: white;
+  color: var(--off-white);
   outline: none;
   transition: border 0.24s ease-in-out;
   p {

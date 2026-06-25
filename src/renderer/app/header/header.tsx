@@ -120,7 +120,7 @@ export const Header = ({ menuItems }: { menuItems: readonly MenuItem[] }) => {
         {currentUser ? (
           <UserMenu user={currentUser} handleError={showError} />
         ) : (
-          <Button onClick={openModal} sx={{ color: "white" }}>
+          <Button onClick={openModal} sx={{ color: "var(--off-white)" }}>
             {Messages.logIn()}
           </Button>
         )}

@@ -48,7 +48,7 @@
 }
 
 .happeningNow .countdown {
-  color: #fff;
+  color: var(--off-white);
   font-weight: bold;
 }
 
@@ -63,7 +63,7 @@
 .name {
   font-size: 14pt;
   font-weight: bold;
-  color: white;
+  color: var(--off-white);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

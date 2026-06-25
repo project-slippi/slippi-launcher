@@ -7,7 +7,7 @@
   background-color: rgb(255 255 255 / 5%);
   border: 1px solid rgb(255 255 255 / 10%);
   border-radius: 6px;
-  color: white;
+  color: var(--off-white);
   font-size: 13px;
   cursor: pointer;
   min-width: 85px;
@@ -87,7 +87,7 @@
 
 .item[data-highlighted] {
   background-color: rgb(159 116 192 / 25%);
-  color: white;
+  color: var(--off-white);
 }
 
 .item[data-selected] {

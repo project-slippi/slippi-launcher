@@ -116,7 +116,7 @@ export const AccountSwitcher = ({
     <div
       css={css`
         min-width: 280px;
-        color: white;
+        color: var(--off-white);
       `}
     >
       {/* Account List */}

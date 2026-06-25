@@ -38,7 +38,7 @@ export function LoadingScreenWithProgress({ current = 0, total = 100 }: { curren
     <Message icon={<BouncingSlippiLogo />}>
       <div
         style={{
-          color: "white",
+          color: "var(--off-white)",
           padding: 3,
           borderRadius: 10,
           borderStyle: "solid",

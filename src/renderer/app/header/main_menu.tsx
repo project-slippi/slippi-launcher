@@ -54,7 +54,7 @@ const CustomLink = ({ title, children, to, ...props }: CustomLinkProps) => {
           component={Link}
           to={to}
           {...(props as any)}
-          sx={{ color: "white", "&:hover": { backgroundColor: "rgba(255, 255, 255, 0.16)" } }}
+          sx={{ color: "var(--off-white)", "&:hover": { backgroundColor: "rgba(255, 255, 255, 0.16)" } }}
         >
           {children}
         </Button>
