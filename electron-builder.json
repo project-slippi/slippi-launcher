@@ -14,7 +14,6 @@
     "!**/*.map",
     "!**/*.md"
   ],
-  "afterSign": ".erb/scripts/notarize.js",
   "fileAssociations": {
     "ext": "slp",
     "name": "slp",
