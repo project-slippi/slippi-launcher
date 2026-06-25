@@ -1880,7 +1880,7 @@ msgid "Up"
 msgstr "Arriba"
 
 #: src/renderer/pages/home/upcoming_tournaments/upcoming_tournaments.messages.ts:5:25
-msgid "Upcoming Majors"
+msgid "Major Upcoming Tournaments"
 msgstr "Próximos Majors"
 
 #: src/renderer/pages/home/home_page.messages.ts:4:30
