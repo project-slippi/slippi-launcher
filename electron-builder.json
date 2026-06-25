@@ -14,6 +14,7 @@
     "!**/*.map",
     "!**/*.md"
   ],
+  "afterSign": ".erb/scripts/notarize.js",
   "fileAssociations": {
     "ext": "slp",
     "name": "slp",
@@ -34,6 +35,7 @@
     },
     "type": "distribution",
     "hardenedRuntime": true,
+    "notarize": false,
     "entitlements": "assets/entitlements.mac.plist",
     "entitlementsInherit": "assets/entitlements.mac.plist",
     "category": "public.app-category.games",
