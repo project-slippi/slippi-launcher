@@ -21,7 +21,7 @@ export class BlueskyNewsSource implements NewsSource {
         title: post.author.displayName,
         imageUrl: post.author.avatar,
         body: post.record.text,
-        subtitle: `@${post.author.handle}`,
+        subtitle: post.author.handle,
         publishedAt,
         permalink: `https://bsky.app/profile/${post.author.handle}/post/${post.uri.split("/").slice(-1)[0]}`,
       };

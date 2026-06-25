@@ -23,3 +23,7 @@
 .previewContainer {
   padding: 16px;
 }
+
+.link:hover {
+  text-decoration: underline;
+}
