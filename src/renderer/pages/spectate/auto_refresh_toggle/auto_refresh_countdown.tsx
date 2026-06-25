@@ -18,23 +18,17 @@ export const AutoRefreshCountdown = React.memo(({ expiresAt }: AutoRefreshCountd
       if (remaining <= 0) {
         setFormatted(null);
       } else {
-        const totalSeconds = Math.floor(remaining / 1_000);
-        const hours = Math.floor(totalSeconds / 3600);
-        const minutes = Math.floor((totalSeconds % 3600) / 60);
-        const seconds = totalSeconds % 60;
-        setFormatted(`${hours}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`);
+        setFormatted(formatTimeRemaining(remaining));
       }
     };
 
-    // Run immediately on mount/change to avoid a 1-second blank flash
     compute();
 
     const id = setInterval(compute, 1_000);
-
     return () => {
       clearInterval(id);
     };
-  }, [expiresAt]); // Safely tracks the primitive number
+  }, [expiresAt]);
 
   if (formatted === null) {
     return null;
@@ -42,3 +36,11 @@ export const AutoRefreshCountdown = React.memo(({ expiresAt }: AutoRefreshCountd
 
   return <>{formatted}</>;
 });
+
+function formatTimeRemaining(remainingMs: number): string {
+  const totalSeconds = Math.floor(remainingMs / 1_000);
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+  return `${hours}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+}
