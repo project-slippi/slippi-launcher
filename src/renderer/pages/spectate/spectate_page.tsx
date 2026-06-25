@@ -1,6 +1,4 @@
 import type { BroadcasterItem } from "@broadcast/types";
-import { css } from "@emotion/react";
-import styled from "@emotion/styled";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import SyncIcon from "@mui/icons-material/Sync";
@@ -40,25 +38,12 @@ export const SpectatePage = React.memo(
     }
 
     return (
-      <Outer>
-        <div
-          css={css`
-            display: flex;
-            flex: 1;
-            position: relative;
-            overflow: hidden;
-          `}
-        >
+      <div className={styles.container}>
+        <div className={styles.mainContentContainer}>
           <DualPane
             id="spectate-page"
             leftSide={
-              <div
-                css={css`
-                  padding-left: 20px;
-                  padding-right: 10px;
-                  width: 100%;
-                `}
-              >
+              <div className={styles.mainContent}>
                 <h1>{Messages.spectate()}</h1>
                 <div>
                   <div className={styles.refreshRow}>
@@ -67,12 +52,7 @@ export const SpectatePage = React.memo(
                     </Button>
                     <AutoRefreshToggle onRefreshBroadcasts={onRefreshBroadcasts} />
                   </div>
-                  <div
-                    css={css`
-                      padding-top: 20px;
-                      padding-bottom: 20px;
-                    `}
-                  >
+                  <div className={styles.broadcastsList}>
                     {broadcasts.length === 0 ? (
                       <IconMessage Icon={HelpOutlineIcon} label={Messages.noUsers()} />
                     ) : (
@@ -93,15 +73,7 @@ export const SpectatePage = React.memo(
               </div>
             }
             rightSide={
-              <div
-                css={css`
-                  padding-left: 10px;
-                  padding-right: 20px;
-                  & > * {
-                    margin-top: 20px;
-                  }
-                `}
-              >
+              <div className={styles.sidebarContainer}>
                 <SpectatorIdBlock userId={userId} />
                 <ShareGameplayBlock />
                 {enableSpectateRemoteControl && <SpectateRemoteControlBlockContainer />}
@@ -111,15 +83,7 @@ export const SpectatePage = React.memo(
           />
         </div>
         <Footer />
-      </Outer>
+      </div>
     );
   },
 );
-
-const Outer = styled.div`
-  display: flex;
-  flex-flow: column;
-  flex: 1;
-  position: relative;
-  min-width: 0;
-`;
