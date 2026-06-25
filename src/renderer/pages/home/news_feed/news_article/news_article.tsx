@@ -1,9 +1,6 @@
 import type { NewsItem } from "@common/types";
 import Button from "@mui/material/Button";
-import Card from "@mui/material/Card";
-import CardActions from "@mui/material/CardActions";
-import Tooltip from "@mui/material/Tooltip";
-import { format, formatDistance } from "date-fns";
+import { format } from "date-fns";
 import React from "react";
 
 import { ExternalLink } from "@/components/external_link";
@@ -40,10 +37,6 @@ export const NewsArticle = React.memo(function NewsArticle({
 
   const dateFnsLocale = getLocale(currentLanguage);
   const localDateString = format(publishedAt, "PPP p", { locale: dateFnsLocale });
-  const timeAgo = formatDistance(publishedAt, new Date(), {
-    addSuffix: true,
-    locale: dateFnsLocale,
-  });
 
   const postContent = React.useMemo(() => {
     switch (item.source) {
@@ -57,16 +50,14 @@ export const NewsArticle = React.memo(function NewsArticle({
   }, [item, autoTruncate]);
 
   return (
-    <Card>
-      {postContent}
-      <CardActions disableSpacing={true} className={styles.cardActions}>
-        <Tooltip title={localDateString}>
-          <div className={styles.dateInfo}>{Messages.posted(timeAgo)}</div>
-        </Tooltip>
-        <Button LinkComponent={ExternalLink} size="small" color="primary" href={permalink}>
+    <div className={styles.container}>
+      <div className={styles.cardActions}>
+        <div className={styles.dateInfo}>{localDateString}</div>
+        <Button LinkComponent={ExternalLink} size="small" color="secondary" href={permalink}>
           {getViewPostButtonText(item.source)}
         </Button>
-      </CardActions>
-    </Card>
+      </div>
+      {postContent}
+    </div>
   );
 });

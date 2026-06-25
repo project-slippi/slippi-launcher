@@ -1,3 +1,8 @@
+.container {
+  max-width: 700px;
+  padding: 0 16px;
+}
+
 .titleHeader {
   display: flex;
   align-items: center;
@@ -10,7 +15,6 @@
 
 .markdownContainer {
   color: #ccc;
-  max-width: 700px;
 }
 
 .dateInfo {
@@ -21,5 +25,9 @@
 }
 
 .cardActions {
-  border-top: 1px solid rgb(255 255 255 / 20%);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 8px;
 }

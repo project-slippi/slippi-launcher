@@ -1,5 +1,4 @@
 import type { NewsItem } from "@common/types";
-import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
 import React from "react";
@@ -12,7 +11,7 @@ export const BlueskyPost = React.memo(function BlueskyPost({ item }: { item: New
   const { imageUrl, title, subtitle, body } = item;
   return (
     <div>
-      <CardContent>
+      <div>
         <div className={styles.titleHeader}>
           {imageUrl && (
             <CardMedia
@@ -33,7 +32,7 @@ export const BlueskyPost = React.memo(function BlueskyPost({ item }: { item: New
           </div>
         </div>
         {body && <MarkdownContent content={body} className={styles.markdownContainer} />}
-      </CardContent>
+      </div>
     </div>
   );
 });

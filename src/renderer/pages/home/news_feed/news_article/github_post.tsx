@@ -1,5 +1,4 @@
 import type { NewsItem } from "@common/types";
-import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
 import React from "react";
@@ -14,7 +13,7 @@ export const GithubPost = React.memo(function GithubPost({ item }: { item: NewsI
   return (
     <div>
       {imageUrl && <CardMedia className={styles.fixedCardHeight} image={imageUrl} title={title} />}
-      <CardContent>
+      <div>
         <div className={styles.titleHeader}>
           <div>
             <Typography variant="h5" component="h2">
@@ -28,7 +27,7 @@ export const GithubPost = React.memo(function GithubPost({ item }: { item: NewsI
           </div>
         </div>
         {body && <MarkdownContent content={body} className={styles.markdownContainer} />}
-      </CardContent>
+      </div>
     </div>
   );
 });

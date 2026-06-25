@@ -1,6 +1,5 @@
 import type { NewsItem } from "@common/types";
 import Button from "@mui/material/Button";
-import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
 import React from "react";
@@ -28,7 +27,7 @@ export const MediumPost = React.memo(function MediumPost({
   return (
     <div>
       {imageUrl && <CardMedia className={styles.fixedCardHeight} image={imageUrl} title={title} />}
-      <CardContent>
+      <div>
         <div className={styles.titleHeader}>
           <div>
             <Typography variant="h5" component="h2">
@@ -47,7 +46,7 @@ export const MediumPost = React.memo(function MediumPost({
             {Messages.readMore()}
           </Button>
         )}
-      </CardContent>
+      </div>
     </div>
   );
 });
