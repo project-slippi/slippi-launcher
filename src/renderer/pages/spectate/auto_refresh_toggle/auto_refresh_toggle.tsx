@@ -16,9 +16,11 @@ export function AutoRefreshToggle({ onRefreshBroadcasts }: { onRefreshBroadcasts
         labelPlacement="start"
         control={<Switch checked={enabled} onChange={toggle} color="primary" size="small" />}
         label={Messages.autoRefresh()}
+        sx={{ margin: 0 }}
         css={css`
           .MuiFormControlLabel-label {
             font-size: 12px;
+            margin-right: 8px;
           }
         `}
       />
