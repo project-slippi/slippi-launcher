@@ -8,7 +8,6 @@ import React from "react";
 import { BasicFooter } from "@/components/footer/footer";
 import { LabelledText } from "@/components/labelled_text";
 import { useSpectateSlpPath } from "@/lib/hooks/use_settings";
-import { cssVar } from "@/styles/css_variables";
 
 import { FooterMessages as Messages } from "./footer.messages";
 
@@ -31,7 +30,7 @@ export const Footer = React.memo(() => {
           size="small"
           onClick={() => window.electron.shell.openPath(spectateSlpFolder)}
           css={css`
-            color: ${cssVar("purpleLight")};
+            color: var(--purple-light);
           `}
         >
           <FolderIcon />
@@ -42,7 +41,7 @@ export const Footer = React.memo(() => {
           margin-left: 10px;
           margin-right: 15px;
           padding-right: 20px;
-          border-right: solid 1px ${cssVar("purple")};
+          border-right: solid 1px var(--purple);
         `}
         label={Messages.saveSpectatedGamesTo()}
       >
@@ -51,7 +50,7 @@ export const Footer = React.memo(() => {
       <Button
         size="small"
         css={css`
-          color: ${cssVar("purpleLight")};
+          color: var(--purple-light);
           text-transform: initial;
         `}
         onClick={onClick}

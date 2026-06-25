@@ -9,7 +9,6 @@ import { useAccount } from "@/lib/hooks/use_account";
 import { useAppStore } from "@/lib/hooks/use_app_store";
 import { getLocale, shortEnLocale } from "@/lib/time";
 import type { SupportedLanguage } from "@/services/i18n/util";
-import { cssVar } from "@/styles/css_variables";
 import { ReactComponent as RankedDayActiveIcon } from "@/styles/images/ranked_day_active.svg";
 import { ReactComponent as RankedDayInactiveIcon } from "@/styles/images/ranked_day_inactive.svg";
 
@@ -69,7 +68,7 @@ const InternalRankedDayStatus = ({
       <div className={clsx(styles.centerStack, styles.rankedDayIcon)}>
         <Typography
           variant="h6"
-          color={cssVar("purpleLight")}
+          color="var(--purple-light)"
           fontSize="12pt"
           fontWeight="semibold"
           marginBottom="8px"
@@ -81,7 +80,7 @@ const InternalRankedDayStatus = ({
         <Typography
           className={styles.stroke}
           variant="body1"
-          color={isFullAccess ? cssVar("greenDark") : cssVar("textDim")}
+          color={isFullAccess ? "var(--green-dark)" : "var(--text-dim)"}
           fontSize="18px"
           fontWeight="medium"
         >
@@ -92,7 +91,7 @@ const InternalRankedDayStatus = ({
       <div className={styles.centerStack}>
         <Typography
           variant="h6"
-          color={cssVar("purpleLight")}
+          color="var(--purple-light)"
           fontSize="11pt"
           fontWeight="semibold"
           marginBottom="4px"
@@ -103,7 +102,7 @@ const InternalRankedDayStatus = ({
         <Typography fontWeight="medium" fontSize="20px">
           {countdown}
         </Typography>
-        <Typography fontSize="12px" color={cssVar("textDim")} marginTop="-4px">
+        <Typography fontSize="12px" color="var(--text-dim)" marginTop="-4px">
           {nextTime.toLocaleString([userLocale, currentLanguage], {
             year: "numeric",
             month: "numeric",
@@ -126,7 +125,7 @@ const InternalRankedDayStatus = ({
 const AlreadySubscribed = ({ connectCode }: { connectCode: string }) => {
   return (
     <>
-      <Typography fontSize="10pt" color={cssVar("textDim")} marginTop="12px">
+      <Typography fontSize="10pt" color="var(--text-dim)" marginTop="12px">
         {Messages.activeSubscription()}
       </Typography>
       <div className={styles.buttonContainer}>
@@ -149,7 +148,7 @@ const AlreadySubscribed = ({ connectCode }: { connectCode: string }) => {
 const SubscribeToRanked = ({ isFullAccess, uid }: { isFullAccess: boolean; uid?: string }) => {
   return (
     <>
-      <Typography fontSize="10pt" color={cssVar("textDim")} marginTop="12px">
+      <Typography fontSize="10pt" color="var(--text-dim)" marginTop="12px">
         {isFullAccess ? Messages.rankedPlayIsCurrentlyAvailable() : Messages.onceEveryFourDaysRankedPlayIsAvailable()}
       </Typography>
       {uid && (

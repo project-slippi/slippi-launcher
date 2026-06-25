@@ -1,12 +1,10 @@
 import { css } from "@emotion/react";
 
-import { cssVar } from "@/styles/css_variables";
-
 export const UserIcon = ({ imageUrl, size = 45 }: { imageUrl: string; size?: number }) => {
   return (
     <div
       css={css`
-        border: solid 3px ${cssVar("purpleLight")};
+        border: solid 3px var(--purple-light);
         background-color: white;
         border-radius: 50%;
         overflow: hidden;

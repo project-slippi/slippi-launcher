@@ -4,7 +4,6 @@ import InputBase from "@mui/material/InputBase";
 import React from "react";
 
 import { InfoBlock } from "@/components/info_block";
-import { cssVar } from "@/styles/css_variables";
 
 import { SpectatorIdBlockMessages as Messages } from "./spectator_id_block.messages";
 
@@ -55,7 +54,7 @@ export const SpectatorIdBlock = ({ userId, className }: SpectatorIdBlockProps) =
       <div
         css={css`
           font-size: 14px;
-          color: ${cssVar("textDim")};
+          color: var(--text-dim);
         `}
       >
         <p>{Messages.spectatorInstructions()}</p>

@@ -15,7 +15,6 @@ import { Checkbox } from "@/components/form/checkbox";
 import { Toggle } from "@/components/form/toggle";
 import { PathInput } from "@/components/path_input/path_input";
 import { isValidIpAddress, isValidPort } from "@/lib/validate/validate";
-import { cssVar } from "@/styles/css_variables";
 
 import { AddConnectionFormMessages as Messages } from "./add_connection_form.messages";
 
@@ -130,7 +129,7 @@ export const AddConnectionForm = ({ defaultValues, onSubmit, disabled }: AddConn
             css={css`
               padding-left: 20px;
               padding-bottom: 10px;
-              border-left: solid 3px ${cssVar("purpleLight")};
+              border-left: solid 3px var(--purple-light);
             `}
           >
             <Notice>

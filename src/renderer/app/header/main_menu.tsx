@@ -6,8 +6,6 @@ import React from "react";
 import type { LinkProps } from "react-router-dom";
 import { Link, useMatch, useResolvedPath } from "react-router-dom";
 
-import { cssVar } from "@/styles/css_variables";
-
 export type MenuItem = {
   subpath: string;
   title: () => string;
@@ -80,6 +78,6 @@ const MenuButton = styled.div<{
     border-style: solid;
     border-width: ${(props) => (props.selected ? "10px" : "0")};
     border-color: transparent;
-    border-bottom-color: ${(props) => (props.selected ? cssVar("purpleDarker") : "transparent")};
+    border-bottom-color: ${(props) => (props.selected ? "var(--purple-darker)" : "transparent")};
   }
 `;

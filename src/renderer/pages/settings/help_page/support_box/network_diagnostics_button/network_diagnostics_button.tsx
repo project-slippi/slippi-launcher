@@ -8,7 +8,6 @@ import DialogTitle from "@mui/material/DialogTitle";
 import React from "react";
 
 import { Button as ActionButton } from "@/components/form/button";
-import { cssVar } from "@/styles/css_variables";
 
 import { NetworkDiagnosticsResult } from "./network_diagnostic_result/network_diagnostics_result";
 import { NetworkDiagnosticsMessages as Messages } from "./network_diagnostics_button.messages";
@@ -65,7 +64,7 @@ export const NetworkDiagnosticsButton = React.memo(() => {
   return (
     <div>
       <ActionButton
-        startIcon={<NetworkCheckIcon fill={cssVar("purpleLighter")} className={styles.icon} />}
+        startIcon={<NetworkCheckIcon fill="var(--purple-lighter)" className={styles.icon} />}
         color="secondary"
         variant="contained"
         onClick={openDialog}

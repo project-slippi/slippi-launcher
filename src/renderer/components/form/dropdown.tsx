@@ -4,8 +4,6 @@ import MenuItem from "@mui/material/MenuItem";
 import MatSelect from "@mui/material/Select";
 import React from "react";
 
-import { cssVar } from "@/styles/css_variables";
-
 type DropdownProps<T> = {
   value: T;
   options: readonly {
@@ -45,7 +43,7 @@ const Select = styled(MatSelect)`
   .MuiOutlinedInput-notchedOutline {
     border-width: 2px;
     border-radius: 10px;
-    border-color: ${cssVar("purpleDark")};
+    border-color: var(--purple-dark);
   }
   .MuiSelect-outlined {
     padding: 8px;
@@ -54,7 +52,7 @@ const Select = styled(MatSelect)`
     font-size: 12px;
   }
   .MuiSelect-icon {
-    color: ${cssVar("purpleLight")};
+    color: var(--purple-light);
     top: 50%;
     transform: translateY(-50%);
   }

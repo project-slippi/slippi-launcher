@@ -12,7 +12,6 @@ import { useDropzone } from "react-dropzone";
 import { ConfirmationModal } from "@/components/confirmation_modal/confirmation_modal";
 import { useIsoPath } from "@/lib/hooks/use_settings";
 import { useToasts } from "@/lib/hooks/use_toasts";
-import { cssVar } from "@/styles/css_variables";
 import { hasBorder } from "@/styles/has_border";
 
 import { QuickStartHeader } from "../../step_container";
@@ -23,7 +22,7 @@ const getColor = (props: any, defaultColor = "#eeeeee") => {
     return "#00e676";
   }
   if (props.isDragActive) {
-    return cssVar("greenPrimary");
+    return "var(--green-primary)";
   }
   return defaultColor;
 };

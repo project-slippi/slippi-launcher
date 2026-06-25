@@ -8,17 +8,16 @@ import { ExternalLink as A } from "@/components/external_link";
 import { useAccount } from "@/lib/hooks/use_account";
 import { useToasts } from "@/lib/hooks/use_toasts";
 import { useServices } from "@/services";
-import { cssVar } from "@/styles/css_variables";
 
 import { StepContainer } from "../../step_container";
 import { VerifyEmailStepMessages as Messages } from "./verify_email_step.messages";
 
 const classes = {
   message: css`
-    color: ${cssVar("textSecondary")};
+    color: var(--text-secondary);
   `,
   emailContainer: css`
-    background: ${cssVar("purpleDark")};
+    background: var(--purple-dark);
     padding: 10px 20px;
     border-radius: 5px;
     margin: 10px;
@@ -29,28 +28,28 @@ const classes = {
     margin-top: -5px;
     margin-left: 10px;
     font-size: 14px;
-    color: ${cssVar("textDim")};
+    color: var(--text-dim);
     > a {
-      color: ${cssVar("purplePrimary")};
+      color: var(--purple-primary);
     }
   `,
   instructions: css`
     margin-top: 25px;
     margin-bottom: 10px;
-    color: ${cssVar("textSecondary")};
+    color: var(--text-secondary);
   `,
   emailNotFoundContainer: css`
     margin-top: 4px;
     font-size: 14px;
-    color: ${cssVar("textDim")};
+    color: var(--text-dim);
     > a {
-      color: ${cssVar("purplePrimary")};
+      color: var(--purple-primary);
     }
   `,
   confirmationContainer: css`
     margin-top: 30px;
     font-size: 28px;
-    color: ${cssVar("greenPrimary")};
+    color: var(--green-primary);
     display: grid;
     align-items: center;
     gap: 8px;

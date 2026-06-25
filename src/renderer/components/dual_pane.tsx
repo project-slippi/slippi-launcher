@@ -2,8 +2,6 @@ import styled from "@emotion/styled";
 import debounce from "lodash/debounce";
 import React from "react";
 
-import { cssVar } from "@/styles/css_variables";
-
 const Outer = styled.div`
   position: relative;
   display: grid;
@@ -21,7 +19,7 @@ const Column = styled.div`
 const ResizeHandle = styled.div`
   position: absolute;
   cursor: e-resize;
-  background-color: ${cssVar("offWhite")};
+  background-color: var(--off-white);
   top: 0;
   height: 100%;
   opacity: 0;

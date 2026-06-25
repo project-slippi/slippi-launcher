@@ -6,7 +6,6 @@ import Tooltip from "@mui/material/Tooltip";
 import React from "react";
 
 import { ExternalLink as A } from "@/components/external_link";
-import { cssVar } from "@/styles/css_variables";
 import { ReactComponent as DiscordIcon } from "@/styles/images/discord.svg";
 
 import { FooterMessages as Messages } from "./footer.messages";
@@ -19,7 +18,7 @@ export const BasicFooter = styled.div`
   align-items: center;
   background-color: black;
   font-size: 14px;
-  color: ${cssVar("purpleLight")};
+  color: var(--purple-light);
 
   svg {
     width: 20px;
@@ -34,14 +33,14 @@ export const Footer: React.ComponentType = () => {
         <TwitterIcon />
       </Social>
       <Social title={Messages.joinDiscord()} url={socials.discordUrl}>
-        <DiscordIcon fill={cssVar("purpleLight")} />
+        <DiscordIcon fill="var(--purple-light)" />
       </Social>
       <div
         css={css`
           display: flex;
           height: 30px;
           align-items: center;
-          border-left: solid 1px ${cssVar("purpleDark")};
+          border-left: solid 1px var(--purple-dark);
           margin-left: 20px;
         `}
       >

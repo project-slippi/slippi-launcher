@@ -5,7 +5,6 @@ import InputBase from "@mui/material/InputBase";
 import React from "react";
 
 import { InfoBlock } from "@/components/info_block";
-import { cssVar } from "@/styles/css_variables";
 
 import { SpectateRemoteControlBlockMessages as Messages } from "./spectate_remote_control_block.messages";
 
@@ -65,7 +64,7 @@ export const SpectateRemoteControlBlock = React.memo(
             css={css`
               text-transform: uppercase;
               font-weight: bold;
-              color: ${cssVar("purpleLight")};
+              color: var(--purple-light);
               margin-right: 10px;
             `}
           >
