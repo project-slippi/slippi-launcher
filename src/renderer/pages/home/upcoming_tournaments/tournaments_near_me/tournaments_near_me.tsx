@@ -18,6 +18,7 @@ import styles from "./tournaments_near_me.module.css";
 
 type SortOption = "distance" | "date" | "entrants";
 
+const COUNTRIES_THAT_USE_MILES: readonly string[] = ["US", "GB"] as const;
 const KM_TO_MILE = 0.621371;
 
 const STORAGE_KEY_RADIUS = "nearbyTournamentRadius";
@@ -100,13 +101,10 @@ const NearbyTournamentCard = ({
 };
 
 export const TournamentsNearMe = ({ locationInfo }: { locationInfo: UserLocationInfo }) => {
-  const [initialUnits] = useState<"km" | "mi">(() => loadStoredValue(STORAGE_KEY_UNITS, "km"));
-  const [initialRadius] = useState<DistanceValue>(() => loadStoredValue(STORAGE_KEY_RADIUS, 100));
-  const [initialSort] = useState<SortOption>(() => loadStoredValue(STORAGE_KEY_SORT, "date"));
-
-  const [radius, setRadius] = useState<DistanceValue>(initialRadius);
-  const [units, setUnits] = useState<UnitValue>(initialUnits);
-  const [sortBy, setSortBy] = useState<SortOption>(initialSort);
+  const defaultUnits: UnitValue = COUNTRIES_THAT_USE_MILES.includes(locationInfo.countryCode) ? "mi" : "km";
+  const [units, setUnits] = useState<UnitValue>(() => loadStoredValue(STORAGE_KEY_UNITS, defaultUnits));
+  const [radius, setRadius] = useState<DistanceValue>(() => loadStoredValue(STORAGE_KEY_RADIUS, 100));
+  const [sortBy, setSortBy] = useState<SortOption>(() => loadStoredValue(STORAGE_KEY_SORT, "date"));
 
   const sortOptions = [
     { value: "date", label: Messages.sortByDate() },
@@ -114,28 +112,11 @@ export const TournamentsNearMe = ({ locationInfo }: { locationInfo: UserLocation
     { value: "entrants", label: Messages.sortByEntrants() },
   ] as const;
 
-  const radiusInKm = useMemo(() => {
-    if (units === "mi") {
-      return Math.round(radius / KM_TO_MILE);
-    }
-    return radius;
-  }, [radius, units]);
-
   const { contentManagementService } = useServices();
   const nearbyTournamentsQuery = useQuery({
-    queryKey: ["nearbyTournamentsQuery", radiusInKm],
+    queryKey: ["nearbyTournamentsQuery", radius, units],
     queryFn: async () => {
-      if (!localStorage.getItem(STORAGE_KEY_UNITS)) {
-        const defaultUnits: "km" | "mi" = ["US", "GB"].includes(locationInfo.countryCode) ? "mi" : "km";
-        setUnits(defaultUnits);
-        storeValue(STORAGE_KEY_UNITS, defaultUnits);
-      }
-
-      if (!localStorage.getItem(STORAGE_KEY_RADIUS)) {
-        setRadius(100);
-        storeValue(STORAGE_KEY_RADIUS, 100);
-      }
-
+      const radiusInKm = units === "mi" ? Math.round(radius / KM_TO_MILE) : radius;
       const events = await contentManagementService.fetchNearestTournaments(
         {
           lat: locationInfo.lat,
@@ -160,13 +141,6 @@ export const TournamentsNearMe = ({ locationInfo }: { locationInfo: UserLocation
   useEffect(() => {
     storeValue(STORAGE_KEY_SORT, sortBy);
   }, [sortBy]);
-
-  const convertDistance = (distanceKm: number): { distance: number; units: "km" | "mi" } => {
-    if (units === "mi") {
-      return { distance: distanceKm * KM_TO_MILE, units: "mi" };
-    }
-    return { distance: distanceKm, units: "km" };
-  };
 
   const sortedEvents = useMemo(() => {
     if (!nearbyTournamentsQuery.data) {
@@ -213,7 +187,7 @@ export const TournamentsNearMe = ({ locationInfo }: { locationInfo: UserLocation
         </div>
         <div className={styles.cardList}>
           {sortedEvents.map((event, index) => {
-            const distance = convertDistance(event.distanceToVenueKm);
+            const distance = convertKmToUnit(event.distanceToVenueKm, units);
             return (
               <NearbyTournamentCard
                 key={index}
@@ -256,3 +230,10 @@ export const TournamentsNearMe = ({ locationInfo }: { locationInfo: UserLocation
     </div>
   );
 };
+
+function convertKmToUnit(distanceKm: number, unitToConvertTo: UnitValue): { distance: number; units: UnitValue } {
+  if (unitToConvertTo === "mi") {
+    return { distance: distanceKm * KM_TO_MILE, units: "mi" };
+  }
+  return { distance: distanceKm, units: "km" };
+}
