@@ -27,13 +27,12 @@ module.exports = async function (params) {
     throw new Error(`Cannot find application at: ${appPath}`);
   }
 
-  console.log(`Notarizing ${appId} found at ${appPath} (this could take awhile, get some coffee...)`);
-
   const keyPath = path.join(process.env.HOME, `private_keys/AuthKey_${process.env.APPLE_API_KEY_ID}.p8`);
   if (!fs.existsSync(keyPath)) {
     throw new Error(`Cannot find Apple API key at: ${keyPath}`);
   }
 
+  console.log(`Notarizing ${appId} found at ${appPath} (this could take awhile, get some coffee...)`);
   try {
     await electronNotarize.notarize({
       tool: "notarytool",
