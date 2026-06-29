@@ -6,4 +6,6 @@ export const ConsoleMirrorMessages = {
     "Slippi Mirroring allows for streaming replays from a console to a PC for real time playback. " +
     "Checkout the Mirroring Guide below for setup instructions.",
   mirroringGuide: () => "Mirroring Guide",
+  autoConnect: () => "Auto-connect",
+  autoConnectDescription: () => "Automatically connect to saved consoles when they appear on the network.",
 };
