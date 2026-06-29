@@ -140,9 +140,9 @@ jobs:
           echo '${{ secrets.APPLE_CONNECT_API_KEY }}' > ~/private_keys/AuthKey_${{ secrets.APPLE_API_KEY_ID }}.p8
           echo "CSC_LINK=${{ secrets.CERTIFICATE_MACOS_APPLICATION }}" >> $GITHUB_ENV
           echo "CSC_KEY_PASSWORD=${{ secrets.CERTIFICATE_MACOS_PASSWORD }}" >> $GITHUB_ENV
-          echo "APPLE_API_KEY=${{ secrets.APPLE_API_KEY_ID }}" >> $GITHUB_ENV
+          echo "APPLE_API_KEY=~/private_keys/AuthKey_${{ secrets.APPLE_API_KEY_ID }}.p8" >> $GITHUB_ENV
           echo "APPLE_API_KEY_ID=${{ secrets.APPLE_API_KEY_ID }}" >> $GITHUB_ENV
-          echo "APPLE_ISSUER_ID=${{ secrets.APPLE_ISSUER_ID }}" >> $GITHUB_ENV
+          echo "APPLE_API_ISSUER=${{ secrets.APPLE_ISSUER_ID }}" >> $GITHUB_ENV
           echo "APPLE_TEAM_PROVIDER_ID=${{ secrets.APPLE_TEAM_PROVIDER_ID }}" >> $GITHUB_ENV
         env:
           CERTIFICATE_MACOS_APPLICATION: ${{ secrets.CERTIFICATE_MACOS_APPLICATION }}

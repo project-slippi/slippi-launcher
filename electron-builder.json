@@ -35,6 +35,7 @@
     },
     "type": "distribution",
     "hardenedRuntime": true,
+    "notarize": false,
     "entitlements": "assets/entitlements.mac.plist",
     "entitlementsInherit": "assets/entitlements.mac.plist",
     "category": "public.app-category.games",
@@ -65,10 +66,11 @@
   "win": {
     "target": ["nsis"],
     "icon": "assets/icon.ico",
-    "publisherName": "Slippi LLC",
-    "sign": ".erb/scripts/windows-sign.js",
-    "signDlls": true,
-    "signingHashAlgorithms": ["sha256"]
+    "signAndEditExecutable": true,
+    "signtoolOptions": {
+      "sign": ".erb/scripts/windows-sign.js",
+      "signingHashAlgorithms": ["sha256"]
+    }
   },
   "nsis": {
     "artifactName": "Slippi-Launcher-Setup-${version}.${ext}",
