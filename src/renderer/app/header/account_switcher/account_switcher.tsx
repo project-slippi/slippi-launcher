@@ -97,7 +97,9 @@ export const AccountSwitcher = ({
 }: AccountSwitcherProps) => {
   // Sort accounts by last active (accounts are already filtered to exclude active)
   const sortedAccounts = React.useMemo(() => {
-    return [...accounts].sort((a, b) => b.lastActive.getTime() - a.lastActive.getTime());
+    return [...accounts]
+      .sort((a, b) => b.lastActive.getTime() - a.lastActive.getTime())
+      .slice(0, MAX_ADDITIONAL_ACCOUNTS);
   }, [accounts]);
 
   const handleAccountClick = (accountId: string) => {
