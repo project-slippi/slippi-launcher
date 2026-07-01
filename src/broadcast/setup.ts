@@ -140,9 +140,6 @@ export default function setupBroadcastIpc({
 
     await spectateWorker.refreshBroadcastList();
 
-    // Reset idle timeout on refresh
-    await resetSpectateIdleTimeout();
-
     return { success: true };
   });
 

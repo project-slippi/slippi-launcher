@@ -1,0 +1,41 @@
+.container {
+  display: flex;
+  flex-flow: column;
+  flex: 1;
+  position: relative;
+  min-width: 0;
+}
+
+.mainContentContainer {
+  display: flex;
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+}
+
+.mainContent {
+  padding-left: 20px;
+  padding-right: 10px;
+  width: 100%;
+}
+
+.refreshRow {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.broadcastsList {
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+.sidebarContainer {
+  padding: 20px;
+  padding-left: 10px;
+  padding-bottom: 10px;
+  display: inline-flex;
+  height: fit-content;
+  flex-direction: column;
+  gap: 16px;
+}

@@ -1,0 +1,19 @@
+.autoRefreshControl {
+  display: flex;
+  align-items: center;
+}
+
+.timer {
+  cursor: pointer;
+  font-variant-numeric: tabular-nums;
+  font-size: 13px;
+  color: #bbb;
+  padding: 4px 8px;
+  border-radius: 4px;
+  user-select: none;
+  text-transform: lowercase;
+}
+
+.timer:hover {
+  text-decoration: underline;
+}
