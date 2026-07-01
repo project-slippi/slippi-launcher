@@ -123,11 +123,11 @@ export function formatRelativeDate(targetDate: Date, locale = "en-US"): string {
 
   const diffDays = Math.round(diffMs / day);
 
-  if (Math.abs(diffDays) < 7) {
+  if (Math.abs(diffDays) < 14) {
     return rtf.format(diffDays, "day");
   }
 
-  if (Math.abs(diffDays) < 30) {
+  if (Math.abs(diffDays) >= 14 && Math.abs(diffDays) < 30) {
     return rtf.format(Math.round(diffDays / 7), "week");
   }
 
