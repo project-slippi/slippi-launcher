@@ -19,8 +19,6 @@ type MockAuth = {
   };
 };
 
-const MAX_ACCOUNTS = 5;
-
 const testUsers = [
   {
     email: "test",
@@ -106,12 +104,7 @@ class MockMultiAccountClient implements MultiAccountService {
   }
 
   async addAccount(email: string, password: string): Promise<StoredAccount> {
-    // Allow re-authentication of existing accounts even when at the account cap
     const existingAccountByEmail = this._accounts.find((acc) => acc.email === email);
-
-    if (!existingAccountByEmail && this._accounts.length >= MAX_ACCOUNTS) {
-      throw new Error(`Maximum of ${MAX_ACCOUNTS} accounts allowed`);
-    }
 
     if (existingAccountByEmail) {
       log.info("Account with that email already exists, re-authenticating...");

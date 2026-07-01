@@ -44,7 +44,7 @@ const firebaseConfig = {
   measurementId: process.env.FIREBASE_MEASUREMENT_ID,
 };
 
-const MAX_ACCOUNTS = 5;
+const MAX_ACCOUNTS_TO_RESTORE = 5;
 
 class MultiAccountClient implements MultiAccountService {
   private _accountsSubject = new Subject<{
@@ -135,12 +135,11 @@ class MultiAccountClient implements MultiAccountService {
           lastActive: new Date(acc.lastActive),
         }));
 
-        // Cap at MAX_ACCOUNTS to prevent permanent lockout from data corruption.
         // If the stored list exceeds the limit, keep the most recently active accounts.
-        if (this._accounts.length > MAX_ACCOUNTS) {
-          log.warn(`Loaded ${this._accounts.length} accounts, capping at ${MAX_ACCOUNTS}`);
+        if (this._accounts.length > MAX_ACCOUNTS_TO_RESTORE) {
+          log.warn(`Loaded ${this._accounts.length} accounts, capping at ${MAX_ACCOUNTS_TO_RESTORE}`);
           this._accounts.sort((a, b) => b.lastActive.getTime() - a.lastActive.getTime());
-          this._accounts = this._accounts.slice(0, MAX_ACCOUNTS);
+          this._accounts = this._accounts.slice(0, MAX_ACCOUNTS_TO_RESTORE);
         }
 
         // If the stored activeId refers to a truncated account, reset it
@@ -352,12 +351,6 @@ class MultiAccountClient implements MultiAccountService {
         log.error(`Failed to re-authenticate existing account:`, err);
         throw err;
       }
-    }
-
-    // Only enforce the account limit for genuinely new accounts.
-    // Re-authentication of existing accounts is always allowed.
-    if (this._accounts.length >= MAX_ACCOUNTS) {
-      throw new Error(`Maximum of ${MAX_ACCOUNTS} accounts allowed`);
     }
 
     // Account doesn't exist - create a temporary Firebase app for login
