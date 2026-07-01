@@ -23,7 +23,7 @@ import log from "electron-log";
 import type { FirebaseApp } from "firebase/app";
 import { deleteApp, getApp, getApps, initializeApp } from "firebase/app";
 import type { Auth, User } from "firebase/auth";
-import { getAuth, onAuthStateChanged, signInWithEmailAndPassword } from "firebase/auth";
+import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { getFunctions, httpsCallable } from "firebase/functions";
 import multicast from "observable-fns/multicast";
 import Subject from "observable-fns/subject";
@@ -128,12 +128,31 @@ class MultiAccountClient implements MultiAccountService {
       const settings = window.electron.settings.getAppSettingsSync();
       const accountData = settings.accounts;
 
-      if (accountData) {
+      if (accountData && Array.isArray(accountData.list)) {
         this._activeAccountId = accountData.activeId;
         this._accounts = accountData.list.map((acc) => ({
           ...acc,
           lastActive: new Date(acc.lastActive),
         }));
+
+        // Cap at MAX_ACCOUNTS to prevent permanent lockout from data corruption.
+        // If the stored list exceeds the limit, keep the most recently active accounts.
+        if (this._accounts.length > MAX_ACCOUNTS) {
+          log.warn(`Loaded ${this._accounts.length} accounts, capping at ${MAX_ACCOUNTS}`);
+          this._accounts.sort((a, b) => b.lastActive.getTime() - a.lastActive.getTime());
+          this._accounts = this._accounts.slice(0, MAX_ACCOUNTS);
+        }
+
+        // If the stored activeId refers to a truncated account, reset it
+        if (this._activeAccountId && !this._accounts.some((acc) => acc.id === this._activeAccountId)) {
+          this._activeAccountId = this._accounts[0]?.id ?? null;
+        }
+      } else {
+        if (accountData) {
+          log.warn("Invalid accounts data format in settings (list is not an array), resetting");
+        }
+        this._accounts = [];
+        this._activeAccountId = null;
       }
 
       log.info(`Loaded ${this._accounts.length} stored accounts`);
@@ -185,6 +204,16 @@ class MultiAccountClient implements MultiAccountService {
 
       if (!user) {
         log.info("No existing session found in default app, skipping migration");
+        return;
+      }
+
+      // Verify the session is actually valid by checking if we can obtain a token.
+      // This prevents migrating stale/expired sessions into phantom accounts.
+      try {
+        await user.getIdToken();
+      } catch {
+        log.warn(`Found expired/stale session for ${user.email ?? user.uid}, clearing and skipping migration`);
+        await signOut(defaultAuth);
         return;
       }
 
@@ -306,13 +335,9 @@ class MultiAccountClient implements MultiAccountService {
    * Add a new account
    */
   async addAccount(email: string, password: string): Promise<StoredAccount> {
-    // Check if we've hit the account limit
-    if (this._accounts.length >= MAX_ACCOUNTS) {
-      throw new Error(`Maximum of ${MAX_ACCOUNTS} accounts allowed`);
-    }
-
-    // Check if account already exists by email (before creating temp app)
-    // This avoids IndexedDB persistence conflicts when re-authenticating
+    // Check if account already exists by email before enforcing the limit.
+    // This allows re-authentication of existing accounts even when at the cap,
+    // preventing users from being locked out by stale/phantom accounts.
     const existingAccountByEmail = this._accounts.find((acc) => acc.email === email);
 
     if (existingAccountByEmail) {
@@ -327,6 +352,12 @@ class MultiAccountClient implements MultiAccountService {
         log.error(`Failed to re-authenticate existing account:`, err);
         throw err;
       }
+    }
+
+    // Only enforce the account limit for genuinely new accounts.
+    // Re-authentication of existing accounts is always allowed.
+    if (this._accounts.length >= MAX_ACCOUNTS) {
+      throw new Error(`Maximum of ${MAX_ACCOUNTS} accounts allowed`);
     }
 
     // Account doesn't exist - create a temporary Firebase app for login
@@ -444,11 +475,17 @@ class MultiAccountClient implements MultiAccountService {
     }
 
     try {
+      // Sign out first to clear IndexedDB persistence before deleting the app
+      // This prevents session resurrection on next startup
+      const auth = this._authInstances.get(accountId);
+      if (auth) {
+        await signOut(auth);
+      }
+
       // Check if this is the default app before deleting
       const app = this._firebaseApps.get(accountId);
       const isDefaultApp = app && app.name === "[DEFAULT]";
 
-      // Delete Firebase app (this will also clear IndexedDB persistence)
       if (app) {
         await deleteApp(app);
         this._firebaseApps.delete(accountId);
