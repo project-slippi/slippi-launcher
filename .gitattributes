@@ -3,7 +3,6 @@
 *.png   binary
 *.jpg   binary
 *.jpeg  binary
-*.svg   binary
 *.ico   binary
 *.icns  binary
 *.eot   binary
