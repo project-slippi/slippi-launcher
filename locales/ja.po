@@ -675,8 +675,8 @@ msgid ""
 msgstr "まず、プレイを観戦したい相手にこのIDを伝えてください。相手が配信を開始したら、「更新」をクリックしてください。"
 
 #: src/renderer/components/footer/footer.messages.ts:3:26
-msgid "Follow Project Slippi on Twitter"
-msgstr "Project SlippiをTwitterでフォロー"
+msgid "Follow Project Slippi on Bluesky"
+msgstr "Project SlippiをBlueskyでフォロー"
 
 #: src/renderer/components/login_form/login_form.messages.ts:12:25
 msgid "Forgot your password?"

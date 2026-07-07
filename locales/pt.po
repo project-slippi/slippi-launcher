@@ -697,8 +697,8 @@ msgstr ""
 "Depois que ela iniciar a transmissão, clique em Atualizar."
 
 #: src/renderer/components/footer/footer.messages.ts:3:26
-msgid "Follow Project Slippi on Twitter"
-msgstr "Siga Project Slippi no Twitter"
+msgid "Follow Project Slippi on Bluesky"
+msgstr "Siga Project Slippi no Bluesky"
 
 #: src/renderer/components/login_form/login_form.messages.ts:12:25
 msgid "Forgot your password?"

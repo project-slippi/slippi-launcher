@@ -696,8 +696,8 @@ msgstr ""
 "как они начали свою трансляцию, нажмите Обновить."
 
 #: src/renderer/components/footer/footer.messages.ts:3:26
-msgid "Follow Project Slippi on Twitter"
-msgstr "Подпишитесь на Project Slippi в Twitter"
+msgid "Follow Project Slippi on Bluesky"
+msgstr "Подпишитесь на Project Slippi в Bluesky"
 
 #: src/renderer/components/login_form/login_form.messages.ts:12:25
 msgid "Forgot your password?"

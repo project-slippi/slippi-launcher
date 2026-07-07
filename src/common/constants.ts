@@ -10,6 +10,6 @@ export const slippiDonateUrl = "https://slippi.gg/donate";
 export const currentRulesVersion = 1;
 
 export const socials = {
-  twitterId: "ProjectSlippi",
   discordUrl: "https://slippi.gg/discord",
+  blueskyUrl: "https://bsky.app/profile/slippi.bsky.social",
 };

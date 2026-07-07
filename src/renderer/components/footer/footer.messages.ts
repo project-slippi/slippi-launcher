@@ -1,5 +1,5 @@
 export const FooterMessages = {
   supportSlippi: () => "Support Slippi",
-  followOnTwitter: () => "Follow Project Slippi on Twitter",
+  followOnBluesky: () => "Follow Project Slippi on Bluesky",
   joinDiscord: () => "Join the Discord",
 };

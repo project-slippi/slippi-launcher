@@ -666,7 +666,7 @@ msgid ""
 msgstr ""
 
 #: src/renderer/components/footer/footer.messages.ts:3:26
-msgid "Follow Project Slippi on Twitter"
+msgid "Follow Project Slippi on Bluesky"
 msgstr ""
 
 #: src/renderer/components/login_form/login_form.messages.ts:12:25

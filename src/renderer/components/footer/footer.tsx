@@ -1,11 +1,11 @@
 import { slippiDonateUrl, socials } from "@common/constants";
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
-import TwitterIcon from "@mui/icons-material/Twitter";
 import Tooltip from "@mui/material/Tooltip";
 import React from "react";
 
 import { ExternalLink as A } from "@/components/external_link";
+import { ReactComponent as BlueskyLogo } from "@/styles/images/bluesky_logo.svg";
 import { ReactComponent as DiscordIcon } from "@/styles/images/discord.svg";
 
 import { FooterMessages as Messages } from "./footer.messages";
@@ -29,8 +29,8 @@ export const BasicFooter = styled.div`
 export const Footer: React.ComponentType = () => {
   return (
     <Outer>
-      <Social title={Messages.followOnTwitter()} url={`https://twitter.com/${socials.twitterId}`}>
-        <TwitterIcon />
+      <Social title={Messages.followOnBluesky()} url={socials.blueskyUrl}>
+        <BlueskyLogo fill="var(--purple-light)" />
       </Social>
       <Social title={Messages.joinDiscord()} url={socials.discordUrl}>
         <DiscordIcon fill="var(--purple-light)" />
