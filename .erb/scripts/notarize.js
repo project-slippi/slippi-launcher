@@ -16,7 +16,7 @@ module.exports = async function (params) {
 
   // Bail early if this is a fork-caused PR build, which doesn't get
   // secrets.
-  if (!process.env.APPLE_API_KEY_ID || !process.env.APPLE_API_KEY || !process.env.APPLE_ISSUER_ID) {
+  if (!process.env.APPLE_API_KEY_ID || !process.env.APPLE_API_KEY || !process.env.APPLE_API_ISSUER) {
     console.log("Bailing, no secrets found.");
     return;
   }
@@ -27,18 +27,20 @@ module.exports = async function (params) {
     throw new Error(`Cannot find application at: ${appPath}`);
   }
 
-  console.log(`Notarizing ${appId} found at ${appPath} (this could take awhile, get some coffee...)`);
-
   const keyPath = path.join(process.env.HOME, `private_keys/AuthKey_${process.env.APPLE_API_KEY_ID}.p8`);
+  if (!fs.existsSync(keyPath)) {
+    throw new Error(`Cannot find Apple API key at: ${keyPath}`);
+  }
 
+  console.log(`Notarizing ${appId} found at ${appPath} (this could take awhile, get some coffee...)`);
   try {
     await electronNotarize.notarize({
       tool: "notarytool",
       appBundleId: appId,
-      appPath: appPath,
+      appPath,
       appleApiKeyId: process.env.APPLE_API_KEY_ID,
       appleApiKey: keyPath,
-      appleApiIssuer: process.env.APPLE_ISSUER_ID,
+      appleApiIssuer: process.env.APPLE_API_ISSUER,
     });
 
     console.log(`Successfully notarized ${appId}`);
