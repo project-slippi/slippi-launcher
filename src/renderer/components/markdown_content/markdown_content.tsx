@@ -58,10 +58,11 @@ const Outer = styled.div`
 
   li {
     margin-bottom: 5px;
+  }
 
-    ul {
-      margin-top: 5px;
-    }
+  ul {
+    margin-top: 5px;
+    padding-left: 25px;
   }
 
   a {
