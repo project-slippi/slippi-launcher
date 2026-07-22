@@ -68,6 +68,9 @@ export interface SettingsSchema {
 
   // Appearance settings
   enableRankDisplay: boolean;
+
+  // Console mirror settings
+  enableAutoConnect: boolean;
 }
 
 /**
