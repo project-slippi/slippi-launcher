@@ -59,7 +59,7 @@ const classes = {
   `,
 };
 
-export const VerifyEmailStep = () => {
+export function VerifyEmailForm() {
   const { authService } = useServices();
   const { showError } = useToasts();
   const user = useAccount((store) => store.user);
@@ -140,4 +140,4 @@ export const VerifyEmailStep = () => {
   }
 
   return stepBody;
-};
+}
