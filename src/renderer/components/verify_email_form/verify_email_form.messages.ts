@@ -8,5 +8,4 @@ export const VerifyEmailFormMessages = {
   wrongEmail: () => "Wrong email? ",
   changeEmail: () => "Change email",
   emailIsNotVerified: () => "Email is not yet verified. Have you checked your spam folder?",
-  errorMissingUser: () => "An error occurred. The application does not have a user.",
 };
