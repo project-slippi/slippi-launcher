@@ -75,21 +75,14 @@ export function VerifyEmailForm() {
     </div>
   );
 
-  let stepBody = null;
-  if (user) {
-    stepBody = (
-      <>
-        <div className={styles.message}>{Messages.aConfirmationEmailHasBeenSentTo()}</div>
-        <div className={styles.emailContainer}>{user.email}</div>
-        <div className={styles.incorrectEmailContainer}>
-          {Messages.wrongEmail()} <A href={slippiManagePage}>{Messages.changeEmail()}</A>
-        </div>
-        {user.emailVerified ? postVerification : preVerification}
-      </>
-    );
-  } else {
-    stepBody = <div>{Messages.errorMissingUser()}</div>;
-  }
-
-  return stepBody;
+  return (
+    <div>
+      <div className={styles.message}>{Messages.aConfirmationEmailHasBeenSentTo()}</div>
+      <div className={styles.emailContainer}>{user.email}</div>
+      <div className={styles.incorrectEmailContainer}>
+        {Messages.wrongEmail()} <A href={slippiManagePage}>{Messages.changeEmail()}</A>
+      </div>
+      {user.emailVerified ? postVerification : preVerification}
+    </div>
+  );
 }
