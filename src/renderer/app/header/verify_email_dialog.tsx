@@ -13,10 +13,9 @@ import { HeaderMessages as Messages } from "./header.messages";
 type VerifyEmailDialogProps = {
   open: boolean;
   onClose: () => void;
-  onSubmit: () => void;
 };
 
-export const VerifyEmailDialog = ({ open, onClose }: VerifyEmailDialogProps) => {
+export function VerifyEmailDialog({ open, onClose }: VerifyEmailDialogProps) {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
@@ -28,7 +27,7 @@ export const VerifyEmailDialog = ({ open, onClose }: VerifyEmailDialogProps) => 
       </DialogContent>
     </Dialog>
   );
-};
+}
 
 const StyledDialogTitle = styled(DialogTitle)`
   h2 {

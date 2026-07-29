@@ -231,11 +231,7 @@ export const UserMenu = ({ user, handleError }: { user: AuthUser; handleError: (
       </Menu>
 
       <NameChangeDialog displayName={displayName} open={openNameChangePrompt} handleClose={handleClose} />
-      <VerifyEmailDialog
-        open={openVerifyEmailDialog}
-        onClose={() => setOpenVerifyEmailDialog(false)}
-        onSubmit={() => {}}
-      />
+      <VerifyEmailDialog open={openVerifyEmailDialog} onClose={() => setOpenVerifyEmailDialog(false)} />
       <ActivateOnlineDialog
         open={openActivationDialog}
         onClose={() => setOpenActivationDialog(false)}
