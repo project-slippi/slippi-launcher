@@ -1,8 +1,13 @@
-export const loadStoredValue = <T>(key: string, defaultValue: T): T => {
+import { useEffect, useState } from "react";
+
+const loadStoredValue = <T>(key: string, defaultValue: T): T => {
   try {
     const stored = localStorage.getItem(key);
     if (stored !== null) {
-      return JSON.parse(stored) as T;
+      const parsed = JSON.parse(stored);
+      if (typeof parsed === typeof defaultValue) {
+        return parsed as T;
+      }
     }
   } catch {
     // Ignore parse errors
@@ -10,10 +15,21 @@ export const loadStoredValue = <T>(key: string, defaultValue: T): T => {
   return defaultValue;
 };
 
-export const storeValue = <T>(key: string, value: T): void => {
+const storeValue = <T>(key: string, value: T): void => {
   try {
     localStorage.setItem(key, JSON.stringify(value));
   } catch {
     // Ignore storage errors
   }
 };
+
+export function useLocalStorage<T>(key: string, defaultValue: T) {
+  const stateHook = useState<T>(() => loadStoredValue(key, defaultValue));
+  const value = stateHook[0];
+
+  useEffect(() => {
+    storeValue(key, value);
+  }, [key, value]);
+
+  return stateHook;
+}
