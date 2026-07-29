@@ -15,32 +15,24 @@ export const useAccount = create(
       userData: undefined as UserData | undefined,
       serverError: false,
       displayName: "",
-      emailVerificationSent: false,
       // Multi-account state
       accounts: [] as readonly StoredAccount[],
       activeAccountId: null as string | null,
     },
-    (set, get) => ({
+    (set) => ({
       setUser: (user: AuthUser | undefined) => {
         if (!user) {
           set({ user: undefined });
           return;
         }
 
-        let emailVerificationSent = get().emailVerificationSent;
-        const currentUid = get().user?.uid;
-        if (currentUid !== user?.uid) {
-          emailVerificationSent = false;
-        }
-
         const displayName = user.displayName || "";
-        set({ user, displayName, emailVerificationSent });
+        set({ user, displayName });
       },
       setLoading: (loading: boolean) => set({ loading }),
       setUserData: (userData: UserData | undefined) => set({ userData }),
       setServerError: (serverError: boolean) => set({ serverError }),
       setDisplayName: (displayName: string) => set({ displayName }),
-      setEmailVerificationSent: (emailVerificationSent: boolean) => set({ emailVerificationSent }),
       // Used to only fetch and update the user's rank and rating
       updateRanking: (rankedProfile: RankedProfile) =>
         set((state) =>
