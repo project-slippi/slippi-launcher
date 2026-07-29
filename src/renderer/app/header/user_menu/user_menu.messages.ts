@@ -7,6 +7,7 @@ export const UserMenuMessages = {
   offline: () => "Offline",
   slippiServerError: () => "Slippi server error",
   onlineActivationRequired: () => "Online activation required",
+  emailVerificationRequired: () => "Email verification required",
   areYouSureYouWantToLogout: () => "Are you sure you want to log out?",
   youWillNeedToLogInAgain: () => "You will need to log in again next time you want to play.",
   failedToRemoveAccount: () => "Failed to remove account",
@@ -15,4 +16,5 @@ export const UserMenuMessages = {
   accountRemoved: (accountName: string) => `Removed {0}`,
   switchedTo: (accountName: string) => `Switched to {0}`,
   closeDolphinToSwitchAccounts: () => "Dolphin is currently running. Close Dolphin to switch accounts",
+  verifyEmail: () => "Verify email",
 };

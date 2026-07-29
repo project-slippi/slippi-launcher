@@ -27,7 +27,11 @@ export const UserInfo = React.memo(function UserInfo({
 }) {
   return (
     <div className={styles.root}>
-      {loading ? <CircularProgress color="inherit" /> : <UserIcon imageUrl={displayPicture} size={42} />}
+      {loading ? (
+        <CircularProgress color="inherit" />
+      ) : (
+        <UserIcon imageUrl={displayPicture} size={42} borderColor={errorMessage ? "var(--red-error)" : undefined} />
+      )}
       <div className={styles.content}>
         <h3 className={styles.displayName}>{displayName}</h3>
         {!loading &&

@@ -17,4 +17,5 @@ export const HeaderMessages = {
   confirm: () => "Confirm",
   displayName: () => "Display Name",
   loading: () => "Loading",
+  verifyYourEmail: () => "Verify your email",
 };

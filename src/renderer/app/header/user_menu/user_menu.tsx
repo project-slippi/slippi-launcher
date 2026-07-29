@@ -17,6 +17,7 @@ import { AddAccountDialog } from "../account_switcher/add_account_dialog";
 import { ActivateOnlineDialog } from "../activate_online_dialog";
 import { NameChangeDialog } from "../name_change_dialog";
 import { UserInfo } from "../user_info/user_info";
+import { VerifyEmailDialog } from "../verify_email_dialog";
 import { UserMenuMessages as Messages } from "./user_menu.messages";
 import styles from "./user_menu.module.css";
 import { UserMenuItems } from "./user_menu_items";
@@ -39,6 +40,7 @@ export const UserMenu = ({ user, handleError }: { user: AuthUser; handleError: (
   const [openLogoutPrompt, setOpenLogoutPrompt] = React.useState(false);
   const [openNameChangePrompt, setOpenNameChangePrompt] = React.useState(false);
   const [openActivationDialog, setOpenActivationDialog] = React.useState(false);
+  const [openVerifyEmailDialog, setOpenVerifyEmailDialog] = React.useState(false);
   const [openAddAccountDialog, setOpenAddAccountDialog] = React.useState(false);
   const [switching, setSwitching] = React.useState(false);
   const [reAuthEmail, setReAuthEmail] = React.useState<string | undefined>();
@@ -161,6 +163,8 @@ export const UserMenu = ({ user, handleError }: { user: AuthUser; handleError: (
     errMessage = Messages.slippiServerError();
   } else if (!userData?.playKey) {
     errMessage = Messages.onlineActivationRequired();
+  } else if (!user?.emailVerified) {
+    errMessage = Messages.emailVerificationRequired();
   }
 
   return (
@@ -191,7 +195,12 @@ export const UserMenu = ({ user, handleError }: { user: AuthUser; handleError: (
           onRemoveAccount={handleRemoveAccount}
           switching={switching}
           isOnlineActivated={!!userData?.playKey}
+          isEmailVerified={!!user.emailVerified}
           serverError={serverError}
+          onVerifyEmail={() => {
+            closeMenu();
+            setOpenVerifyEmailDialog(true);
+          }}
           onActivateOnline={() => {
             closeMenu();
             setOpenActivationDialog(true);
@@ -218,6 +227,11 @@ export const UserMenu = ({ user, handleError }: { user: AuthUser; handleError: (
       </Menu>
 
       <NameChangeDialog displayName={displayName} open={openNameChangePrompt} handleClose={handleClose} />
+      <VerifyEmailDialog
+        open={openVerifyEmailDialog}
+        onClose={() => setOpenVerifyEmailDialog(false)}
+        onSubmit={() => {}}
+      />
       <ActivateOnlineDialog
         open={openActivationDialog}
         onClose={() => setOpenActivationDialog(false)}
