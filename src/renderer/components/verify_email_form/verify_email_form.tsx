@@ -4,19 +4,21 @@ import Button from "@mui/material/Button";
 import { useEffect } from "react";
 
 import { ExternalLink as A } from "@/components/external_link";
-import { useAccount } from "@/lib/hooks/use_account";
 import { useToasts } from "@/lib/hooks/use_toasts";
+import { useLocalStorage } from "@/lib/local_storage";
 import { useServices } from "@/services";
+import type { AuthUser } from "@/services/auth/types";
 
 import { VerifyEmailFormMessages as Messages } from "./verify_email_form.messages";
 import styles from "./verify_email_form.module.css";
 
-export function VerifyEmailForm() {
+const VERIFICATION_EMAIL_SENT_KEY = "verificationEmailSentByUser";
+
+export function VerifyEmailForm({ user }: { user: AuthUser }) {
   const { authService } = useServices();
   const { showError } = useToasts();
-  const user = useAccount((store) => store.user);
-  const emailVerificationSent = useAccount((store) => store.emailVerificationSent);
-  const setEmailVerificationSent = useAccount((store) => store.setEmailVerificationSent);
+  const [sentByUser, setSentByUser] = useLocalStorage<Record<string, boolean>>(VERIFICATION_EMAIL_SENT_KEY, {});
+  const emailVerificationSent = sentByUser[user.uid] ?? false;
 
   const handleCheckVerification = async () => {
     try {
@@ -36,7 +38,7 @@ export function VerifyEmailForm() {
     const sendVerificationEmail = async () => {
       try {
         await authService.sendVerificationEmail();
-        setEmailVerificationSent(true);
+        setSentByUser((prev) => ({ ...prev, [user.uid]: true }));
       } catch (err: any) {
         showError(err.message);
       }
@@ -45,7 +47,7 @@ export function VerifyEmailForm() {
     if (user && !user.emailVerified && !emailVerificationSent) {
       void sendVerificationEmail();
     }
-  }, [emailVerificationSent, setEmailVerificationSent, showError, user, authService]);
+  }, [emailVerificationSent, setSentByUser, showError, user, authService]);
 
   const preVerification = (
     <>
