@@ -7,6 +7,7 @@ import { useEffect, useMemo, useState } from "react";
 
 import { ExternalLink as A, ExternalLink } from "@/components/external_link";
 import { useAppStore } from "@/lib/hooks/use_app_store";
+import { loadStoredValue, storeValue } from "@/lib/local_storage";
 import { formatDateRange, formatRelativeDate } from "@/lib/time";
 import { useServices } from "@/services";
 import type { SupportedLanguage } from "@/services/i18n/util";
@@ -24,26 +25,6 @@ const KM_TO_MILE = 0.621371;
 const STORAGE_KEY_RADIUS = "nearbyTournamentRadius";
 const STORAGE_KEY_UNITS = "nearbyTournamentUnits";
 const STORAGE_KEY_SORT = "nearbyTournamentSort";
-
-const loadStoredValue = <T,>(key: string, defaultValue: T): T => {
-  try {
-    const stored = localStorage.getItem(key);
-    if (stored !== null) {
-      return JSON.parse(stored) as T;
-    }
-  } catch {
-    // Ignore parse errors
-  }
-  return defaultValue;
-};
-
-const storeValue = <T,>(key: string, value: T): void => {
-  try {
-    localStorage.setItem(key, JSON.stringify(value));
-  } catch {
-    // Ignore storage errors
-  }
-};
 
 const NearbyTournamentCard = ({
   name,
