@@ -7,7 +7,7 @@ import { useMemo } from "react";
 
 import { ExternalLink as A, ExternalLink } from "@/components/external_link";
 import { useAppStore } from "@/lib/hooks/use_app_store";
-import { useLocalStorage } from "@/lib/local_storage";
+import { useLocalStorage } from "@/lib/hooks/use_local_storage";
 import { formatDateRange, formatRelativeDate } from "@/lib/time";
 import { useServices } from "@/services";
 import type { SupportedLanguage } from "@/services/i18n/util";

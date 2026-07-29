@@ -4,8 +4,8 @@ import Button from "@mui/material/Button";
 import { useEffect } from "react";
 
 import { ExternalLink as A } from "@/components/external_link";
+import { useLocalStorage } from "@/lib/hooks/use_local_storage";
 import { useToasts } from "@/lib/hooks/use_toasts";
-import { useLocalStorage } from "@/lib/local_storage";
 import { useServices } from "@/services";
 import type { AuthUser } from "@/services/auth/types";
 
