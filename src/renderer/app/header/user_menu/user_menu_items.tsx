@@ -5,6 +5,7 @@ import EmailIcon from "@mui/icons-material/Email";
 import LanguageIcon from "@mui/icons-material/Language";
 import LogoutIcon from "@mui/icons-material/Logout";
 import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
+import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import MenuItem from "@mui/material/MenuItem";
@@ -70,7 +71,10 @@ export const UserMenuItems = ({
           <ListItemIcon>
             <LanguageIcon fontSize="small" />
           </ListItemIcon>
-          <ListItemText primary={Messages.activateOnlinePlay()} />
+          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+            <ListItemText primary={Messages.activateOnlinePlay()} />
+            <RedDot />
+          </div>
         </MenuItem>
       )}
 
@@ -79,8 +83,10 @@ export const UserMenuItems = ({
           <ListItemIcon>
             <EmailIcon fontSize="small" />
           </ListItemIcon>
-          <ListItemText primary={Messages.verifyEmail()} />
-          <RedDot />
+          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+            <ListItemText primary={Messages.verifyEmail()} />
+            <RedDot />
+          </div>
         </MenuItem>
       )}
 
@@ -91,12 +97,14 @@ export const UserMenuItems = ({
               <AccountBoxIcon fontSize="small" />
             </ListItemIcon>
             <ListItemText primary={Messages.viewProfile()} />
+            <OpenInNewIcon fontSize="small" />
           </MenuItem>
           <MenuItem onClick={onManageAccount}>
             <ListItemIcon>
               <ManageAccountsIcon fontSize="small" />
             </ListItemIcon>
             <ListItemText primary={Messages.manageAccount()} />
+            <OpenInNewIcon fontSize="small" />
           </MenuItem>
           <MenuItem onClick={onEditDisplayName}>
             <ListItemIcon>
@@ -118,5 +126,14 @@ export const UserMenuItems = ({
 };
 
 function RedDot({ size = 10 }: { size?: number }) {
-  return <div style={{ backgroundColor: "var(--red-error)", height: size, width: size, borderRadius: "50%" }} />;
+  return (
+    <div
+      style={{
+        backgroundColor: "var(--red-error)",
+        height: size,
+        width: size,
+        borderRadius: "50%",
+      }}
+    />
+  );
 }

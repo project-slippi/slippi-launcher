@@ -156,6 +156,7 @@ export const UserMenu = ({ user, handleError }: { user: AuthUser; handleError: (
     return accounts.filter((account) => account.id !== activeAccountId);
   }, [accounts, activeAccountId]);
 
+  let isUserErrorMessage: boolean = false;
   let errMessage: string | undefined = undefined;
   if (!isOnline) {
     errMessage = Messages.offline();
@@ -163,8 +164,10 @@ export const UserMenu = ({ user, handleError }: { user: AuthUser; handleError: (
     errMessage = Messages.slippiServerError();
   } else if (!userData?.playKey) {
     errMessage = Messages.onlineActivationRequired();
+    isUserErrorMessage = true;
   } else if (!user?.emailVerified) {
     errMessage = Messages.emailVerificationRequired();
+    isUserErrorMessage = true;
   }
 
   return (
@@ -176,6 +179,7 @@ export const UserMenu = ({ user, handleError }: { user: AuthUser; handleError: (
           connectCode={userData?.playKey?.connectCode}
           tier={userData?.activeSubscription.level}
           isVip={userData?.activeSubscription.hasGiftSub}
+          errorBorder={isUserErrorMessage}
           errorMessage={errMessage}
           loading={loading}
         />
