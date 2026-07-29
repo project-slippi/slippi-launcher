@@ -1,0 +1,53 @@
+.message {
+  color: var(--text-secondary);
+}
+
+.emailContainer {
+  background: var(--purple-dark);
+  padding: 10px 20px;
+  border-radius: 5px;
+  margin: 10px;
+  width: fit-content;
+  font-size: 20px;
+}
+
+.incorrectEmailContainer {
+  margin-top: -5px;
+  margin-left: 10px;
+  font-size: 14px;
+  color: var(--text-dim);
+}
+
+.incorrectEmailContainer a {
+  color: var(--purple-primary);
+}
+
+.instructions {
+  margin-top: 25px;
+  margin-bottom: 10px;
+  color: var(--text-secondary);
+}
+
+.emailNotFoundContainer {
+  margin-top: 4px;
+  font-size: 14px;
+  color: var(--text-dim);
+}
+
+.emailNotFoundContainer a {
+  color: var(--purple-primary);
+}
+
+.confirmationContainer {
+  margin-top: 30px;
+  font-size: 28px;
+  color: var(--green-primary);
+  display: grid;
+  align-items: center;
+  gap: 8px;
+  grid-template-columns: auto auto 1fr;
+}
+
+.confirmationContainer svg {
+  font-size: 40px;
+}

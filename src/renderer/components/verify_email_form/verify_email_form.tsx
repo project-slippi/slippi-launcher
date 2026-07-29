@@ -1,5 +1,4 @@
 import { slippiManagePage } from "@common/constants";
-import { css } from "@emotion/react";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import Button from "@mui/material/Button";
 import { useEffect } from "react";
@@ -10,54 +9,7 @@ import { useToasts } from "@/lib/hooks/use_toasts";
 import { useServices } from "@/services";
 
 import { VerifyEmailFormMessages as Messages } from "./verify_email_form.messages";
-
-const classes = {
-  message: css`
-    color: var(--text-secondary);
-  `,
-  emailContainer: css`
-    background: var(--purple-dark);
-    padding: 10px 20px;
-    border-radius: 5px;
-    margin: 10px;
-    width: fit-content;
-    font-size: 20px;
-  `,
-  incorrectEmailContainer: css`
-    margin-top: -5px;
-    margin-left: 10px;
-    font-size: 14px;
-    color: var(--text-dim);
-    > a {
-      color: var(--purple-primary);
-    }
-  `,
-  instructions: css`
-    margin-top: 25px;
-    margin-bottom: 10px;
-    color: var(--text-secondary);
-  `,
-  emailNotFoundContainer: css`
-    margin-top: 4px;
-    font-size: 14px;
-    color: var(--text-dim);
-    > a {
-      color: var(--purple-primary);
-    }
-  `,
-  confirmationContainer: css`
-    margin-top: 30px;
-    font-size: 28px;
-    color: var(--green-primary);
-    display: grid;
-    align-items: center;
-    gap: 8px;
-    grid-template-columns: auto auto 1fr;
-    > svg {
-      font-size: 40px;
-    }
-  `,
-};
+import styles from "./verify_email_form.module.css";
 
 export function VerifyEmailForm() {
   const { authService } = useServices();
@@ -97,11 +49,11 @@ export function VerifyEmailForm() {
 
   const preVerification = (
     <>
-      <div css={classes.instructions}>{Messages.visitYourEmail()}</div>
+      <div className={styles.instructions}>{Messages.visitYourEmail()}</div>
       <Button variant="outlined" onClick={handleCheckVerification}>
         {Messages.checkVerification()}
       </Button>
-      <div css={classes.emailNotFoundContainer}>
+      <div className={styles.emailNotFoundContainer}>
         {Messages.cantFindEmail()}{" "}
         <a
           href="#"
@@ -117,7 +69,7 @@ export function VerifyEmailForm() {
   );
 
   const postVerification = (
-    <div css={classes.confirmationContainer}>
+    <div className={styles.confirmationContainer}>
       <CheckCircleOutlineIcon />
       {Messages.emailVerified()}
     </div>
@@ -127,9 +79,9 @@ export function VerifyEmailForm() {
   if (user) {
     stepBody = (
       <>
-        <div css={classes.message}>{Messages.aConfirmationEmailHasBeenSentTo()}</div>
-        <div css={classes.emailContainer}>{user.email}</div>
-        <div css={classes.incorrectEmailContainer}>
+        <div className={styles.message}>{Messages.aConfirmationEmailHasBeenSentTo()}</div>
+        <div className={styles.emailContainer}>{user.email}</div>
+        <div className={styles.incorrectEmailContainer}>
           {Messages.wrongEmail()} <A href={slippiManagePage}>{Messages.changeEmail()}</A>
         </div>
         {user.emailVerified ? postVerification : preVerification}
