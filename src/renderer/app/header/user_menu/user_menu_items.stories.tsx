@@ -56,6 +56,8 @@ const mockAccounts: StoredAccount[] = [
   },
 ];
 
+type UserMenuItemsProps = React.ComponentProps<typeof UserMenuItems>;
+
 // No inactive accounts to switch to (1 total account - active one shown in header)
 export const NoInactiveAccounts: Story = {
   args: {
@@ -66,12 +68,14 @@ export const NoInactiveAccounts: Story = {
     switching: false,
     isOnlineActivated: true,
     serverError: false,
+    isEmailVerified: true,
     onActivateOnline: action("onActivateOnline"),
     onViewProfile: action("onViewProfile"),
     onManageAccount: action("onManageAccount"),
     onEditDisplayName: action("onEditDisplayName"),
+    onVerifyEmail: action("onVerifyEmail"),
     onLogout: action("onLogout"),
-  },
+  } as UserMenuItemsProps,
 };
 
 // Not activated (no play key)
