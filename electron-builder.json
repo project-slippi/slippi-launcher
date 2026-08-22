@@ -67,9 +67,11 @@
     "target": ["nsis"],
     "icon": "assets/icon.ico",
     "signAndEditExecutable": true,
-    "signtoolOptions": {
-      "sign": ".erb/scripts/windows-sign.js",
-      "signingHashAlgorithms": ["sha256"]
+    "azureSignOptions": {
+      "publisherName": "Slippi LLC",
+      "endpoint": "https://eus.codesigning.azure.net",
+      "codeSigningAccountName": "slippi",
+      "certificateProfileName": "slippi-release"
     }
   },
   "nsis": {

@@ -80,31 +80,10 @@ jobs:
       - name: Ensure Electron binary is installed
         run: node node_modules/electron/install.js
       
-      - name: Cache CodeSignTool
-        if: matrix.os == 'windows-2022'
-        uses: actions/cache@v5
-        with:
-          path: |
-            ./CodeSignTool/
-          key: ${{ runner.os }}-${{ secrets.CACHE_CONTROL }}
-      - name: Download CodeSignTool
-        env:
-          ES_USERNAME: ${{ secrets.ES_USERNAME }}
-        if: matrix.os == 'windows-2022' && env.ES_USERNAME != null
-        working-directory: ${{ github.workspace }}
-        shell: powershell
-        run: |
-          if (!(Test-Path ".\CodeSignTool\CodeSignTool.bat" -PathType Leaf)) {
-            mkdir CodeSignTool
-            cd .\CodeSignTool
-            Invoke-WebRequest -Uri https://www.ssl.com/download/codesigntool-for-windows/ -UseBasicParsing -OutFile ".\CodeSignTool.zip"
-            7z x CodeSignTool.zip
-            Remove-Item CodeSignTool.zip
-          }
       - name: Load Windows signing secrets
         env:
-          ES_USERNAME: ${{ secrets.ES_USERNAME }}
-        if: matrix.os == 'windows-2022' && (env.ES_USERNAME != null || env.IS_PR == 'true')
+          AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+        if: matrix.os == 'windows-2022' && (env.AZURE_CLIENT_ID != null || env.IS_PR == 'true')
         shell: bash
         run: |
           # Enable signing if: (1) PR with enable-codesigning label, OR (2) not a PR and release commit
@@ -123,13 +102,25 @@ jobs:
             fi
           fi
           echo "SLIPPI_ENABLE_SIGNING=yes" >> $GITHUB_ENV
-          echo "ES_USERNAME=${{ secrets.ES_USERNAME }}" >> $GITHUB_ENV
-          echo "ES_PASSWORD=${{ secrets.ES_PASSWORD }}" >> $GITHUB_ENV
-          echo "ES_CREDENTIAL_ID=${{ secrets.ES_CREDENTIAL_ID }}" >> $GITHUB_ENV
-          echo "ES_TOTP_SECRET=${{ secrets.ES_TOTP_SECRET }}" >> $GITHUB_ENV
-          echo "CSC_LINK=${{ secrets.CERTIFICATE_WINDOWS_APPLICATION }}" >> $GITHUB_ENV
-          echo "CSC_KEY_PASSWORD=${{ secrets.CERTIFICATE_WINDOWS_PASSWORD }}" >> $GITHUB_ENV
+          echo "AZURE_TENANT_ID=${{ secrets.AZURE_TENANT_ID }}" >> $GITHUB_ENV
+          echo "AZURE_CLIENT_ID=${{ secrets.AZURE_CLIENT_ID }}" >> $GITHUB_ENV
+          echo "AZURE_CLIENT_SECRET=${{ secrets.AZURE_CLIENT_SECRET }}" >> $GITHUB_ENV
           echo "signing enabled and secrets loaded"
+
+      # electron-builder signs unconditionally whenever win.azureSignOptions is present,
+      # so strip that block when signing is disabled (fork PRs, non-release commits).
+      - name: Disable Windows signing
+        if: matrix.os == 'windows-2022' && env.SLIPPI_ENABLE_SIGNING != 'yes'
+        shell: bash
+        run: |
+          node -e "
+            const fs = require('fs');
+            const f = 'electron-builder.json';
+            const c = JSON.parse(fs.readFileSync(f, 'utf8'));
+            delete c.win.azureSignOptions;
+            fs.writeFileSync(f, JSON.stringify(c, null, 2));
+          "
+          echo "removed win.azureSignOptions; this build will be unsigned"
 
       - name: Load macOS signing certificates and secrets
         if: matrix.os == 'macOS-latest' && env.CERTIFICATE_MACOS_PASSWORD != null && (env.IS_PR != 'true' || env.ENABLE_CODESIGNING_LABEL == 'true')
@@ -158,7 +149,6 @@ jobs:
           NODE_OPTIONS: "--max-old-space-size=8192"
           USE_HARD_LINKS: false # because of https://github.com/electron-userland/electron-builder/issues/3179
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          CODESIGNTOOL_PATH: "${{ github.workspace }}/CodeSignTool"
           CSC_FOR_PULL_REQUEST: ${{ env.IS_PR != 'true' || env.ENABLE_CODESIGNING_LABEL == 'true' }}
       - name: Run tests
         run: |
