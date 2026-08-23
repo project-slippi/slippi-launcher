@@ -8,7 +8,7 @@ msgstr ""
 "n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "x-generator: i18next-auto-keys CLI\n"
 "Language: ru-RU\n"
-"PO-Revision-Date: 2026-06-04T05:47:27.973Z\n"
+"PO-Revision-Date: 2026-08-23T13:54:17.817Z\n"
 
 #: src/renderer/components/activate_online_form/activate_online_form.messages.ts:3:30
 msgid "2-4 uppercase English characters"
@@ -18,7 +18,7 @@ msgstr "2-4 заглавные латинские буквы"
 msgid "7z files must be uncompressed to be used in Dolphin."
 msgstr "7z файлы должны быть распакованы для использования в Dolphin."
 
-#: src/renderer/pages/quick_start/steps/verify_email_step/verify_email_step.messages.ts:8:42
+#: src/renderer/components/verify_email_form/verify_email_form.messages.ts:7:42
 msgid "A confirmation email has been sent to:"
 msgstr "Письмо с подтверждением было отправлено на:"
 
@@ -60,6 +60,10 @@ msgstr "Дополнительные SLP каталоги"
 #: src/renderer/pages/settings/create.messages.ts:12:19
 msgid "Advanced"
 msgstr "Дополнительные"
+
+#: src/renderer/components/rosetta_install_dialog/rosetta_install_dialog.messages.ts:12:26
+msgid "Agree and Install"
+msgstr ""
 
 #: src/renderer/pages/replays/replay_browser/file_selection_toolbar/file_selection_toolbar.messages.ts:3:40
 #. {0} count: number
@@ -108,7 +112,7 @@ msgstr ""
 msgid "Allows remote control of spectate features via WebSocket."
 msgstr "Позволяет удаленно управлять функционалом трансляций через WebSocket."
 
-#: src/renderer/pages/quick_start/steps/verify_email_step/verify_email_step.messages.ts:12:27
+#: src/renderer/pages/quick_start/steps/verify_email_step/verify_email_step.messages.ts:3:27
 msgid "An error occurred. The application does not have a user."
 msgstr "Произошла ошибка. У приложения нет пользователя."
 
@@ -128,13 +132,17 @@ msgstr "Внешний вид"
 msgid "Are you sure you want to delete this code?"
 msgstr "Вы уверены, что хотите удалить этот код?"
 
-#: src/renderer/app/header/user_menu/user_menu.messages.ts:10:36
+#: src/renderer/app/header/user_menu/user_menu.messages.ts:11:36
 msgid "Are you sure you want to log out?"
 msgstr "Вы уверены, что хотите разлогиниться?"
 
 #: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:17:21
 msgid "Are you sure?"
 msgstr "Вы уверены?"
+
+#: src/renderer/pages/spectate/auto_refresh_toggle/auto_refresh_toggle.messages.ts:3:22
+msgid "Auto-refresh"
+msgstr ""
 
 #: src/renderer/initialize_app.messages.ts:11:5
 #. {0} version: string
@@ -191,12 +199,13 @@ msgstr "CGNAT или Double NAT"
 msgid "Can be changed later for a one-time payment"
 msgstr "Можно изменить позже за одноразовый платеж"
 
-#: src/renderer/pages/quick_start/steps/verify_email_step/verify_email_step.messages.ts:5:24
+#: src/renderer/components/verify_email_form/verify_email_form.messages.ts:4:24
 msgid "Can't find the email? Check your spam folder. Still missing? "
 msgstr "Не можете найти письмо? Проверьте спам-каталог. Все еще не пришло? "
 
 #: src/renderer/app/header/header.messages.ts:15:17
 #: src/renderer/components/confirmation_modal/confirmation_modal.messages.ts:3:17
+#: src/renderer/components/rosetta_install_dialog/rosetta_install_dialog.messages.ts:9:17
 #: src/renderer/pages/spectate/share_gameplay_block/start_broadcast_dialog.messages.ts:10:17
 msgid "Cancel"
 msgstr "Отмена"
@@ -209,7 +218,7 @@ msgstr "Нельзя добавить подкаталоги корневого 
 msgid "Change Folder"
 msgstr "Сменить каталог"
 
-#: src/renderer/pages/quick_start/steps/verify_email_step/verify_email_step.messages.ts:10:22
+#: src/renderer/components/verify_email_form/verify_email_form.messages.ts:9:22
 msgid "Change email"
 msgstr "Сменить email"
 
@@ -230,7 +239,7 @@ msgstr "Сообщения"
 msgid "Chat messages to use for netplay"
 msgstr "Сообщения для использования в онлайне"
 
-#: src/renderer/pages/quick_start/steps/verify_email_step/verify_email_step.messages.ts:4:28
+#: src/renderer/components/verify_email_form/verify_email_form.messages.ts:3:28
 msgid "Check Verification"
 msgstr "Проверка подтверждения"
 
@@ -283,7 +292,7 @@ msgstr "Удалить файлы"
 msgid "Clear filter"
 msgstr "Сбросить фильтр"
 
-#: src/renderer/components/slippi_usage_policy_list/slippi_usage_policy_list.messages.ts:4:29
+#: src/renderer/components/slippi_usage_policy_list/slippi_usage_policy_list.messages.ts:3:29
 msgid "Click the links below to review:"
 msgstr "Кликните ссылки ниже для просмотра:"
 
@@ -488,7 +497,7 @@ msgstr ""
 "настроек, и приложите их в Slippi Discord в канал #windows-support, вместе "
 "с описанием проблемы "
 
-#: src/renderer/app/header/user_menu/user_menu.messages.ts:17:39
+#: src/renderer/app/header/user_menu/user_menu.messages.ts:18:39
 msgid "Dolphin is currently running. Close Dolphin to switch accounts"
 msgstr "Dolphin в данный момент запущен. Закройте Dolphin для переключения аккаунтов"
 
@@ -500,6 +509,10 @@ msgstr "Dolphin обновляется"
 #: src/renderer/lib/dolphin/dolphin.messages.ts:2:28
 msgid "Dolphin is updating. Try again later."
 msgstr "Dolphin обновляется. Попробуйте позже."
+
+#: src/renderer/components/rosetta_install_dialog/rosetta_install_dialog.messages.ts:13:15
+msgid "Done"
+msgstr ""
 
 #: src/renderer/pages/settings/chat_settings/chat_settings.messages.ts:11:15
 msgid "Down"
@@ -539,11 +552,15 @@ msgstr "Поменять никнейм"
 msgid "Email"
 msgstr "Email"
 
-#: src/renderer/pages/quick_start/steps/verify_email_step/verify_email_step.messages.ts:11:29
+#: src/renderer/components/verify_email_form/verify_email_form.messages.ts:10:29
 msgid "Email is not yet verified. Have you checked your spam folder?"
 msgstr "Email не подтвержден. Проверили ли вы ваш спам-каталог?"
 
-#: src/renderer/pages/quick_start/steps/verify_email_step/verify_email_step.messages.ts:7:24
+#: src/renderer/app/header/user_menu/user_menu.messages.ts:10:36
+msgid "Email verification required"
+msgstr ""
+
+#: src/renderer/components/verify_email_form/verify_email_form.messages.ts:6:24
 msgid "Email verified"
 msgstr "Email подтвержден"
 
@@ -661,6 +678,10 @@ msgstr "Не удалось загрузить новости. Попробуй�
 msgid "Failed to fetch tournaments. Error: {0}"
 msgstr "Не удалось загрузить турниры. Ошибка: {0}"
 
+#: src/renderer/pages/home/overview/melee_majors_carousel/melee_majors_carousel.messages.ts:2:35
+msgid "Failed to fetch upcoming events"
+msgstr ""
+
 #: src/renderer/app/header/header.messages.ts:5:29
 msgid "Failed to get updates"
 msgstr "Ошибка получения обновлений"
@@ -679,11 +700,11 @@ msgstr ""
 msgid "Failed to read gecko codes"
 msgstr "Не получилось прочитать gecko-коды"
 
-#: src/renderer/app/header/user_menu/user_menu.messages.ts:12:32
+#: src/renderer/app/header/user_menu/user_menu.messages.ts:13:32
 msgid "Failed to remove account"
 msgstr "Не получилось удалить аккаунт"
 
-#: src/renderer/app/header/user_menu/user_menu.messages.ts:13:32
+#: src/renderer/app/header/user_menu/user_menu.messages.ts:14:32
 msgid "Failed to switch account"
 msgstr "Не получилось переключить аккаунт"
 
@@ -762,7 +783,6 @@ msgstr "Главная"
 msgid "Home-Run Contest"
 msgstr "Home-Run Contest"
 
-#: src/renderer/components/slippi_usage_policy_list/slippi_usage_policy_list.messages.ts:3:28
 #: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:2:28
 msgid "I accept the Slippi Online Rules"
 msgstr "Я принимаю правила Slippi Online"
@@ -808,9 +828,17 @@ msgstr "Несовместимо с WASAPI."
 msgid "Install update"
 msgstr "Установить обновление"
 
+#: src/renderer/components/rosetta_install_dialog/rosetta_install_dialog.messages.ts:8:25
+msgid "Installation completed successfully. You can now relaunch Slippi Dolphin."
+msgstr ""
+
 #: src/renderer/components/persistent_notification/persistent_notification.messages.ts:5:24
 msgid "Installation failed."
 msgstr "Установка неуспешна."
+
+#: src/renderer/components/rosetta_install_dialog/rosetta_install_dialog.messages.ts:4:21
+msgid "Installing... This may take a few minutes."
+msgstr ""
 
 #: src/renderer/components/slippi_online_rules/slippi_online_rules.messages.ts:13:16
 msgid ""
@@ -922,6 +950,10 @@ msgstr ""
 "Mainline Slippi Dolphin имеет более новые требования к системе, проверьте "
 "секцию Помощь для подробной информации"
 
+#: src/renderer/pages/home/upcoming_tournaments/upcoming_tournaments.messages.ts:5:25
+msgid "Major Upcoming Tournaments"
+msgstr "Предстоящие мейжоры"
+
 #: src/renderer/pages/settings/dolphin_settings/gecko_codes/gecko_codes.messages.ts:5:17
 msgid "Manage"
 msgstr "Управлять"
@@ -934,7 +966,7 @@ msgstr "Управление Gecko кодами"
 msgid "Manage account"
 msgstr "Управление аккаунтом"
 
-#: src/renderer/app/header/user_menu/user_menu.messages.ts:14:40
+#: src/renderer/app/header/user_menu/user_menu.messages.ts:15:40
 #. {0} max: number
 msgid "Maximum {0} accounts reached. Remove an account to add another."
 msgstr "Достигнут лимит в {0} аккаунтов. Удалите аккаунт, чтобы добавить новый."
@@ -1067,6 +1099,7 @@ msgstr "Каталог не указан"
 msgid "No network connection"
 msgstr "Нет сетевого соединения"
 
+#: src/renderer/pages/home/news_feed/news_feed.messages.ts:6:17
 #: src/renderer/pages/home/overview/news_preview/news_preview.messages.ts:3:17
 msgid "No news to show"
 msgstr "Нет новостей"
@@ -1082,6 +1115,10 @@ msgstr "Нет сохраненных консольных подключени�
 #: src/renderer/pages/replays/replay_file_stats/replay_file_stats.messages.ts:6:26
 msgid "No stats computed"
 msgstr "Нет собранных статов"
+
+#: src/renderer/pages/home/overview/melee_majors_carousel/melee_majors_carousel.messages.ts:3:24
+msgid "No upcoming events"
+msgstr ""
 
 #: src/renderer/app/header/header.messages.ts:6:28
 msgid "No update available"
@@ -1351,7 +1388,7 @@ msgstr "Сервер удаленного контроля"
 msgid "Remove"
 msgstr "Удалить"
 
-#: src/renderer/app/header/user_menu/user_menu.messages.ts:15:44
+#: src/renderer/app/header/user_menu/user_menu.messages.ts:16:44
 #. {0} accountName: string
 msgid "Removed {0}"
 msgstr "Удален {0}"
@@ -1405,6 +1442,12 @@ msgstr "Сбросить"
 msgid "Reset {0}"
 msgstr "Сбросить {0}"
 
+#: src/renderer/components/location_guard/location_guard.messages.ts:8:16
+#: src/renderer/pages/home/overview/melee_majors_carousel/melee_majors_carousel.messages.ts:4:16
+#: src/renderer/pages/home/overview/news_preview/news_preview.messages.ts:5:16
+msgid "Retry"
+msgstr ""
+
 #: src/renderer/pages/not_found/not_found_page.messages.ts:4:21
 msgid "Return home"
 msgstr "Вернуться на главную"
@@ -1427,6 +1470,10 @@ msgstr "Вправо"
 #: src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:2:24
 msgid "Root SLP Folder"
 msgstr "Корневой каталог SLP"
+
+#: src/renderer/components/rosetta_install_dialog/rosetta_install_dialog.messages.ts:2:22
+msgid "Rosetta Required"
+msgstr ""
 
 #: src/renderer/pages/settings/create.messages.ts:14:27
 #: src/renderer/pages/settings/rules_and_policies_page/rules_and_policies_page.messages.ts:2:27
@@ -1483,7 +1530,7 @@ msgstr "Выбрать Melee ISO"
 msgid "Select your preferred language for the app."
 msgstr "Выберите язык приложения."
 
-#: src/renderer/pages/quick_start/steps/verify_email_step/verify_email_step.messages.ts:6:20
+#: src/renderer/components/verify_email_form/verify_email_form.messages.ts:5:20
 msgid "Send verification email again"
 msgstr "Отправить email с подтверждением заново"
 
@@ -1511,7 +1558,7 @@ msgstr "Показать продвинутые настройки"
 msgid "Show map of events"
 msgstr "Показать карту турниров"
 
-#: src/renderer/pages/home/news_feed/news_feed.messages.ts:6:19
+#: src/renderer/pages/home/news_feed/news_feed.messages.ts:7:19
 msgid "Show more"
 msgstr "Показать больше"
 
@@ -1526,6 +1573,12 @@ msgstr "Зарегистрироваться"
 #: src/renderer/pages/quick_start/quick_start.messages.ts:4:20
 msgid "Skip setup"
 msgstr "Пропустить настройку"
+
+#: src/renderer/components/rosetta_install_dialog/rosetta_install_dialog.messages.ts:3:22
+msgid ""
+"Slippi Dolphin requires Rosetta on Apple Silicon Macs. Would you like to "
+"install it now?"
+msgstr ""
 
 #: src/renderer/initialize_app.messages.ts:9:42
 #. {0} version: string
@@ -1545,11 +1598,11 @@ msgstr ""
 msgid "Slippi Online Rules"
 msgstr "Правила Slippi Online"
 
-#: src/renderer/components/slippi_usage_policy_list/slippi_usage_policy_list.messages.ts:5:30
+#: src/renderer/components/slippi_usage_policy_list/slippi_usage_policy_list.messages.ts:4:30
 msgid "Slippi Privacy Policy"
 msgstr "Slippi Privacy Policy"
 
-#: src/renderer/components/slippi_usage_policy_list/slippi_usage_policy_list.messages.ts:6:31
+#: src/renderer/components/slippi_usage_policy_list/slippi_usage_policy_list.messages.ts:5:31
 msgid "Slippi Terms of Service"
 msgstr "Slippi Terms of Service"
 
@@ -1689,7 +1742,7 @@ msgstr "Логи скопированы в буфер обмена"
 msgid "Support Slippi"
 msgstr "Поддержать Slippi"
 
-#: src/renderer/app/header/user_menu/user_menu.messages.ts:16:40
+#: src/renderer/app/header/user_menu/user_menu.messages.ts:17:40
 #. {0} accountName: string
 msgid "Switched to {0}"
 msgstr "Переключен на {0}"
@@ -1794,6 +1847,10 @@ msgstr ""
 msgid "This will remove all your {0} settings."
 msgstr "Это удалит все ваши настройки {0}."
 
+#: src/renderer/pages/spectate/auto_refresh_toggle/auto_refresh_toggle.messages.ts:2:24
+msgid "Time before auto-refresh turns off again. Click to extend by an hour."
+msgstr ""
+
 #: src/renderer/components/login_form/login_form.messages.ts:8:35
 msgid "Toggle password visibility"
 msgstr "Увидеть пароль"
@@ -1871,10 +1928,6 @@ msgstr "Не проверен"
 msgid "Up"
 msgstr "Вверх"
 
-#: src/renderer/pages/home/upcoming_tournaments/upcoming_tournaments.messages.ts:5:25
-msgid "Major Upcoming Tournaments"
-msgstr "Предстоящие мейжоры"
-
 #: src/renderer/pages/home/home_page.messages.ts:4:30
 #: src/renderer/pages/home/overview/overview.messages.ts:3:30
 msgid "Upcoming Tournaments"
@@ -1888,6 +1941,12 @@ msgstr "Обновление"
 msgid "Use anyway"
 msgstr "Использовать все равно"
 
+#: src/renderer/components/rosetta_install_dialog/rosetta_install_dialog.messages.ts:11:5
+msgid ""
+"Use of Rosetta is subject to Apple's software license agreement. A list of "
+"Apple SLAs may be found here:"
+msgstr ""
+
 #: src/renderer/components/login_notice/login_notice.messages.ts:2:28
 msgid "User is not logged in"
 msgstr "Пользователь не залогинен"
@@ -1896,6 +1955,11 @@ msgstr "Пользователь не залогинен"
 msgid "Valid"
 msgstr "Корректный"
 
+#: src/renderer/app/header/user_menu/user_menu.messages.ts:19:22
+msgid "Verify email"
+msgstr ""
+
+#: src/renderer/app/header/header.messages.ts:20:26
 #: src/renderer/pages/quick_start/steps/verify_email_step/verify_email_step.messages.ts:2:26
 msgid "Verify your email"
 msgstr "Подтвердите ваш email"
@@ -1943,7 +2007,7 @@ msgstr "Посмотреть профиль"
 msgid "View stream"
 msgstr "Смотреть стрим"
 
-#: src/renderer/pages/quick_start/steps/verify_email_step/verify_email_step.messages.ts:3:25
+#: src/renderer/components/verify_email_form/verify_email_form.messages.ts:2:25
 msgid ""
 "Visit your email, click the link in the verification email, and then check "
 "verification"
@@ -1965,7 +2029,7 @@ msgstr "Что такое Slippi Mirroring?"
 msgid "Would you like to play offline?"
 msgstr "Хотите ли вы играть оффлайн?"
 
-#: src/renderer/pages/quick_start/steps/verify_email_step/verify_email_step.messages.ts:9:21
+#: src/renderer/components/verify_email_form/verify_email_form.messages.ts:8:21
 msgid "Wrong email? "
 msgstr "Неправильный email? "
 
@@ -2006,7 +2070,7 @@ msgstr ""
 msgid "You must be logged in to use this feature"
 msgstr "Вы должны быть залогинены для использования этой функции"
 
-#: src/renderer/app/header/user_menu/user_menu.messages.ts:11:34
+#: src/renderer/app/header/user_menu/user_menu.messages.ts:12:34
 msgid "You will need to log in again next time you want to play."
 msgstr "Вам потребуется залогиниться снова, когда вы захотите поиграть."
 
