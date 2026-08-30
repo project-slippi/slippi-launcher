@@ -116,6 +116,6 @@
   "publish": {
     "provider": "github",
     "owner": "project-slippi",
-    "repo": "slippi-launcher"
+    "repo": "launcher-update-test"
   }
 }
