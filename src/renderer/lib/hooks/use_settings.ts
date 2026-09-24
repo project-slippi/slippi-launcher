@@ -97,6 +97,8 @@ export const useEnableLocationAccess = () => useSetting("enableLocationAccess");
 
 export const useEnableRankDisplay = () => useSetting("enableRankDisplay");
 
+export const useEnableAutoConnect = () => useSetting("enableAutoConnect");
+
 export const useDolphinBeta = (dolphinType: DolphinLaunchType) => {
   const netplayBeta = useSettingsStore((state) => state.settings.useNetplayBeta);
   const playbackBeta = useSettingsStore((state) => state.settings.usePlaybackBeta);
