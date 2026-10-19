@@ -1,5 +1,6 @@
 import type { NewsItem } from "@common/types";
 import Typography from "@mui/material/Typography";
+import { clsx } from "clsx";
 import React from "react";
 
 import { ExternalLink as A } from "@/components/external_link";
@@ -26,7 +27,7 @@ export const BlueskyPreview = React.memo(function BlueskyPreview({ item }: { ite
           )}
         </div>
       </div>
-      {body && <MarkdownContent content={body} className={styles.markdownContainer} />}
+      {body && <MarkdownContent content={body} className={clsx(styles.markdownContainer, styles.blueskyThread)} />}
     </div>
   );
 });
