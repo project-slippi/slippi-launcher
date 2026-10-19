@@ -129,8 +129,7 @@ jobs:
           mkdir -p ~/private_keys/
           echo "SLIPPI_ENABLE_SIGNING=true" >> $GITHUB_ENV
           echo '${{ secrets.APPLE_CONNECT_API_KEY }}' > ~/private_keys/AuthKey_${{ secrets.APPLE_API_KEY_ID }}.p8
-          echo "CSC_LINK=${{ secrets.CERTIFICATE_MACOS_APPLICATION }}" >> $GITHUB_ENV
-          echo "CSC_KEY_PASSWORD=${{ secrets.CERTIFICATE_MACOS_PASSWORD }}" >> $GITHUB_ENV
+          echo "CSC_KEYCHAIN=$HOME/Library/Keychains/build.keychain-db" >> $GITHUB_ENV
           echo "APPLE_API_KEY=~/private_keys/AuthKey_${{ secrets.APPLE_API_KEY_ID }}.p8" >> $GITHUB_ENV
           echo "APPLE_API_KEY_ID=${{ secrets.APPLE_API_KEY_ID }}" >> $GITHUB_ENV
           echo "APPLE_API_ISSUER=${{ secrets.APPLE_ISSUER_ID }}" >> $GITHUB_ENV
