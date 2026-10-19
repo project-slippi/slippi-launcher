@@ -17,6 +17,15 @@
   color: #ccc;
 }
 
+/* Separates the posts of a Bluesky thread */
+.blueskyThread hr {
+  width: 95%;
+  height: 1px;
+  margin: 16px auto;
+  border: none;
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
 .dateInfo {
   margin-right: auto;
   margin-left: 5px;
