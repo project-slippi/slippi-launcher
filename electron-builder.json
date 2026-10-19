@@ -67,6 +67,7 @@
     "target": ["nsis"],
     "icon": "assets/icon.ico",
     "signAndEditExecutable": true,
+    "signExts": [".dll"],
     "azureSignOptions": {
       "publisherName": "Slippi LLC",
       "endpoint": "https://eus.codesigning.azure.net",
