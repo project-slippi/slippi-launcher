@@ -1,3 +1,5 @@
+import type { NewsItem } from "@common/types";
+import { useEffect } from "react";
 import { create } from "zustand";
 import { combine } from "zustand/middleware";
 
@@ -6,6 +8,35 @@ import { useNewsFeedQuery } from "@/lib/hooks/use_data_fetch_query";
 // Only consider news that is published within this time frame to be considered "new"
 const NEW_NEWS_THRESHOLD_MS = 30 * 24 * 60 * 60 * 1000; // 1 month in milliseconds
 const STORAGE_KEY = "news-read-status";
+
+// Time to wait before automatically marking a news item as read
+const READ_DWELL_MS = 2_000;
+
+export function useMarkNewsAsReadWhenDisplayed(item: NewsItem | undefined): void {
+  const markAsRead = useNewsReadStore((s) => s.markAsRead);
+  const id = item?.id;
+  const publishedAtMs = item?.publishedAt.getTime();
+
+  useEffect(() => {
+    if (!id || publishedAtMs === undefined) {
+      return;
+    }
+
+    const target = { id, publishedAt: new Date(publishedAtMs) };
+    if (!isNewsUnread(target, useNewsReadStore.getState().readStatus)) {
+      return;
+    }
+
+    const timer = window.setTimeout(() => {
+      // Re-check in case it was marked elsewhere while the timer was pending
+      if (isNewsUnread(target, useNewsReadStore.getState().readStatus)) {
+        markAsRead(id);
+      }
+    }, READ_DWELL_MS);
+
+    return () => window.clearTimeout(timer);
+  }, [id, publishedAtMs, markAsRead]);
+}
 
 function loadReadStatus(): Record<string, number> {
   try {

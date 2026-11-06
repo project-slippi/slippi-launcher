@@ -8,11 +8,11 @@ import { InfiniteScrollContainer } from "@/components/infinite_scroll_container/
 import { useAppStore } from "@/lib/hooks/use_app_store";
 import type { SupportedLanguage } from "@/services/i18n/util";
 
-import { NewsArticleContainer } from "../news_article/news_article.container";
+import { NewsArticle } from "../news_article/news_article";
 import { ListItem } from "./list_item";
 import { NewsDualPaneMessages as Messages } from "./news_dual_pane.messages";
 import styles from "./news_dual_pane.module.css";
-import { isNewsUnread, useNewsReadStore } from "./news_read_store";
+import { isNewsUnread, useMarkNewsAsReadWhenDisplayed, useNewsReadStore } from "./news_read_store";
 
 const INITIAL_VISIBLE = 20;
 const LOAD_MORE_COUNT = 10;
@@ -119,4 +119,18 @@ export const NewsDualPane = React.memo(function NewsDualPane({
       </div>
     </div>
   );
+});
+
+const NewsArticleContainer = React.memo(function NewsArticleContainer({ item }: { item: NewsItem | undefined }) {
+  const currentLanguage = useAppStore((store) => store.currentLanguage) as SupportedLanguage;
+
+  // Mark the news item as read when it is displayed
+  useMarkNewsAsReadWhenDisplayed(item);
+
+  if (!item) {
+    // The empty news list case should be handled by the parent component so this should never happen
+    return null;
+  }
+
+  return <NewsArticle item={item} currentLanguage={currentLanguage} />;
 });
