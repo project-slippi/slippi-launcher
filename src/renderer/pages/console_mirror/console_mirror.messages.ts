@@ -8,7 +8,5 @@ export const ConsoleMirrorMessages = {
   mirroringGuide: () => "Mirroring Guide",
   consoleAutoConnect: () => "Auto-connect",
   consoleAutoConnectDescription: () =>
-    "Automatically connect to saved consoles as they appear on the network. " +
-    "Consoles you disconnect manually stay disconnected until you reconnect them, " +
-    "or toggle console auto-connect off and on again.",
+    "Automatically connect to saved consoles when discovered. Manually disconnected consoles will remain disconnected until manually reconnected or Auto-connect is toggled.",
 };
