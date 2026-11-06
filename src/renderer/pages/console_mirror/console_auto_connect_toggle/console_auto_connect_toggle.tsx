@@ -1,12 +1,8 @@
 import { css } from "@emotion/react";
 import HelpOutline from "@mui/icons-material/HelpOutline";
-import Dialog from "@mui/material/Dialog";
-import DialogContent from "@mui/material/DialogContent";
-import DialogTitle from "@mui/material/DialogTitle";
 import FormControlLabel from "@mui/material/FormControlLabel";
-import IconButton from "@mui/material/IconButton";
 import Switch from "@mui/material/Switch";
-import React from "react";
+import Tooltip from "@mui/material/Tooltip";
 
 import { useConsoleDiscoveryStore } from "@/lib/hooks/use_console_discovery";
 import { useEnableConsoleAutoConnect } from "@/lib/hooks/use_settings";
@@ -18,7 +14,6 @@ export const ConsoleAutoConnectToggle = () => {
   const [enableConsoleAutoConnect, setEnableConsoleAutoConnect] = useEnableConsoleAutoConnect();
   const clearConsoleAutoConnectOptOuts = useConsoleDiscoveryStore((store) => store.clearConsoleAutoConnectOptOuts);
   const { showError } = useToasts();
-  const [modalOpen, setModalOpen] = React.useState(false);
 
   const onToggle = (checked: boolean) => {
     // Re-enabling clears manual disconnects so all available consoles reconnect.
@@ -54,25 +49,15 @@ export const ConsoleAutoConnectToggle = () => {
           }
         `}
       />
-      <IconButton
-        onClick={() => setModalOpen(true)}
-        size="small"
-        css={css`
-          opacity: 0.5;
-        `}
-      >
+      <Tooltip title={Messages.consoleAutoConnectDescription()}>
         <HelpOutline
           css={css`
             font-size: 18px;
+            opacity: 0.5;
+            cursor: help;
           `}
         />
-      </IconButton>
-      <Dialog open={modalOpen} closeAfterTransition={true} onClose={() => setModalOpen(false)}>
-        <DialogTitle>{Messages.whatIsConsoleAutoConnect()}</DialogTitle>
-        <DialogContent>
-          <p>{Messages.consoleAutoConnectDescription()}</p>
-        </DialogContent>
-      </Dialog>
+      </Tooltip>
     </div>
   );
 };
