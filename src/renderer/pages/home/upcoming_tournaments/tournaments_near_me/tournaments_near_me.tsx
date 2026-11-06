@@ -38,12 +38,12 @@ const NearbyTournamentCard = ({
 }: {
   name: string;
   url: string;
-  imageSrc: string;
+  imageSrc?: string;
   distance: { distance: number; units: "km" | "mi" };
   startDate: Date;
   endDate: Date;
   timezone: string;
-  entrantCount: number;
+  entrantCount?: number;
 }) => {
   const currentLanguage = useAppStore((store) => store.currentLanguage) as SupportedLanguage;
   const dateRange = formatDateRange(startDate, endDate, timezone, currentLanguage);
@@ -57,7 +57,7 @@ const NearbyTournamentCard = ({
 
   return (
     <A href={url} className={styles.card}>
-      <img src={imageSrc} alt={name} className={styles.thumbnail} />
+      {imageSrc && <img src={imageSrc} alt={name} className={styles.thumbnail} />}
       <div className={styles.content}>
         <div style={{ display: "flex", alignItems: "center" }}>
           <div className={styles.name}>{name}</div>
@@ -67,11 +67,15 @@ const NearbyTournamentCard = ({
         </div>
         <div className={styles.meta}>
           <span className={styles.date}>{dateRange}</span>
-          <span className={styles.dot} />
-          <span className={styles.entrantsCount}>
-            <PeopleIcon style={{ fontSize: "16pt" }} />
-            {entrantCount}
-          </span>
+          {entrantCount !== undefined && (
+            <>
+              <span className={styles.dot} />
+              <span className={styles.entrantsCount}>
+                <PeopleIcon style={{ fontSize: "16pt" }} />
+                {entrantCount}
+              </span>
+            </>
+          )}
         </div>
       </div>
       <div className={clsx(styles.countdownOverlay, isLive && styles.happeningNow)}>
@@ -130,7 +134,8 @@ export const TournamentsNearMe = ({ locationInfo }: { locationInfo: UserLocation
     } else if (sortBy === "date") {
       events.sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime());
     } else if (sortBy === "entrants") {
-      events.sort((a, b) => b.attendees - a.attendees);
+      // Events with an unknown attendee count sort last
+      events.sort((a, b) => (b.attendees ?? -1) - (a.attendees ?? -1));
     }
 
     return events;

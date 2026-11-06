@@ -1,5 +1,8 @@
 import { Preconditions } from "@common/preconditions";
 import { TimeExpiryCache } from "@common/time_expiry_cache";
+import electronLog from "electron-log";
+
+const log = electronLog.scope("smash_map");
 
 const SECOND = 1000;
 const MINUTE = 60 * SECOND;
@@ -15,7 +18,8 @@ type SmashMapEventResponse = {
   id: number;
   game: Game;
   address: Address;
-  image: Image;
+  // Events without an uploaded profile image have a null image
+  image: Image | null;
   is_online: number;
   name: string;
   iso_start_date_time: string;
@@ -23,7 +27,8 @@ type SmashMapEventResponse = {
   timezone_start_date_time: string;
   timezone_end_date_time: string;
   timezone: string;
-  attendees: number;
+  /** Number of attendees at the event, returns null if unknown */
+  attendees: number | null;
   link: string;
   user_subscribed: boolean;
 };
@@ -69,7 +74,7 @@ function isValidLatLng(lat: number, lng: number) {
 
 export type SmashMapEvent = {
   name: string;
-  imageSrc: string;
+  imageSrc?: string;
   startDate: Date;
   endDate: Date;
   timezone: string;
@@ -80,8 +85,8 @@ export type SmashMapEvent = {
   };
   /** Distance from the search location to the event venue in km */
   distanceToVenueKm: number;
-  /** Number of attendees at the event */
-  attendees: number;
+  /** Number of attendees at the event, if known */
+  attendees?: number;
 };
 
 export async function fetchNearestTournaments(
@@ -98,41 +103,100 @@ export async function fetchNearestTournaments(
   if (!response) {
     // Fetch the data
     const res = await fetch(url);
-    response = (await res.json()) as SmashMapEventsResponse;
+    if (!res.ok) {
+      throw new Error(`Failed to fetch SmashMap events: HTTP ${res.status} ${res.statusText}`);
+    }
 
-    // Cache the data
+    let data: unknown;
+    try {
+      data = await res.json();
+    } catch {
+      throw new Error("Failed to parse SmashMap events response");
+    }
+
+    Preconditions.checkState(isSmashMapEventsResponse(data), "Invalid SmashMap events response");
+    response = data;
+
+    // Cache the data only after we know it has the expected shape
     smashMapResponseCache.set(url, response);
   }
 
   const now = Date.now();
-  return response.data
-    .map((event) => mapSmashMapEventResponseToSmashMapEvent(event, { lat, lng }))
-    .filter((event) => event.endDate.getTime() > now);
+  return (
+    response.data
+      .map((event) => safeMapSmashMapEventResponse(event, { lat, lng }))
+      // Drop any events we could not map instead of failing the entire list
+      .filter((event): event is SmashMapEvent => event !== null && event.endDate.getTime() > now)
+  );
+}
+
+function safeMapSmashMapEventResponse(
+  event: SmashMapEventResponse,
+  searchLocation: { lat: number; lng: number },
+): SmashMapEvent | null {
+  try {
+    return mapSmashMapEventResponseToSmashMapEvent(event, searchLocation);
+  } catch (error) {
+    log.warn(`Failed to map SmashMap event: ${event?.name} (${event?.id})`, error);
+    return null;
+  }
 }
 
 function mapSmashMapEventResponseToSmashMapEvent(
   event: SmashMapEventResponse,
   searchLocation: { lat: number; lng: number },
-): SmashMapEvent {
+): SmashMapEvent | null {
+  const startDate = new Date(event.iso_start_date_time);
+  const endDate = new Date(event.iso_end_date_time);
+  const address = event.address;
+  const timezone = address?.country?.timezone;
+
+  if (
+    Number.isNaN(startDate.getTime()) ||
+    Number.isNaN(endDate.getTime()) ||
+    !isValidTimeZone(timezone) ||
+    !address ||
+    !isValidLatLng(address.latitude, address.longitude)
+  ) {
+    log.warn(`Skipping invalid SmashMap event: ${event.name} (${event.id})`, event);
+    return null;
+  }
+
   return {
     name: event.name,
-    imageSrc: event.image.url,
-    startDate: new Date(event.iso_start_date_time),
-    endDate: new Date(event.iso_end_date_time),
-    timezone: event.address.country.timezone,
+    // Events are allowed to have no image
+    imageSrc: event.image?.url,
+    startDate,
+    endDate,
+    timezone,
     url: event.link,
     location: {
-      lat: event.address.latitude,
-      lng: event.address.longitude,
+      lat: address.latitude,
+      lng: address.longitude,
     },
-    distanceToVenueKm: haversineDistanceKm(
-      event.address.latitude,
-      event.address.longitude,
-      searchLocation.lat,
-      searchLocation.lng,
-    ),
-    attendees: event.attendees,
+    distanceToVenueKm: haversineDistanceKm(address.latitude, address.longitude, searchLocation.lat, searchLocation.lng),
+    attendees: event.attendees ?? undefined,
   };
+}
+
+function isSmashMapEventsResponse(value: unknown): value is SmashMapEventsResponse {
+  if (typeof value !== "object" || value === null) {
+    return false;
+  }
+  return Array.isArray((value as { data?: unknown }).data);
+}
+
+function isValidTimeZone(timezone: string | null | undefined): timezone is string {
+  if (!timezone) {
+    return false;
+  }
+
+  try {
+    new Intl.DateTimeFormat("en-US", { timeZone: timezone });
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 function toRadians(degrees: number): number {
