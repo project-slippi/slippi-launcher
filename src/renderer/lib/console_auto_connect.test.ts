@@ -3,7 +3,7 @@ import { ConnectionStatus } from "@console/types";
 import type { StoredConnection } from "@settings/types";
 import { describe, expect, it } from "vitest";
 
-import { getConnectionsToAutoConnect } from "./auto_connect";
+import { getConnectionsToConsoleAutoConnect } from "./console_auto_connect";
 
 const makeConnection = (id: number, ipAddress: string): StoredConnection => ({
   id,
@@ -15,11 +15,11 @@ const makeConnection = (id: number, ipAddress: string): StoredConnection => ({
   useNicknameFolders: false,
 });
 
-type Params = Parameters<typeof getConnectionsToAutoConnect>[0];
+type Params = Parameters<typeof getConnectionsToConsoleAutoConnect>[0];
 
 // Runs the decision with sensible defaults so each test only specifies what it cares about.
 const run = (overrides: Partial<Params>): StoredConnection[] =>
-  getConnectionsToAutoConnect({
+  getConnectionsToConsoleAutoConnect({
     enabled: true,
     savedConnections: [],
     availableIps: new Set<string>(),
@@ -29,14 +29,14 @@ const run = (overrides: Partial<Params>): StoredConnection[] =>
     ...overrides,
   });
 
-describe("getConnectionsToAutoConnect", () => {
+describe("getConnectionsToConsoleAutoConnect", () => {
   it("connects to a saved console that is available and disconnected", () => {
     const conn = makeConnection(1, "192.168.0.5");
     const result = run({ savedConnections: [conn], availableIps: new Set(["192.168.0.5"]) });
     expect(result).toEqual([conn]);
   });
 
-  it("returns an empty array when auto-connect is disabled, even if a console is available", () => {
+  it("returns an empty array when console auto-connect is disabled, even if a console is available", () => {
     const result = run({
       enabled: false,
       savedConnections: [makeConnection(1, "192.168.0.5")],

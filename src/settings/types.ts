@@ -70,7 +70,7 @@ export interface SettingsSchema {
   enableRankDisplay: boolean;
 
   // Console mirror settings
-  enableAutoConnect: boolean;
+  enableConsoleAutoConnect: boolean;
 }
 
 /**

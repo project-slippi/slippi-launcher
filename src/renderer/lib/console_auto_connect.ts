@@ -2,8 +2,8 @@ import type { ConsoleMirrorStatusUpdate } from "@console/types";
 import { ConnectionStatus } from "@console/types";
 import type { StoredConnection } from "@settings/types";
 
-type GetConnectionsToAutoConnectParams = {
-  // Whether the auto-connect feature is enabled. When false, nothing is auto-connected.
+type GetConnectionsToConsoleAutoConnectParams = {
+  // Whether the console auto-connect feature is enabled. When false, nothing is auto-connected.
   enabled: boolean;
   savedConnections: StoredConnection[];
   availableIps: ReadonlySet<string>;
@@ -21,14 +21,14 @@ type GetConnectionsToAutoConnectParams = {
  * running component. The effect that calls it is responsible for performing the
  * actual connection.
  */
-export const getConnectionsToAutoConnect = ({
+export const getConnectionsToConsoleAutoConnect = ({
   enabled,
   savedConnections,
   availableIps,
   connectedConsoles,
   inFlightIps,
   optedOutIps,
-}: GetConnectionsToAutoConnectParams): StoredConnection[] => {
+}: GetConnectionsToConsoleAutoConnectParams): StoredConnection[] => {
   if (!enabled) {
     return [];
   }

@@ -14,8 +14,7 @@ import { DualPane } from "@/components/dual_pane";
 import { ExternalLink as A } from "@/components/external_link";
 import { Footer } from "@/components/footer/footer";
 import { Button } from "@/components/form/button";
-import { Toggle } from "@/components/form/toggle";
-import { getConnectionsToAutoConnect } from "@/lib/auto_connect";
+import { getConnectionsToConsoleAutoConnect } from "@/lib/console_auto_connect";
 import type { EditConnectionType } from "@/lib/console_connection";
 import {
   addConsoleConnection,
@@ -24,11 +23,12 @@ import {
   editConsoleConnection,
 } from "@/lib/console_connection";
 import { useConsoleDiscoveryStore } from "@/lib/hooks/use_console_discovery";
-import { useEnableAutoConnect, useSettings } from "@/lib/hooks/use_settings";
+import { useEnableConsoleAutoConnect, useSettings } from "@/lib/hooks/use_settings";
 import { useToasts } from "@/lib/hooks/use_toasts";
 import { useServices } from "@/services";
 
 import { AddConnectionDialog } from "./add_connection_dialog/add_connection_dialog";
+import { ConsoleAutoConnectToggle } from "./console_auto_connect_toggle/console_auto_connect_toggle";
 import { ConsoleMirrorMessages as Messages } from "./console_mirror.messages";
 import { NewConnectionList } from "./new_connection_list/new_connection_list";
 import { SavedConnectionsList } from "./saved_connections_list/saved_connections_list";
@@ -50,9 +50,8 @@ export const ConsoleMirror = React.memo(() => {
   const savedIps = savedConnections.map((conn) => conn.ipAddress);
   const availableConsoles = useConsoleDiscoveryStore((store) => store.consoleItems);
   const connectedConsoles = useConsoleDiscoveryStore((store) => store.connectedConsoles);
-  const autoConnectOptOutIps = useConsoleDiscoveryStore((store) => store.autoConnectOptOutIps);
-  const clearAutoConnectOptOuts = useConsoleDiscoveryStore((store) => store.clearAutoConnectOptOuts);
-  const [enableAutoConnect, setEnableAutoConnect] = useEnableAutoConnect();
+  const consoleAutoConnectOptOutIps = useConsoleDiscoveryStore((store) => store.consoleAutoConnectOptOutIps);
+  const [enableConsoleAutoConnect] = useEnableConsoleAutoConnect();
   const consoleItemsToShow = availableConsoles.filter((item) => !savedIps.includes(item.ip));
   const consoleIsConnected = React.useCallback(
     (ipAddress?: string): boolean => {
@@ -86,12 +85,12 @@ export const ConsoleMirror = React.memo(() => {
   // that mutating it doesn't trigger a re-render (and in turn re-run this effect).
   const inFlightConnectionsRef = React.useRef<Set<string>>(new Set());
 
-  // Automatically connect to saved consoles as they appear on the network.
+  // Console auto-connect: automatically connect to saved consoles as they appear on the network.
   React.useEffect(() => {
     const inFlightIps = inFlightConnectionsRef.current;
 
     // Once a console reports a terminal disconnected state, stop treating it as in-flight so
-    // it can be auto-connected again (e.g. after dropping off the network and returning).
+    // it can be picked up by console auto-connect again (e.g. after dropping off the network and returning).
     for (const [ip, info] of Object.entries(connectedConsoles)) {
       if (info.status === ConnectionStatus.DISCONNECTED) {
         inFlightIps.delete(ip);
@@ -99,9 +98,9 @@ export const ConsoleMirror = React.memo(() => {
     }
 
     const availableIps = new Set(availableConsoles.map((item) => item.ip));
-    const optedOutIps = new Set(Object.keys(autoConnectOptOutIps));
-    const toConnect = getConnectionsToAutoConnect({
-      enabled: enableAutoConnect,
+    const optedOutIps = new Set(Object.keys(consoleAutoConnectOptOutIps));
+    const toConnect = getConnectionsToConsoleAutoConnect({
+      enabled: enableConsoleAutoConnect,
       savedConnections,
       availableIps,
       connectedConsoles,
@@ -117,11 +116,11 @@ export const ConsoleMirror = React.memo(() => {
       });
     }
   }, [
-    enableAutoConnect,
+    enableConsoleAutoConnect,
     availableConsoles,
     savedConnections,
     connectedConsoles,
-    autoConnectOptOutIps,
+    consoleAutoConnectOptOutIps,
     consoleService,
     showError,
   ]);
@@ -172,27 +171,17 @@ export const ConsoleMirror = React.memo(() => {
               >
                 <h1>{Messages.consoleMirror()}</h1> <MirroringHelp />
               </div>
-              <Button onClick={() => setModalOpen(true)} startIcon={<AddIcon />}>
-                {Messages.newConnection()}
-              </Button>
               <div
                 css={css`
-                  max-width: 480px;
-                  margin-top: 20px;
+                  display: flex;
+                  align-items: center;
+                  gap: 16px;
                 `}
               >
-                <Toggle
-                  value={enableAutoConnect}
-                  onChange={(checked) => {
-                    // Re-enabling clears manual disconnects so all available consoles reconnect.
-                    if (checked) {
-                      clearAutoConnectOptOuts();
-                    }
-                    setEnableAutoConnect(checked).catch(showError);
-                  }}
-                  label={Messages.autoConnect()}
-                  description={Messages.autoConnectDescription()}
-                />
+                <Button onClick={() => setModalOpen(true)} startIcon={<AddIcon />}>
+                  {Messages.newConnection()}
+                </Button>
+                <ConsoleAutoConnectToggle />
               </div>
               <SavedConnectionsList
                 availableConsoles={availableConsoles}

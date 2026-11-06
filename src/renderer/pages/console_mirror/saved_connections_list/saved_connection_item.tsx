@@ -52,19 +52,19 @@ export const SavedConnectionItem = ({
 }: SavedConnectionItemProps) => {
   const { showError } = useToasts();
   const { consoleService } = useServices();
-  const optOutOfAutoConnect = useConsoleDiscoveryStore((store) => store.optOutOfAutoConnect);
-  const allowAutoConnect = useConsoleDiscoveryStore((store) => store.allowAutoConnect);
+  const optOutOfConsoleAutoConnect = useConsoleDiscoveryStore((store) => store.optOutOfConsoleAutoConnect);
+  const allowConsoleAutoConnect = useConsoleDiscoveryStore((store) => store.allowConsoleAutoConnect);
   const onConnect = React.useCallback(async () => {
-    // Manually connecting re-opts the console into auto-connect.
-    allowAutoConnect(connection.ipAddress);
+    // Manually connecting re-opts the console into console auto-connect.
+    allowConsoleAutoConnect(connection.ipAddress);
     await consoleService.connectToConsoleMirror(buildMirrorConfig(connection, nickname));
-  }, [consoleService, connection, nickname, allowAutoConnect]);
+  }, [consoleService, connection, nickname, allowConsoleAutoConnect]);
   const onMirror = React.useCallback(() => {
     consoleService.startMirroring(connection.ipAddress).catch(showError);
   }, [consoleService, connection, showError]);
   const onDisconnect = () => {
-    // Manually disconnecting opts the console out of auto-connect for this session.
-    optOutOfAutoConnect(connection.ipAddress);
+    // Manually disconnecting opts the console out of console auto-connect for this session.
+    optOutOfConsoleAutoConnect(connection.ipAddress);
     void consoleService.disconnectFromConsole(connection.ipAddress);
   };
   const statusName =
