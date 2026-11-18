@@ -1,0 +1,1919 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: slippi-launcher 1.0\n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: uk\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : 2);\n"
+"mime-version: 1.0\n"
+"x-generator: i18next-auto-keys CLI\n"
+"X-Generator: Poedit 3.10\n"
+
+#: src/renderer/components/activate_online_form/activate_online_form.messages.ts:3:30
+msgid "2-4 uppercase English characters"
+msgstr "Від 2 до 4 великих англійських літер"
+
+#: src/renderer/pages/quick_start/steps/iso_selection_step/iso_selection_step.messages.ts:10:40
+msgid "7z files must be uncompressed to be used in Dolphin."
+msgstr "Щоб використовувати файли 7z у Dolphin, їх потрібно розпакувати."
+
+#: src/renderer/components/verify_email_form/verify_email_form.messages.ts:7:42
+msgid "A confirmation email has been sent to:"
+msgstr "Лист із підтвердженням надіслано на адресу:"
+
+#: src/renderer/listeners/listeners.messages.ts:3:23
+msgid "A network error occurred."
+msgstr "Сталася помилка мережі."
+
+#: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:4:20
+msgid "Accept All"
+msgstr "Прийняти все"
+
+#: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:5:33
+msgid "Accept rules and policies"
+msgstr "Прийняти правила та політики"
+
+#: src/renderer/app/header/user_menu/user_menu.messages.ts:2:29
+msgid "Activate online play"
+msgstr "Увімкнути мережеву гру"
+
+#: src/renderer/pages/home/overview/ranked_day_status/ranked_day_status.messages.ts:3:17
+msgid "Active"
+msgstr "Активний"
+
+#: src/renderer/components/multi_path_input/multi_path_input.messages.ts:3:14 src/renderer/pages/console_mirror/new_connection_list/new_connection_list.messages.ts:5:14 src/renderer/pages/settings/dolphin_settings/gecko_codes/add_codes/add_codes.messages.ts:6:14
+#: src/renderer/pages/settings/dolphin_settings/gecko_codes/gecko_codes.messages.ts:6:14
+msgid "Add"
+msgstr "Додати"
+
+#: src/renderer/app/header/account_switcher/account_switcher.messages.ts:2:28
+msgid "Add another account"
+msgstr "Додати ще один обліковий запис"
+
+#: src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:10:31
+msgid "Additional SLP Folders"
+msgstr "Додаткові папки SLP"
+
+#: src/renderer/pages/settings/create.messages.ts:12:19
+msgid "Advanced"
+msgstr "Розширені"
+
+#: src/renderer/components/rosetta_install_dialog/rosetta_install_dialog.messages.ts:12:26
+msgid "Agree and Install"
+msgstr "Погодитися та встановити"
+
+#. {0} count: number
+#: src/renderer/pages/replays/replay_browser/file_selection_toolbar/file_selection_toolbar.messages.ts:3:40
+msgid "All {0, plural, one {# file} other {# files}} selected"
+msgstr "Вибрано всі {0, plural, one {# файл} few {# файли} many {# файлів} other {# файлу}}Вибрано всі {0, plural, one {# файл} few {# файли} many {# файлів} other {# файла}}"
+
+#: src/renderer/components/location_guard/location_guard.messages.ts:6:16
+msgid "Allow"
+msgstr "Дозволено"
+
+#: src/renderer/components/location_guard/location_guard.messages.ts:2:16
+msgid "Allow Approximate Location Access"
+msgstr "Дозволити доступ до приблизного місцезнаходження"
+
+#: src/renderer/pages/settings/advanced_app_settings/advanced_app_settings.messages.ts:6:5
+msgid "Allow the app to access your approximate location for showing nearby tournaments. This data will be sent to a third-party service. Slippi does NOT collect this data."
+msgstr "Дозвольте застосунку доступ до вашого приблизного місцезнаходження, щоб показувати турніри поблизу. Ці дані буде надіслано стороннім сервісом. Slippi НЕ збирає ці дані."
+
+#: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:15:5
+msgid "Allows automatic hiding and showing of an OBS source (e.g. your Dolphin capture) when the game is active. Requires OBS Websocket 5.0+, which comes preinstalled on OBS 28+."
+msgstr "Дає змогу автоматично приховувати й показувати джерело OBS (наприклад, захоплення Dolphin), коли гра активна. Потрібен OBS Websocket 5.0+, який попередньо встановлений в OBS 28+."
+
+#: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:24:33
+msgid "Allows external programs to read live game data by connecting to a local endpoint."
+msgstr "Дає змогу зовнішнім програмам читати дані гри в реальному часі через підключення до локальної кінцевої точки."
+
+#: src/renderer/pages/settings/spectate_settings/spectate_settings.messages.ts:3:49
+msgid "Allows remote control of spectate features via WebSocket."
+msgstr "Дає змогу дистанційно керувати функціями спостереження через WebSocket."
+
+#: src/renderer/pages/quick_start/steps/verify_email_step/verify_email_step.messages.ts:3:27
+msgid "An error occurred. The application does not have a user."
+msgstr "Сталася помилка. У застосунку немає користувача."
+
+#: src/renderer/pages/settings/appearance_settings/language_selector/language_selector.messages.ts:2:22
+msgid "App Language"
+msgstr "Мова застосунку"
+
+#: src/renderer/pages/settings/create.messages.ts:10:22
+msgid "App Settings"
+msgstr "Налаштування додатку"
+
+#: src/renderer/pages/settings/create.messages.ts:11:21
+msgid "Appearance"
+msgstr "Зовнішній вигляд"
+
+#: src/renderer/pages/settings/dolphin_settings/gecko_codes/manage_codes/manage_codes.messages.ts:5:21
+msgid "Are you sure you want to delete this code?"
+msgstr "Ви впевнені, що хочете видалити цей код?"
+
+#: src/renderer/app/header/user_menu/user_menu.messages.ts:11:36
+msgid "Are you sure you want to log out?"
+msgstr "Ви впевнені, що бажаєте вийти?"
+
+#: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:17:21
+msgid "Are you sure?"
+msgstr "Ви впевнені?"
+
+#: src/renderer/pages/spectate/auto_refresh_toggle/auto_refresh_toggle.messages.ts:3:22
+msgid "Auto-refresh"
+msgstr "Автоматичне оновлення"
+
+#. {0} version: string
+#: src/renderer/initialize_app.messages.ts:11:5
+msgid "Auto-update to version {0} failed. Try manually downloading the latest version from slippi.gg."
+msgstr "Не вдалося автоматично оновити до версії {0}. Спробуйте вручну завантажити останню версію з slippi.gg."
+
+#: src/renderer/pages/settings/advanced_app_settings/advanced_app_settings.messages.ts:3:39
+msgid "Automatically install Slippi Launcher updates when they become available."
+msgstr "Автоматично встановлювати оновлення Slippi Launcher, коли вони стають доступні."
+
+#: src/renderer/pages/console_mirror/new_connection_list/new_connection_list.messages.ts:4:20 src/renderer/pages/console_mirror/saved_connections_list/saved_connection_item.messages.ts:7:20
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:24:20
+msgid "Available"
+msgstr "Доступно"
+
+#: src/renderer/pages/home/news_feed/news_dual_pane/news_dual_pane.messages.ts:2:15 src/renderer/pages/quick_start/stepper_dots/stepper_dots.messages.ts:3:15
+msgid "Back"
+msgstr "Назад"
+
+#: src/renderer/pages/replays/replay_file_stats/game_profile_header/game_profile_header.messages.ts:2:24
+msgid "Back to replays"
+msgstr "Назад до записів ігор"
+
+#: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:24:15
+msgid "Beta (Mainline)"
+msgstr "Бета-версія (основна гілка)"
+
+#. {0} broadcastDuration: string
+#: src/renderer/pages/spectate/share_gameplay_block/broadcast_panel.messages.ts:9:50
+msgid "Broadcast ended after {0}"
+msgstr "Трансляцію завершено через {0}"
+
+#: src/renderer/pages/spectate/share_gameplay_block/broadcast_panel.messages.ts:8:27
+msgid "Broadcast started"
+msgstr "Трансляцію розпочато"
+
+#. {0} displayName: string
+#. {1} connectCode: string
+#: src/renderer/pages/spectate/share_gameplay_block/start_broadcast_dialog.messages.ts:6:66
+msgid "Broadcast to: {0} ({1})"
+msgstr "Трансляція для: {0} ({1})"
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:30:27
+msgid "CGNAT or Double NAT"
+msgstr "CGNAT або подвійний NAT"
+
+#: src/renderer/components/activate_online_form/activate_online_form.messages.ts:5:23
+msgid "Can be changed later for a one-time payment"
+msgstr "Можна змінити пізніше за одноразову плату"
+
+#: src/renderer/components/verify_email_form/verify_email_form.messages.ts:4:24
+msgid "Can't find the email? Check your spam folder. Still missing? "
+msgstr "Не можете знайти лист? Перевірте папку зі спамом. Досі немає? "
+
+#: src/renderer/app/header/header.messages.ts:15:17 src/renderer/components/confirmation_modal/confirmation_modal.messages.ts:3:17 src/renderer/components/rosetta_install_dialog/rosetta_install_dialog.messages.ts:9:17 src/renderer/pages/spectate/share_gameplay_block/start_broadcast_dialog.messages.ts:10:17
+msgid "Cancel"
+msgstr "Скасувати"
+
+#: src/renderer/components/multi_path_input/multi_path_input.messages.ts:5:36
+msgid "Cannot add subfolders of the Root SLP Folder."
+msgstr "Не можна додавати вкладені папки кореневої папки SLP."
+
+#: src/renderer/pages/spectate/footer/footer.messages.ts:3:23
+msgid "Change Folder"
+msgstr "Змінити папку"
+
+#: src/renderer/components/verify_email_form/verify_email_form.messages.ts:9:22
+msgid "Change email"
+msgstr "Змінити e-mail"
+
+#: src/renderer/pages/settings/create.messages.ts:5:15
+msgid "Chat"
+msgstr "Чат"
+
+#. {0} direction: string
+#: src/renderer/pages/settings/chat_settings/chat_settings.messages.ts:7:37
+msgid "Chat Group: {0}"
+msgstr "Група чату: {0}"
+
+#: src/renderer/pages/settings/chat_settings/chat_settings.messages.ts:12:23
+msgid "Chat Messages"
+msgstr "Повідомлення чату"
+
+#: src/renderer/pages/settings/chat_settings/chat_settings.messages.ts:13:34
+msgid "Chat messages to use for netplay"
+msgstr "Повідомлення чату для мережевої гри"
+
+#: src/renderer/components/verify_email_form/verify_email_form.messages.ts:3:28
+msgid "Check Verification"
+msgstr "Перевірити підтвердження"
+
+#: src/renderer/app/header/header.messages.ts:3:26
+msgid "Check for updates"
+msgstr "Перевірити наявність оновлень"
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostics_button.messages.ts:6:29 src/renderer/pages/settings/help_page/support_box/support_box.messages.ts:9:29
+msgid "Check network issues"
+msgstr "Перевірити наявність проблем із мережею"
+
+#: src/renderer/app/header/header.messages.ts:4:29
+msgid "Checking for updates..."
+msgstr "Перевірка оновлень..."
+
+#: src/renderer/app/header/header.messages.ts:9:29 src/renderer/pages/quick_start/steps/activate_online_step/activate_online_step.messages.ts:2:29
+msgid "Choose a connect code"
+msgstr "Оберіть код підключення"
+
+#: src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:11:42
+msgid "Choose any additional SLP folders that should show up in the replay browser."
+msgstr "Оберіть додаткові папки SLP, які мають показуватися в браузері записів ігор."
+
+#: src/renderer/pages/settings/game_settings/game_settings.messages.ts:8:38
+msgid "Choose what happens when the Play button is pressed."
+msgstr "Оберіть, що відбувається після натискання кнопки «Грати»."
+
+#: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:22:50
+msgid "Choose which Slippi Dolphin release to install"
+msgstr "Оберіть, який випуск Slippi Dolphin встановити"
+
+#: src/renderer/pages/replays/replay_browser/file_selection_toolbar/file_selection_toolbar.messages.ts:5:16 src/renderer/pages/spectate/share_gameplay_block/start_broadcast_dialog.messages.ts:8:16
+msgid "Clear"
+msgstr "Очистити"
+
+#: src/renderer/pages/settings/advanced_app_settings/advanced_app_settings.messages.ts:7:25
+msgid "Clear Temporary Files"
+msgstr "Очистити тимчасові файли"
+
+#: src/renderer/pages/settings/advanced_app_settings/advanced_app_settings.messages.ts:10:21
+msgid "Clear files"
+msgstr "Очистити файли"
+
+#: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:6:22
+msgid "Clear filter"
+msgstr "Очистити фільтр"
+
+#: src/renderer/components/slippi_usage_policy_list/slippi_usage_policy_list.messages.ts:3:29
+msgid "Click the links below to review:"
+msgstr "Натисніть на посилання нижче, щоб ознайомитися:"
+
+#: src/renderer/pages/settings/settings_page.messages.ts:2:16
+msgid "Close"
+msgstr "Закрити"
+
+#: src/renderer/pages/settings/game_settings/game_settings.messages.ts:4:31 src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:5:38
+msgid "Close Dolphin to change this setting"
+msgstr "Закрийте Dolphin, щоб змінити це налаштування"
+
+#: src/renderer/pages/settings/dolphin_settings/gecko_codes/manage_codes/manage_codes.messages.ts:7:32
+msgid "Code copied to clipboard!"
+msgstr "Код скопійовано в буфер обміну!"
+
+#: src/renderer/lib/validate/validate.messages.ts:6:24
+msgid "Code is too long"
+msgstr "Код задовгий"
+
+#: src/renderer/lib/validate/validate.messages.ts:5:25
+msgid "Code is too short"
+msgstr "Код закороткий"
+
+#: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:10:33
+msgid "Configure Dolphin"
+msgstr "Налаштувати Dolphin"
+
+#. {0} dolphinTypeName: string
+#: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:4:50
+msgid "Configure {0}"
+msgstr "Налаштувати {0}"
+
+#: src/renderer/app/header/header.messages.ts:17:18 src/renderer/components/confirmation_modal/confirmation_modal.messages.ts:2:18 src/renderer/pages/spectate/share_gameplay_block/start_broadcast_dialog.messages.ts:11:18
+msgid "Confirm"
+msgstr "Підтвердити"
+
+#: src/renderer/pages/replays/replay_browser/file_selection_toolbar/file_selection_toolbar.messages.ts:8:30
+msgid "Confirm File Deletion"
+msgstr "Підтвердьте видалення файлу"
+
+#: src/renderer/components/activate_online_form/activate_online_form.messages.ts:6:22
+msgid "Confirm code"
+msgstr "Підтвердити код"
+
+#: src/renderer/components/login_form/login_form.messages.ts:9:26
+msgid "Confirm password"
+msgstr "Підтвердьте пароль"
+
+#: src/renderer/pages/console_mirror/saved_connections_list/saved_connection_item.messages.ts:8:18
+msgid "Connect"
+msgstr "Підключитися"
+
+#: src/renderer/pages/console_mirror/saved_connections_list/saved_connection_item.messages.ts:2:20 src/renderer/pages/spectate/share_gameplay_block/broadcast_panel.messages.ts:3:20 src/renderer/pages/spectate/spectate_remote_control_block/spectate_remote_control_block.messages.ts:11:20
+msgid "Connected"
+msgstr "Підключено"
+
+#: src/renderer/pages/console_mirror/saved_connections_list/saved_connection_item.messages.ts:3:21 src/renderer/pages/spectate/share_gameplay_block/broadcast_panel.messages.ts:5:21
+msgid "Connecting"
+msgstr "Підключення"
+
+#: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:25:25
+msgid "Connection Port"
+msgstr "Порт підключення"
+
+#: src/renderer/app/create.messages.ts:5:18 src/renderer/pages/console_mirror/console_mirror.messages.ts:2:24
+msgid "Console Mirror"
+msgstr "Дзеркалення консолі"
+
+#: src/renderer/pages/console_mirror/new_connection_list/new_connection_list.messages.ts:3:27
+msgid "Consoles detected on the network will show up here."
+msgstr "Тут з'являться консолі, виявлені в мережі."
+
+#: src/renderer/components/login_form/login_form.messages.ts:15:19 src/renderer/pages/quick_start/steps/setup_complete_step/setup_complete_step.messages.ts:3:19
+msgid "Continue"
+msgstr "Продовжити"
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:7:17 src/renderer/pages/spectate/spectate_remote_control_block/spectate_remote_control_block.messages.ts:13:17
+#: src/renderer/pages/spectate/spectator_id_block/spectator_id_block.messages.ts:4:17
+msgid "Copied!"
+msgstr "Скопійовано!"
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:6:15 src/renderer/pages/spectate/spectate_remote_control_block/spectate_remote_control_block.messages.ts:14:15
+#: src/renderer/pages/spectate/spectator_id_block/spectator_id_block.messages.ts:3:15
+msgid "Copy"
+msgstr "Копіювати"
+
+#: src/renderer/pages/settings/help_page/support_box/support_box.messages.ts:8:19
+msgid "Copy logs"
+msgstr "Копіювати логи"
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:8:22
+msgid "Copy results"
+msgstr "Копіювати результати"
+
+#: src/renderer/pages/settings/dolphin_settings/gecko_codes/manage_codes/manage_codes.messages.ts:3:26
+msgid "Copy to Clipboard"
+msgstr "Копіювати в буфер обміну"
+
+#: src/renderer/components/login_form/login_form.messages.ts:2:26
+msgid "Create an account"
+msgstr "Створити обліковий запис"
+
+#: src/renderer/pages/replays/replay_file_stats/replay_file_stats.messages.ts:5:27
+msgid "Crunching numbers..."
+msgstr "Рахуємо..."
+
+#: src/renderer/pages/console_mirror/saved_connections_list/saved_connection_item.messages.ts:15:22 src/renderer/pages/replays/replay_file_stats/replay_file_stats.messages.ts:9:22
+msgid "Current file"
+msgstr "Поточний файл"
+
+#: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:4:24
+msgid "Current folder"
+msgstr "Поточна папка"
+
+#: src/renderer/pages/settings/chat_settings/chat_settings.messages.ts:4:18
+msgid "Default"
+msgstr "Типово"
+
+#: src/renderer/pages/console_mirror/saved_connections_list/saved_connections_list.messages.ts:3:17 src/renderer/pages/replays/replay_browser/file_list/file_list.messages.ts:3:17 src/renderer/pages/replays/replay_browser/file_selection_toolbar/file_selection_toolbar.messages.ts:4:17
+#: src/renderer/pages/settings/dolphin_settings/gecko_codes/manage_codes/manage_codes.messages.ts:6:17
+msgid "Delete"
+msgstr "Видалити"
+
+#: src/renderer/pages/settings/dolphin_settings/gecko_codes/manage_codes/manage_codes.messages.ts:2:21
+msgid "Delete Code"
+msgstr "Видалити код"
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:33:36
+msgid "Detected (it could also be a VPN)"
+msgstr "Виявлено (це також може бути VPN)"
+
+#: src/renderer/pages/settings/chat_settings/chat_settings.messages.ts:3:25
+msgid "Discard Changes"
+msgstr "Скасувати зміни"
+
+#: src/renderer/pages/console_mirror/saved_connections_list/saved_connection_item.messages.ts:10:21
+msgid "Disconnect"
+msgstr "Відключитися"
+
+#: src/renderer/pages/console_mirror/saved_connections_list/saved_connection_item.messages.ts:5:23 src/renderer/pages/spectate/share_gameplay_block/broadcast_panel.messages.ts:4:23 src/renderer/pages/spectate/spectate_remote_control_block/spectate_remote_control_block.messages.ts:12:23
+msgid "Disconnected"
+msgstr "Відключено"
+
+#: src/renderer/app/header/header.messages.ts:18:22 src/renderer/components/login_form/login_form.messages.ts:5:22
+msgid "Display Name"
+msgstr "Ім'я для показу"
+
+#: src/renderer/lib/validate/validate.messages.ts:10:31
+msgid "Display name is too long"
+msgstr "Ім'я для показу задовге"
+
+#: src/renderer/lib/validate/validate.messages.ts:9:32
+msgid "Display name is too short"
+msgstr "Ім'я для показу закоротке"
+
+#: src/renderer/lib/validate/validate.messages.ts:8:5
+msgid "Display names can only contain letters, numbers, Hiragana, Katakana, and special characters"
+msgstr "Імена можуть містити лише літери, цифри, хіраґану, катакану та спеціальні символи"
+
+#: src/renderer/pages/settings/create.messages.ts:7:26
+msgid "Dolphin Settings"
+msgstr "Налаштування Dolphin"
+
+#. {0} exitCode: string
+#: src/renderer/lib/dolphin/handle_dolphin_exit_code.messages.ts:9:5
+msgid "Dolphin exited with error code: {0}. If you're in need of assistance, screenshot this and post it in a support channel in the Slippi Discord with some context regarding the crash."
+msgstr "Dolphin завершив роботу з кодом помилки: {0}. Якщо вам потрібна допомога, зробіть скріншот і опублікуйте його в каналі підтримки в Discord Slippi з описом ситуації, у якій стався збій."
+
+#: src/renderer/lib/dolphin/handle_dolphin_exit_code.messages.ts:5:5
+msgid "Dolphin has crashed. Please go to the Help section of the settings page, click \"Copy logs\", and paste them in the Slippi Discord's #windows-support channel with some context regarding the crash."
+msgstr "Dolphin аварійно завершив роботу. Перейдіть до розділу «Допомога» на сторінці налаштувань, натисніть «Копіювати логи» та вставте їх у канал #windows-support в Discord Slippi з описом ситуації, у якій стався збій."
+
+#: src/renderer/app/header/user_menu/user_menu.messages.ts:18:39
+msgid "Dolphin is currently running. Close Dolphin to switch accounts"
+msgstr "Dolphin зараз запущений. Закрийте Dolphin, щоб змінити обліковий запис"
+
+#: src/renderer/pages/replays/replay_browser/replay_file/replay_file.messages.ts:6:28 src/renderer/pages/replays/replay_file_stats/game_profile_header/game_profile_header.messages.ts:6:28
+msgid "Dolphin is updating"
+msgstr "Dolphin оновлюється"
+
+#: src/renderer/lib/dolphin/dolphin.messages.ts:2:28
+msgid "Dolphin is updating. Try again later."
+msgstr "Dolphin оновлюється. Спробуйте пізніше."
+
+#: src/renderer/components/rosetta_install_dialog/rosetta_install_dialog.messages.ts:13:15
+msgid "Done"
+msgstr "Готово"
+
+#: src/renderer/pages/settings/chat_settings/chat_settings.messages.ts:11:15
+msgid "Down"
+msgstr "Вниз"
+
+#: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:17:19
+msgid "Download"
+msgstr "Завантажити"
+
+#: src/renderer/components/persistent_notification/persistent_notification.messages.ts:6:27
+msgid "Download manually"
+msgstr "Завантажити вручну"
+
+#. {0} version: string
+#: src/renderer/components/persistent_notification/persistent_notification.messages.ts:2:44
+msgid "Downloading version {0}..."
+msgstr "Завантаження версії {0}..."
+
+#: src/renderer/pages/settings/dolphin_settings/gecko_codes/add_codes/add_codes.messages.ts:4:28
+msgid "Duplicate code name"
+msgstr "Дубльована назва коду"
+
+#: src/renderer/pages/console_mirror/saved_connections_list/saved_connections_list.messages.ts:2:15
+msgid "Edit"
+msgstr "Редагувати"
+
+#: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_dialog.messages.ts:2:25
+msgid "Edit connection"
+msgstr "Редагувати підключення"
+
+#: src/renderer/app/header/header.messages.ts:16:26 src/renderer/app/header/user_menu/user_menu.messages.ts:5:26
+msgid "Edit display name"
+msgstr "Змінити ім'я для показу"
+
+#: src/renderer/components/login_form/login_form.messages.ts:6:16
+msgid "Email"
+msgstr "Email"
+
+#: src/renderer/components/verify_email_form/verify_email_form.messages.ts:10:29
+msgid "Email is not yet verified. Have you checked your spam folder?"
+msgstr "Email ще не підтверджено. Ви перевірили папку зі спамом?"
+
+#: src/renderer/app/header/user_menu/user_menu.messages.ts:10:36
+msgid "Email verification required"
+msgstr "Потрібне підтвердження email"
+
+#: src/renderer/components/verify_email_form/verify_email_form.messages.ts:6:24
+msgid "Email verified"
+msgstr "Email підтверджено"
+
+#: src/renderer/pages/settings/advanced_app_settings/advanced_app_settings.messages.ts:4:31
+msgid "Enable Approximate Location Access"
+msgstr "Увімкнути доступ до приблизного місцезнаходження"
+
+#: src/renderer/pages/settings/advanced_app_settings/advanced_app_settings.messages.ts:2:28
+msgid "Enable Auto Updates"
+msgstr "Увімкнути автооновлення"
+
+#: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:13:29
+msgid "Enable Autoswitcher"
+msgstr "Увімкнути автоперемикач"
+
+#: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:23:22
+msgid "Enable Console Relay"
+msgstr "Увімкнути ретранслятор консолі"
+
+#: src/renderer/pages/settings/game_settings/game_music_toggle/game_music_toggle.messages.ts:2:22
+msgid "Enable Music"
+msgstr "Увімкнути музику"
+
+#: src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:13:31
+msgid "Enable Netplay Replays"
+msgstr "Увімкнути записи мережевої гри"
+
+#: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:7:29
+msgid "Enable Real-time Mode"
+msgstr "Увімкнути режим реального часу"
+
+#: src/renderer/pages/settings/spectate_settings/spectate_settings.messages.ts:2:38
+msgid "Enable Spectate Remote Control"
+msgstr "Увімкнути дистанційне керування режимом глядача"
+
+#: src/renderer/pages/settings/game_settings/game_music_toggle/game_music_toggle.messages.ts:3:33
+msgid "Enable in-game music."
+msgstr "Увімкнути музику в грі."
+
+#: src/renderer/pages/home/overview/ranked_day_status/ranked_day_status.messages.ts:5:19
+msgid "Ending In"
+msgstr "Закінчується через"
+
+#: src/renderer/pages/spectate/share_gameplay_block/start_broadcast_dialog.messages.ts:5:27
+msgid "Enter Spectator ID"
+msgstr "Введіть ID глядача"
+
+#: src/renderer/pages/spectate/share_gameplay_block/share_gameplay_block.messages.ts:3:35
+msgid "Error connecting to Dolphin. Ensure Dolphin is running and try again."
+msgstr "Помилка підключення до Dolphin. Переконайтеся, що Dolphin запущений, і спробуйте ще раз."
+
+#. {0} errorMessage: string
+#: src/renderer/pages/settings/dolphin_settings/gecko_codes/gecko_codes.messages.ts:3:53
+msgid "Error reading gecko codes: {0}"
+msgstr "Помилка читання gecko-кодів: {0}"
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostics_button.messages.ts:3:34
+msgid "Error running network diagnostics"
+msgstr "Помилка запуску діагностики мережі"
+
+#. {0} errorMessage: string
+#: src/renderer/pages/settings/dolphin_settings/gecko_codes/gecko_codes.messages.ts:4:52
+msgid "Error saving gecko codes: {0}"
+msgstr "Помилка збереження gecko-кодів: {0}"
+
+#: src/renderer/pages/spectate/spectate_remote_control_block/spectate_remote_control_block.messages.ts:3:30
+msgid "Error starting server"
+msgstr "Помилка запуску сервера"
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:3:28
+msgid "External IP Address"
+msgstr "Зовнішня IP-адреса"
+
+#: src/renderer/pages/settings/help_page/help_page.messages.ts:2:14
+msgid "FAQ"
+msgstr "Поширені запитання"
+
+#: src/renderer/initialize_app.messages.ts:2:47
+msgid "Failed to communicate with Slippi servers."
+msgstr "Не вдалося зв'язатися із серверами Slippi."
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:29:44
+msgid "Failed to determine CGNAT or Double NAT presence"
+msgstr "Не вдалося визначити наявність CGNAT або подвійного NAT"
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:2:37
+msgid "Failed to determine IP Address"
+msgstr "Не вдалося визначити IP-адресу"
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:11:35
+msgid "Failed to determine NAT type"
+msgstr "Не вдалося визначити тип NAT"
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:21:39
+msgid "Failed to determine port mapping availability"
+msgstr "Не вдалося визначити доступність переадресації портів"
+
+#. {0} errorMessage: string
+#: src/renderer/components/location_guard/location_guard.messages.ts:7:36
+msgid "Failed to fetch location information. Error: {0}"
+msgstr "Не вдалося отримати інформацію про місцезнаходження. Помилка: {0}"
+
+#: src/renderer/pages/home/news_feed/news_feed.messages.ts:4:24
+msgid "Failed to fetch news articles."
+msgstr "Не вдалося завантажити новини."
+
+#: src/renderer/pages/home/overview/news_preview/news_preview.messages.ts:2:28
+msgid "Failed to fetch news. Try again later."
+msgstr "Не вдалося завантажити новини. Спробуйте пізніше."
+
+#. {0} errorMessage: string
+#: src/renderer/pages/home/upcoming_tournaments/tournaments_near_me/tournaments_near_me.messages.ts:12:36
+msgid "Failed to fetch tournaments. Error: {0}"
+msgstr "Не вдалося завантажити турніри. Помилка: {0}"
+
+#: src/renderer/pages/home/overview/melee_majors_carousel/melee_majors_carousel.messages.ts:2:35
+msgid "Failed to fetch upcoming events"
+msgstr "Не вдалося завантажити майбутні події"
+
+#: src/renderer/app/header/header.messages.ts:5:29
+msgid "Failed to get updates"
+msgstr "Не вдалося отримати оновлення"
+
+#. {0} dolphinTypeName: string
+#: src/renderer/initialize_app.messages.ts:6:5 src/renderer/lib/dolphin/dolphin.messages.ts:4:5
+msgid "Failed to install {0}. Try closing all Dolphin instances and restarting the launcher."
+msgstr "Не вдалося встановити {0}. Спробуйте закрити всі вікна Dolphin і перезапустити лаунчер."
+
+#: src/renderer/pages/settings/dolphin_settings/gecko_codes/gecko_codes.messages.ts:2:33
+msgid "Failed to read gecko codes"
+msgstr "Не вдалося прочитати gecko-коди"
+
+#: src/renderer/app/header/user_menu/user_menu.messages.ts:13:32
+msgid "Failed to remove account"
+msgstr "Не вдалося видалити обліковий запис"
+
+#: src/renderer/app/header/user_menu/user_menu.messages.ts:14:32
+msgid "Failed to switch account"
+msgstr "Не вдалося переключити обліковий запис"
+
+#: src/renderer/pages/spectate/spectator_id_block/spectator_id_block.messages.ts:6:5
+msgid "First give this ID to the person whose gameplay you want to watch. Then after they have started their broadcast, click Refresh."
+msgstr "Спершу надайте цей ID людині, чию гру ви хочете дивитися. Після того як вона розпочне трансляцію, натисніть «Оновити»."
+
+#: src/renderer/components/footer/footer.messages.ts:3:26
+msgid "Follow Project Slippi on Bluesky"
+msgstr "Підписуйтесь на Project Slippi у Bluesky :D"
+
+#: src/renderer/components/login_form/login_form.messages.ts:12:25
+msgid "Forgot your password?"
+msgstr "Забули пароль?"
+
+#. A sentence describing the number of tournaments found nearby.
+#. {0} count: number - The number of tournaments found. e.g. 10
+#. {1} city: string - The approximate city the user is in. e.g. Shimomeguro
+#. {2} greaterRegion: string - The greater region/state/prefecture the city is contained in. e.g. Tokyo
+#: src/renderer/pages/home/upcoming_tournaments/tournaments_near_me/tournaments_near_me.messages.ts:10:5
+msgid "Found {0, plural, one {# tournament} other {# tournaments}} near {1}, {2}."
+msgstr "Знайдено {0, plural, one {# турнір} few {# турніри} many {# турнірів} other {# турніру}} поблизу {1}, {2}."
+
+#: src/renderer/pages/settings/create.messages.ts:3:15
+msgid "Game"
+msgstr "Гра"
+
+#: src/renderer/pages/replays/replay_file_stats/replay_file_stats.messages.ts:7:47
+msgid "Game stats for team battles is unsupported"
+msgstr "Статистика ігор у командних боях не підтримується"
+
+#: src/renderer/pages/settings/create.messages.ts:2:26
+msgid "General Settings"
+msgstr "Загальні налаштування"
+
+#: src/renderer/components/login_form/login_form.messages.ts:17:17 src/renderer/pages/replays/replay_file_stats/replay_file_stats.messages.ts:3:17
+msgid "Go back"
+msgstr "Назад"
+
+#: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:20:20
+msgid "Hard reset"
+msgstr "Жорстке скидання"
+
+#: src/renderer/pages/settings/create.messages.ts:13:15
+msgid "Help"
+msgstr "Допомога"
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:4:15
+msgid "Hide"
+msgstr "Приховати"
+
+#: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:11:30
+msgid "Hide advanced options"
+msgstr "Приховати розширені параметри"
+
+#: src/renderer/pages/home/overview/my_ranking/my_ranking.messages.ts:6:15
+msgid "Hide ranking"
+msgstr "Приховати рейтинг"
+
+#: src/renderer/pages/replays/replay_browser/filter_toolbar/filter_toolbar.messages.ts:7:25
+msgid "Hide short games"
+msgstr "Приховати короткі ігри"
+
+#: src/renderer/app/create.messages.ts:2:15
+msgid "Home"
+msgstr "Головна"
+
+#: src/renderer/pages/replays/replay_file_stats/game_profile_header/game_profile_header.messages.ts:5:25
+msgid "Home-Run Contest"
+msgstr "Змагання з хоум-рану"
+
+#: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:2:28
+msgid "I accept the Slippi Online Rules"
+msgstr "Я приймаю правила Slippi Online"
+
+#: src/renderer/pages/quick_start/steps/accept_rules_step/accept_rules_step.messages.ts:3:36
+msgid "I accept the Slippi Privacy Policy and Terms of Service"
+msgstr "Я приймаю Політику конфіденційності та Умови використання Slippi"
+
+#: src/renderer/components/login_form/login_form.messages.ts:10:31
+msgid "I already have an account"
+msgstr "У мене вже є обліковий запис"
+
+#: src/renderer/components/build_info/build_info.messages.ts:2:19
+msgid "I hope you know what you're doing..."
+msgstr "Сподіваюся, ви знаєте, що робите..."
+
+#: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:2:20
+msgid "IP Address"
+msgstr "IP-адреса"
+
+#: src/renderer/pages/settings/appearance_settings/rank_display_toggle/rank_display_toggle.messages.ts:3:33
+msgid "If enabled, your current rank and rating will be displayed on the Home page."
+msgstr "Якщо ввімкнено, ваш поточний ранг і рейтинг показуватимуться на головній сторінці."
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:35:31
+msgid "If the failure persists, you can test this in your computer's terminal app. See below:"
+msgstr "Якщо збій повторюється, спробуйте перевірити це в терміналі свого комп'ютера. Дивіться нижче:"
+
+#: src/renderer/pages/home/overview/carousel/carousel.messages.ts:2:21 src/renderer/pages/home/upcoming_tournaments/major_card/major_card.messages.ts:2:21 src/renderer/pages/home/upcoming_tournaments/tournaments_near_me/tournaments_near_me.messages.ts:17:21
+#: src/renderer/pages/home/upcoming_tournaments/upcoming_tournaments.messages.ts:3:21
+msgid "In progress"
+msgstr "У процесі"
+
+#: src/renderer/pages/settings/game_settings/game_music_toggle/game_music_toggle.messages.ts:4:33
+msgid "Incompatible with WASAPI."
+msgstr "Несумісно з WASAPI."
+
+#: src/renderer/components/persistent_notification/persistent_notification.messages.ts:3:24
+msgid "Install update"
+msgstr "Встановити оновлення"
+
+#: src/renderer/components/rosetta_install_dialog/rosetta_install_dialog.messages.ts:8:25
+msgid "Installation completed successfully. You can now relaunch Slippi Dolphin."
+msgstr "Встановлення успішно завершено. Тепер можна перезапустити Slippi Dolphin."
+
+#: src/renderer/components/persistent_notification/persistent_notification.messages.ts:5:24
+msgid "Installation failed."
+msgstr "Не вдалося встановити."
+
+#: src/renderer/components/rosetta_install_dialog/rosetta_install_dialog.messages.ts:4:21
+msgid "Installing... This may take a few minutes."
+msgstr "Встановлення... Це може тривати кілька хвилин."
+
+#: src/renderer/components/slippi_online_rules/slippi_online_rules.messages.ts:13:16
+msgid "Intentionally manipulating the game performance for your own gain is not allowed."
+msgstr "Навмисне маніпулювання продуктивністю гри заради власної вигоди заборонено."
+
+#: src/renderer/pages/settings/game_settings/game_settings.messages.ts:13:18
+msgid "Invalid"
+msgstr "Недійсний"
+
+#: src/renderer/pages/settings/dolphin_settings/gecko_codes/add_codes/add_codes.messages.ts:2:27
+msgid "Invalid Gecko code"
+msgstr "Недійсний Gecko-код"
+
+#: src/renderer/lib/validate/validate.messages.ts:2:27
+msgid "Invalid IP address"
+msgstr "Недійсна IP-адреса"
+
+#: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:20:22
+msgid "Invalid Port"
+msgstr "Недійсний порт"
+
+#: src/renderer/lib/validate/validate.messages.ts:3:22
+msgid "Invalid code"
+msgstr "Недійсний код"
+
+#: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:29:28
+msgid "Invalid port number"
+msgstr "Недійсний номер порту"
+
+#: src/renderer/pages/spectate/share_gameplay_block/start_broadcast_dialog.messages.ts:2:30
+msgid "Invalid user ID format"
+msgstr "Недійсний формат ID користувача"
+
+#: src/renderer/components/footer/footer.messages.ts:4:22 src/renderer/pages/settings/help_page/support_box/support_box.messages.ts:7:22
+msgid "Join the Discord"
+msgstr "Приєднатися до Discord"
+
+#: src/renderer/components/loading_screen/loading_screen.messages.ts:2:19 src/renderer/pages/loading/loading_page.messages.ts:2:19
+msgid "Just a sec..."
+msgstr "Хвилинку..."
+
+#: src/renderer/pages/home/home_page.messages.ts:3:21 src/renderer/pages/home/news_feed/news_feed.messages.ts:2:21 src/renderer/pages/home/overview/overview.messages.ts:2:21
+msgid "Latest News"
+msgstr "Останні новини"
+
+#: src/renderer/pages/settings/game_settings/game_settings.messages.ts:10:24
+msgid "Launch Dolphin"
+msgstr "Запустити Dolphin"
+
+#: src/renderer/pages/settings/game_settings/game_settings.messages.ts:9:22
+msgid "Launch Melee"
+msgstr "Запустити Melee"
+
+#: src/renderer/pages/replays/replay_browser/replay_file/replay_file.messages.ts:5:23 src/renderer/pages/replays/replay_file_stats/game_profile_header/game_profile_header.messages.ts:7:23
+msgid "Launch replay"
+msgstr "Запустити запис гри"
+
+#: src/renderer/pages/replays/replay_browser/filter_toolbar/filter_toolbar.messages.ts:4:22
+msgid "Least recent"
+msgstr "Найдавніші"
+
+#: src/renderer/pages/settings/chat_settings/chat_settings.messages.ts:9:15
+msgid "Left"
+msgstr "Вліво"
+
+#: src/renderer/pages/quick_start/quick_start.messages.ts:3:23
+msgid "Let's get set up"
+msgstr "Давайте налаштуємо"
+
+#: src/renderer/app/header/header.messages.ts:19:18
+msgid "Loading"
+msgstr "Завантаження"
+
+#: src/renderer/pages/home/news_feed/news_feed.messages.ts:3:18 src/renderer/pages/replays/replay_file_stats/replay_file_stats.messages.ts:4:18
+msgid "Loading..."
+msgstr "Завантаження..."
+
+#: src/renderer/app/header/header.messages.ts:2:16 src/renderer/components/login_form/login_form.messages.ts:3:16 src/renderer/components/login_notice/login_notice.messages.ts:3:16
+msgid "Log in"
+msgstr "Увійти"
+
+#: src/renderer/app/header/user_menu/user_menu.messages.ts:6:17
+msgid "Log out"
+msgstr "Вийти"
+
+#: src/renderer/pages/replays/replay_browser/filter_toolbar/filter_toolbar.messages.ts:5:22
+msgid "Longest game"
+msgstr "Найдовша гра"
+
+#: src/renderer/components/slippi_online_rules/slippi_online_rules.messages.ts:14:16
+msgid "Macros and bots are not allowed."
+msgstr "Макроси та боти заборонені."
+
+#: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:3:5
+msgid "Mainline Slippi Dolphin has updated OS requirements, check the Help Section for more info"
+msgstr "В основній версії Slippi Dolphin оновлено вимоги до ОС, докладніше див. у розділі «Допомога»"
+
+#: src/renderer/pages/home/upcoming_tournaments/upcoming_tournaments.messages.ts:5:25
+msgid "Major Upcoming Tournaments"
+msgstr "Головні майбутні турніри"
+
+#: src/renderer/pages/settings/dolphin_settings/gecko_codes/gecko_codes.messages.ts:5:17
+msgid "Manage"
+msgstr "Керувати"
+
+#: src/renderer/pages/settings/dolphin_settings/gecko_codes/gecko_codes.messages.ts:7:27
+msgid "Manage Gecko codes"
+msgstr "Керувати Gecko-кодами"
+
+#: src/renderer/app/header/user_menu/user_menu.messages.ts:4:24
+msgid "Manage account"
+msgstr "Керувати обліковим записом"
+
+#. {0} max: number
+#: src/renderer/app/header/user_menu/user_menu.messages.ts:15:40
+msgid "Maximum {0} accounts reached. Remove an account to add another."
+msgstr "Досягнуто максимум {0} облікових записів. Видаліть один, щоб додати інший."
+
+#: src/renderer/pages/settings/game_settings/game_settings.messages.ts:2:23
+msgid "Melee ISO File"
+msgstr "Файл ISO Melee"
+
+#: src/renderer/pages/console_mirror/saved_connections_list/saved_connection_item.messages.ts:9:17
+msgid "Mirror"
+msgstr "Дзеркалити"
+
+#: src/renderer/pages/console_mirror/console_mirror.messages.ts:8:25
+msgid "Mirroring Guide"
+msgstr "Посібник із дзеркалення"
+
+#: src/renderer/pages/replays/replay_browser/replay_file/replay_file.messages.ts:3:22
+msgid "More options"
+msgstr "Більше параметрів"
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:10:5
+msgid "More than one hop to your external IP address indicates CGNAT or Double NAT (or VPN)."
+msgstr "Більше ніж один стрибок до вашої зовнішньої IP-адреси вказує на CGNAT або подвійний NAT (або VPN)."
+
+#: src/renderer/pages/replays/replay_browser/filter_toolbar/filter_toolbar.messages.ts:3:21
+msgid "Most recent"
+msgstr "Найновіші"
+
+#: src/renderer/pages/home/overview/my_ranking/my_ranking.messages.ts:2:20
+msgid "My Ranking"
+msgstr "Мій рейтинг"
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:12:18
+msgid "NAT Type"
+msgstr "Тип NAT"
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:26:17
+msgid "NAT-PMP."
+msgstr "NAT-PMP."
+
+#: src/renderer/pages/settings/dolphin_settings/gecko_codes/add_codes/add_codes.messages.ts:3:23
+msgid "Name is required"
+msgstr "Потрібне ім'я"
+
+#: src/renderer/pages/settings/help_page/support_box/support_box.messages.ts:2:19
+msgid "Need help?"
+msgstr "Потрібна допомога?"
+
+#: src/renderer/pages/settings/create.messages.ts:8:18
+msgid "Netplay"
+msgstr "Мережева гра"
+
+#: src/renderer/initialize_app.messages.ts:7:25 src/renderer/lib/dolphin/dolphin.messages.ts:5:25 src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:5:25
+msgid "Netplay Dolphin"
+msgstr "Dolphin для мережевої гри"
+
+#: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:21:39
+msgid "Netplay Dolphin Release Channel"
+msgstr "Канал випусків Dolphin для мережевої гри"
+
+#: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:8:33
+msgid "Netplay Dolphin Settings"
+msgstr "Налаштування Dolphin для мережевої гри"
+
+#: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:14:28
+msgid "Netplay Gecko Codes"
+msgstr "Gecko-коди для мережевої гри"
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostics_button.messages.ts:4:29
+msgid "Network Diagnostics"
+msgstr "Діагностика мережі"
+
+#. {0} count: number
+#: src/renderer/pages/console_mirror/new_connection_list/new_connection_list.messages.ts:2:38
+msgid "New Connections ({0})"
+msgstr "Нові підключення ({0})"
+
+#: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_dialog.messages.ts:3:24 src/renderer/pages/console_mirror/console_mirror.messages.ts:3:24
+msgid "New connection"
+msgstr "Нове підключення"
+
+#: src/renderer/pages/quick_start/stepper_dots/stepper_dots.messages.ts:2:15
+msgid "Next"
+msgstr "Далі"
+
+#: src/renderer/pages/replays/replay_file_stats/game_profile_header/game_profile_header.messages.ts:9:21
+msgid "Next replay"
+msgstr "Наступний запис гри"
+
+#: src/renderer/pages/quick_start/steps/setup_complete_step/setup_complete_step.messages.ts:2:19
+msgid "Nice work!"
+msgstr "Чудова робота!"
+
+#: src/renderer/app/header/header.messages.ts:7:25
+msgid "No Melee ISO file specified"
+msgstr "Файл ISO Melee не вказано"
+
+#: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:5:26
+msgid "No SLP files found"
+msgstr "Файли SLP не знайдено"
+
+#: src/renderer/components/multi_path_input/multi_path_input.messages.ts:2:35
+msgid "No additional folders added."
+msgstr "Додаткових папок не додано."
+
+#: src/renderer/pages/spectate/share_gameplay_block/start_broadcast_dialog.messages.ts:7:32
+msgid "No associated user found"
+msgstr "Пов'язаного користувача не знайдено"
+
+#: src/renderer/pages/settings/game_settings/game_settings.messages.ts:5:20
+msgid "No file set"
+msgstr "Файл не задано"
+
+#: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:5:34
+msgid "No folder selected"
+msgstr "Папку не вибрано"
+
+#: src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:6:22
+msgid "No folder set"
+msgstr "Папку не задано"
+
+#: src/renderer/app/header/header.messages.ts:12:30
+msgid "No network connection"
+msgstr "Немає підключення до мережі"
+
+#: src/renderer/pages/home/news_feed/news_feed.messages.ts:6:17 src/renderer/pages/home/overview/news_preview/news_preview.messages.ts:3:17
+msgid "No news to show"
+msgstr "Немає новин для показу"
+
+#: src/renderer/pages/home/overview/my_ranking/my_ranking.messages.ts:4:20
+msgid "No ranking"
+msgstr "Без рейтингу"
+
+#: src/renderer/pages/console_mirror/saved_connections_list/saved_connections_list.messages.ts:4:29
+msgid "No saved console connections"
+msgstr "Немає збережених підключень до консолей"
+
+#: src/renderer/pages/replays/replay_file_stats/replay_file_stats.messages.ts:6:26
+msgid "No stats computed"
+msgstr "Статистику не обчислено"
+
+#: src/renderer/pages/home/overview/melee_majors_carousel/melee_majors_carousel.messages.ts:3:24
+msgid "No upcoming events"
+msgstr "Немає майбутніх подій"
+
+#: src/renderer/app/header/header.messages.ts:6:28
+msgid "No update available"
+msgstr "Оновлень немає"
+
+#: src/renderer/pages/spectate/spectate_page.messages.ts:3:18
+msgid "No users are broadcasting to you"
+msgstr "Ніхто не транслює вам"
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:13:20
+msgid "Normal NAT"
+msgstr "Звичайний NAT"
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:23:23
+msgid "Not available"
+msgstr "Недоступно"
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:31:22
+msgid "Not detected."
+msgstr "Не виявлено."
+
+#: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:12:19
+msgid "Not found"
+msgstr "Не знайдено"
+
+#: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:21:22
+msgid "OBS Password"
+msgstr "Пароль OBS"
+
+#: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:22:24
+msgid "OBS Source Name"
+msgstr "Назва джерела OBS"
+
+#: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:18:25
+msgid "OBS Websocket IP"
+msgstr "IP-адреса Websocket OBS"
+
+#: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:19:27
+msgid "OBS Websocket Port"
+msgstr "Порт Websocket OBS"
+
+#: src/renderer/app/header/user_menu/user_menu.messages.ts:7:18
+msgid "Offline"
+msgstr "Офлайн"
+
+#: src/renderer/pages/home/overview/ranked_day_status/ranked_day_status.messages.ts:10:5
+msgid "Once every 4 days, ranked play is available to all users including non-subs. Check back soon!"
+msgstr "Раз на 4 дні рейтингова гра доступна всім користувачам, зокрема без підписки. Заходьте скоро!"
+
+#: src/renderer/app/header/user_menu/user_menu.messages.ts:9:35
+msgid "Online activation required"
+msgstr "Потрібна активація онлайн-гри"
+
+#: src/renderer/lib/validate/validate.messages.ts:4:39
+msgid "Only English characters are allowed"
+msgstr "Дозволені лише англійські літери"
+
+#: src/renderer/app/header/header.messages.ts:11:41
+msgid "Only logged in users can play online."
+msgstr "Грати онлайн можуть лише користувачі, які ввійшли в обліковий запис."
+
+# тут чекпоінт
+#: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:12:45
+msgid "Only modify these values if you know what you're doing."
+msgstr "Змінюйте ці значення, лише якщо знаєте, що робите."
+
+#: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:11:35
+msgid "Open settings folder"
+msgstr "Відкрити папку налаштувань"
+
+#. {0} currentDate: string
+#: src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:15:60
+msgid "Organize into monthly subfolders (e.g. {0})."
+msgstr "Розподіляти по щомісячних підпапках (напр. {0})."
+
+#: src/renderer/pages/home/home_page.messages.ts:2:19
+msgid "Overview"
+msgstr "Огляд"
+
+#: src/renderer/components/login_form/login_form.messages.ts:7:19
+msgid "Password"
+msgstr "Пароль"
+
+#: src/renderer/components/login_form/login_form.messages.ts:13:24
+msgid "Password reset"
+msgstr "Скидання пароля"
+
+#. {0} email: string
+#: src/renderer/components/login_form/login_form.messages.ts:14:53
+msgid "Password reset instructions have been sent to {0}."
+msgstr "Інструкції зі скидання пароля надіслано на {0}."
+
+#: src/renderer/components/login_form/login_form.messages.ts:4:30
+msgid "Passwords do not match"
+msgstr "Паролі не збігаються"
+
+#: src/renderer/pages/spectate/share_gameplay_block/start_broadcast_dialog.messages.ts:9:16
+msgid "Paste"
+msgstr "Вставити"
+
+#: src/renderer/pages/settings/dolphin_settings/gecko_codes/add_codes/add_codes.messages.ts:5:26
+msgid "Paste Gecko Codes"
+msgstr "Вставити Gecko-коди"
+
+#: src/renderer/app/header/play_button/play_button.messages.ts:2:15
+msgid "Play"
+msgstr "Грати"
+
+#: src/renderer/pages/replays/replay_browser/file_selection_toolbar/file_selection_toolbar.messages.ts:7:18
+msgid "Play All"
+msgstr "Грати все"
+
+#: src/renderer/pages/settings/game_settings/game_settings.messages.ts:7:27
+msgid "Play Button Action"
+msgstr "Дія кнопки «Грати»"
+
+#: src/renderer/app/header/header.messages.ts:14:22
+msgid "Play offline"
+msgstr "Грати офлайн"
+
+#: src/renderer/pages/settings/create.messages.ts:9:19
+msgid "Playback"
+msgstr "Відтворення"
+
+#: src/renderer/initialize_app.messages.ts:8:26 src/renderer/lib/dolphin/dolphin.messages.ts:6:26 src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:6:26
+msgid "Playback Dolphin"
+msgstr "Dolphin для відтворення"
+
+#: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:9:34
+msgid "Playback Dolphin Settings"
+msgstr "Налаштування Dolphin для відтворення"
+
+#: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:15:29
+msgid "Playback Gecko Codes"
+msgstr "Gecko-коди для відтворення"
+
+#: src/renderer/pages/settings/chat_settings/chat_settings.messages.ts:14:34
+msgid "Please log in to use this feature."
+msgstr "Увійдіть, щоб скористатися цією функцією."
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:28:30
+msgid "Please try again later."
+msgstr "Спробуйте пізніше."
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:20:5
+msgid "Please try again later. If the failure persists, this network may block UDP. In that case it will not be possible to use Slippi as well as many other online games and apps."
+msgstr "Спробуйте пізніше. Якщо збій повторюється, ця мережа може блокувати UDP. У такому разі користуватися Slippi, як і багатьма іншими онлайн-іграми та застосунками, буде неможливо."
+
+#: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:28:15
+msgid "Port"
+msgstr "Порт"
+
+#: src/renderer/pages/settings/spectate_settings/spectate_port_form/spectate_port_form.messages.ts:2:25
+msgid "Port is required"
+msgstr "Потрібен порт"
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:22:22
+msgid "Port mapping"
+msgstr "Відображення портів"
+
+#: src/renderer/pages/settings/spectate_settings/spectate_port_form/spectate_port_form.messages.ts:3:27
+msgid "Port must be a number from 1 to 65535"
+msgstr "Порт має бути числом від 1 до 65535"
+
+#. {0} timeAgo: string
+#: src/renderer/pages/home/news_feed/news_article/news_article.messages.ts:6:32
+msgid "Posted {0}"
+msgstr "Опубліковано {0}"
+
+#: src/renderer/pages/settings/chat_settings/chat_settings.messages.ts:6:18
+msgid "Premium"
+msgstr "Преміум"
+
+#: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:9:5
+msgid "Prevents delay from accumulating when mirroring. Keep this off unless both the Wii and computer are on a wired LAN connection."
+msgstr "Запобігає накопиченню затримки під час дзеркалення. Тримайте вимкненим, якщо Wii і комп'ютер не підключені до дротової локальної мережі (LAN)."
+
+#: src/renderer/pages/replays/replay_file_stats/game_profile_header/game_profile_header.messages.ts:8:25
+msgid "Previous replay"
+msgstr "Попередній запис гри"
+
+#: src/renderer/components/slippi_usage_policy_list/slippi_usage_policy_list.messages.ts:2:41
+msgid "Privacy Policy and Terms of Service"
+msgstr "Політика конфіденційності та Умови використання"
+
+#: src/renderer/pages/quick_start/steps/iso_selection_step/iso_selection_step.messages.ts:9:33
+msgid "Provided ISO will not work with Slippi Online. Please provide an NTSC 1.02 ISO."
+msgstr "Наданий ISO не працюватиме зі Slippi Online. Надайте ISO версії NTSC 1.02."
+
+#: src/renderer/pages/quick_start/steps/iso_selection_step/iso_selection_step.messages.ts:11:34
+msgid "RVZ files are currently incompatible with Slippi."
+msgstr "Файли RVZ наразі несумісні зі Slippi."
+
+#: src/renderer/components/slippi_online_rules/slippi_online_rules.messages.ts:8:5
+msgid "Racist, homophobic, transphobic, or otherwise bigoted names and codes are not allowed. Targeted harassment in names and codes is also not allowed."
+msgstr "Расистські, гомофобні, трансфобні та інші нетерпимі імена й коди заборонені. Цілеспрямоване цькування в іменах і кодах також заборонене."
+
+#: src/renderer/pages/home/overview/my_ranking/my_ranking.messages.ts:5:22
+msgid "Rank pending"
+msgstr "Ранг визначається"
+
+#: src/renderer/pages/home/overview/overview.messages.ts:4:20 src/renderer/pages/home/overview/ranked_day_status/ranked_day_status.messages.ts:2:20
+msgid "Ranked Day"
+msgstr "Рейтинговий день"
+
+#: src/renderer/pages/home/overview/ranked_day_status/ranked_day_status.messages.ts:8:5
+msgid "Ranked play is currently available for everyone. Try it now! Available once every 4 days."
+msgstr "Рейтингова гра наразі доступна для всіх. Спробуйте зараз! Доступно раз на 4 дні."
+
+#: src/renderer/app/header/account_switcher/account_switcher.messages.ts:3:32
+msgid "Re-authenticate account"
+msgstr "Повторна автентифікація облікового запису"
+
+#: src/renderer/pages/home/news_feed/news_article/news_article.messages.ts:5:19
+msgid "Read more"
+msgstr "Читати далі"
+
+#: src/renderer/pages/home/overview/news_preview/news_preview.messages.ts:4:19
+msgid "Read post"
+msgstr "Читати допис"
+
+#: src/renderer/pages/console_mirror/saved_connections_list/saved_connection_item.messages.ts:4:23
+msgid "Reconnecting"
+msgstr "Повторне підключення"
+
+#: src/renderer/pages/home/overview/my_ranking/my_ranking.messages.ts:3:18 src/renderer/pages/replays/replay_browser/filter_toolbar/filter_toolbar.messages.ts:2:18 src/renderer/pages/spectate/spectate_page.messages.ts:4:18
+msgid "Refresh"
+msgstr "Оновити"
+
+#: src/renderer/pages/console_mirror/saved_connections_list/saved_connection_item.messages.ts:11:20
+msgid "Relay Port"
+msgstr "Порт ретранслятора"
+
+#: src/renderer/pages/spectate/spectate_remote_control_block/spectate_remote_control_block.messages.ts:2:30
+msgid "Remote Control Server"
+msgstr "Сервер дистанційного керування"
+
+#: src/renderer/app/header/account_switcher/account_switcher.messages.ts:4:17 src/renderer/components/multi_path_input/multi_path_input.messages.ts:4:17
+msgid "Remove"
+msgstr "Видалити"
+
+#. {0} accountName: string
+#: src/renderer/app/header/user_menu/user_menu.messages.ts:16:44
+msgid "Removed {0}"
+msgstr "Видалено {0}"
+
+#: src/renderer/pages/settings/advanced_app_settings/advanced_app_settings.messages.ts:9:5
+msgid "Removes temporary downloads, files used for Dolphin communication, and files streamed from Slippi.gg."
+msgstr "Видаляє тимчасові завантаження, файли для зв'язку з Dolphin і файли, отримані зі Slippi.gg."
+
+#: src/renderer/app/create.messages.ts:3:18 src/renderer/pages/settings/create.messages.ts:4:18
+msgid "Replays"
+msgstr "Повтори"
+
+#: src/renderer/lib/dolphin/handle_dolphin_exit_code.messages.ts:3:5
+msgid "Required DLLs for launching Dolphin are missing. Check the Help section in the settings page to fix this issue."
+msgstr "Відсутні потрібні DLL для запуску Dolphin. Щоб виправити це, перегляньте розділ «Допомога» на сторінці налаштувань."
+
+#: src/renderer/lib/dolphin/handle_dolphin_exit_code.messages.ts:12:5
+msgid "Required libraries for launching Dolphin may be missing. Check the Help section in the settings page for guidance. Post in the Slippi Discord's #linux-support forum for further assistance if needed."
+msgstr "Можуть бути відсутні потрібні бібліотеки для запуску Dolphin. Поради дивіться в розділі «Допомога» на сторінці налаштувань. За потреби напишіть у форум #linux-support в Discord Slippi."
+
+#. {0} version: string
+#: src/renderer/pages/settings/game_settings/game_music_toggle/game_music_toggle.messages.ts:5:48
+msgid "Requires Dolphin version {0} or higher"
+msgstr "Потрібен Dolphin версії {0} або новіший"
+
+#: src/renderer/components/login_form/login_form.messages.ts:16:16
+msgid "Reset"
+msgstr "Скинути"
+
+#: src/renderer/pages/settings/spectate_settings/spectate_port_form/spectate_port_form.messages.ts:5:25
+msgid "Reset to default"
+msgstr "Скинути до типових"
+
+#. {0} dolphinTypeName: string
+#: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:16:46
+msgid "Reset {0}"
+msgstr "Скинути {0}"
+
+#: src/renderer/components/location_guard/location_guard.messages.ts:8:16 src/renderer/pages/home/overview/melee_majors_carousel/melee_majors_carousel.messages.ts:4:16 src/renderer/pages/home/overview/news_preview/news_preview.messages.ts:5:16
+msgid "Retry"
+msgstr "Повторити"
+
+#: src/renderer/pages/not_found/not_found_page.messages.ts:4:21
+msgid "Return home"
+msgstr "На головну"
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:5:17
+msgid "Reveal"
+msgstr "Показати"
+
+#: src/renderer/pages/replays/replay_browser/file_list/file_list.messages.ts:2:25 src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:3:25 src/renderer/pages/replays/replay_file_stats/replay_file_stats.messages.ts:8:25 src/renderer/pages/spectate/footer/footer.messages.ts:2:25
+msgid "Reveal location"
+msgstr "Показати розташування"
+
+#: src/renderer/pages/settings/chat_settings/chat_settings.messages.ts:10:16
+msgid "Right"
+msgstr "Вправо"
+
+#: src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:2:24
+msgid "Root SLP Folder"
+msgstr "Коренева папка SLP"
+
+#: src/renderer/components/rosetta_install_dialog/rosetta_install_dialog.messages.ts:2:22
+msgid "Rosetta Required"
+msgstr "Потрібен Rosetta"
+
+#: src/renderer/pages/settings/create.messages.ts:14:27 src/renderer/pages/settings/rules_and_policies_page/rules_and_policies_page.messages.ts:2:27
+msgid "Rules & Policies"
+msgstr "Правила та політики"
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:36:25
+msgid "Run this command"
+msgstr "Виконайте цю команду"
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostics_button.messages.ts:2:29
+msgid "Running network diagnostics..."
+msgstr "Виконується діагностика мережі..."
+
+#: src/renderer/pages/settings/chat_settings/chat_settings.messages.ts:2:15 src/renderer/pages/settings/spectate_settings/spectate_port_form/spectate_port_form.messages.ts:4:15
+msgid "Save"
+msgstr "Зберегти"
+
+#: src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:14:42
+msgid "Save replays for netplay games to the Root SLP Folder."
+msgstr "Зберігати записи мережевих ігор у кореневу папку SLP."
+
+#: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:6:34
+msgid "Save replays to subfolders based on console nickname"
+msgstr "Зберігати записи ігор в підпапки за псевдонімом консолі"
+
+#: src/renderer/pages/spectate/footer/footer.messages.ts:4:31
+msgid "Save spectated games to"
+msgstr "Зберігати ігри спостереження в"
+
+#: src/renderer/pages/replays/replay_browser/filter_toolbar/filter_toolbar.messages.ts:8:17
+msgid "Search"
+msgstr "Пошук"
+
+#: src/renderer/pages/home/upcoming_tournaments/tournaments_near_me/tournaments_near_me.messages.ts:11:18
+msgid "Searching for nearby tournaments..."
+msgstr "Пошук турнірів поблизу..."
+
+#: src/renderer/components/path_input/path_input.messages.ts:2:17 src/renderer/pages/quick_start/steps/iso_selection_step/iso_selection_step.messages.ts:12:17
+msgid "Select"
+msgstr "Вибрати"
+
+#: src/renderer/pages/replays/replay_browser/file_selection_toolbar/file_selection_toolbar.messages.ts:6:20
+msgid "Select All"
+msgstr "Вибрати все"
+
+#: src/renderer/pages/quick_start/steps/iso_selection_step/iso_selection_step.messages.ts:2:25
+msgid "Select Melee ISO"
+msgstr "Виберіть ISO Melee"
+
+#: src/renderer/pages/settings/appearance_settings/language_selector/language_selector.messages.ts:3:33
+msgid "Select your preferred language for the app."
+msgstr "Виберіть бажану мову застосунку."
+
+#: src/renderer/components/verify_email_form/verify_email_form.messages.ts:5:20
+msgid "Send verification email again"
+msgstr "Надіслати лист для підтвердження ще раз"
+
+#: src/renderer/app/header/header.messages.ts:8:19
+msgid "Settings"
+msgstr "Налаштування"
+
+#: src/renderer/pages/spectate/share_gameplay_block/share_gameplay_block.messages.ts:2:28
+msgid "Share your gameplay"
+msgstr "Діліться своєю грою"
+
+#: src/renderer/pages/replays/replay_browser/filter_toolbar/filter_toolbar.messages.ts:6:23
+msgid "Shortest game"
+msgstr "Найкоротша гра"
+
+#: src/renderer/pages/settings/appearance_settings/rank_display_toggle/rank_display_toggle.messages.ts:2:22
+msgid "Show Ranking on Home Page"
+msgstr "Показувати рейтинг на головній сторінці"
+
+#: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:10:30
+msgid "Show advanced options"
+msgstr "Показати розширені параметри"
+
+#: src/renderer/pages/home/upcoming_tournaments/tournaments_near_me/tournaments_near_me.messages.ts:13:27
+msgid "Show map of events"
+msgstr "Показати карту подій"
+
+#: src/renderer/pages/home/news_feed/news_feed.messages.ts:7:19
+msgid "Show more"
+msgstr "Показати більше"
+
+#: src/renderer/pages/replays/replay_browser/replay_file/replay_file.messages.ts:4:20
+msgid "Show stats"
+msgstr "Показати статистику"
+
+#: src/renderer/components/login_form/login_form.messages.ts:11:17
+msgid "Sign up"
+msgstr "Зареєструватися"
+
+#: src/renderer/pages/quick_start/quick_start.messages.ts:4:20
+msgid "Skip setup"
+msgstr "Пропустити налаштування"
+
+#: src/renderer/components/rosetta_install_dialog/rosetta_install_dialog.messages.ts:3:22
+msgid "Slippi Dolphin requires Rosetta on Apple Silicon Macs. Would you like to install it now?"
+msgstr "Slippi Dolphin потребує Rosetta на Mac з Apple Silicon. Встановити її зараз?"
+
+#. {0} version: string
+#: src/renderer/initialize_app.messages.ts:9:42
+msgid "Slippi Launcher has been updated to version {0}"
+msgstr "Slippi Launcher оновлено до версії {0}"
+
+#: src/renderer/pages/console_mirror/console_mirror.messages.ts:6:5
+msgid "Slippi Mirroring allows for streaming replays from a console to a PC for real time playback. Checkout the Mirroring Guide below for setup instructions."
+msgstr "Slippi Mirroring дає змогу транслювати повтори з консолі на ПК для відтворення в реальному часі. Інструкції з налаштування дивіться в посібнику з дзеркалення нижче."
+
+#: src/renderer/components/slippi_online_rules/slippi_online_rules.messages.ts:2:28
+msgid "Slippi Online Rules"
+msgstr "Правила Slippi Online"
+
+#: src/renderer/components/slippi_usage_policy_list/slippi_usage_policy_list.messages.ts:4:30
+msgid "Slippi Privacy Policy"
+msgstr "Політика конфіденційності Slippi"
+
+#: src/renderer/components/slippi_usage_policy_list/slippi_usage_policy_list.messages.ts:5:31
+msgid "Slippi Terms of Service"
+msgstr "Умови використання Slippi"
+
+#: src/renderer/components/slippi_online_rules/slippi_online_rules.messages.ts:11:5
+msgid "Slippi does its best to promote fairness in terms of player matching, result reporting, etc. Attempting to circumvent these systems is not allowed."
+msgstr "Slippi докладає всіх зусиль, щоб забезпечити чесність підбору гравців, звітування про результати тощо. Спроби обійти ці системи заборонені."
+
+#: src/renderer/initialize_app.messages.ts:4:26
+msgid "Slippi may be experiencing some downtime. Playing online may or may not work."
+msgstr "Можливо, у Slippi зараз збої. Онлайн-гра може працювати нестабільно."
+
+#: src/renderer/app/header/user_menu/user_menu.messages.ts:8:28
+msgid "Slippi server error"
+msgstr "Помилка сервера Slippi"
+
+#: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:19:20
+msgid "Soft reset"
+msgstr "М'яке скидання"
+
+#: src/renderer/listeners/listeners.messages.ts:4:39
+msgid "Some functionality of the Launcher and Dolphin will be unavailable."
+msgstr "Деякі функції Launcher і Dolphin будуть недоступні."
+
+#: src/renderer/pages/not_found/not_found_page.messages.ts:3:29
+msgid "Something went wrong."
+msgstr "Щось пішло не так."
+
+#: src/renderer/pages/home/upcoming_tournaments/tournaments_near_me/tournaments_near_me.messages.ts:15:21
+msgid "Sort by date"
+msgstr "Сортувати за датою"
+
+#: src/renderer/pages/home/upcoming_tournaments/tournaments_near_me/tournaments_near_me.messages.ts:14:25
+msgid "Sort by distance"
+msgstr "Сортувати за відстанню"
+
+#: src/renderer/pages/home/upcoming_tournaments/tournaments_near_me/tournaments_near_me.messages.ts:16:25
+msgid "Sort by entrants"
+msgstr "Сортувати за кількістю учасників"
+
+#: src/renderer/app/create.messages.ts:4:19 src/renderer/pages/settings/create.messages.ts:6:19 src/renderer/pages/spectate/spectate_page.messages.ts:2:19
+msgid "Spectate"
+msgstr "Спостерігати"
+
+#: src/renderer/pages/settings/spectate_settings/spectate_settings.messages.ts:4:36
+msgid "Spectate Remote Control Port"
+msgstr "Порт дистанційного керування спостереженням"
+
+#: src/renderer/pages/spectate/share_gameplay_block/start_broadcast_dialog.messages.ts:4:22
+msgid "Spectator ID"
+msgstr "ID глядача"
+
+#: src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:8:29
+msgid "Spectator SLP Folder"
+msgstr "Папка SLP глядача"
+
+#: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:23:17
+msgid "Stable (Ishiiruka)"
+msgstr "Стабільна (Ishiiruka)"
+
+#: src/renderer/pages/spectate/share_gameplay_block/broadcast_panel.messages.ts:6:25
+msgid "Start Broadcast"
+msgstr "Почати трансляцію"
+
+#: src/renderer/pages/spectate/spectate_remote_control_block/spectate_remote_control_block.messages.ts:5:22
+msgid "Start Server"
+msgstr "Запустити сервер"
+
+#: src/renderer/pages/spectate/spectate_remote_control_block/spectate_remote_control_block.messages.ts:7:18
+msgid "Started"
+msgstr "Розпочато"
+
+#: src/renderer/pages/home/overview/ranked_day_status/ranked_day_status.messages.ts:6:21
+msgid "Starting In"
+msgstr "Починається через"
+
+#: src/renderer/pages/spectate/spectate_remote_control_block/spectate_remote_control_block.messages.ts:9:25
+msgid "Starting Server..."
+msgstr "Запуск сервера..."
+
+#: src/renderer/pages/home/overview/ranked_day_status/ranked_day_status.messages.ts:4:23
+msgid "Starting Soon"
+msgstr "Скоро початок"
+
+#. {0} countdown: string
+#: src/renderer/pages/home/upcoming_tournaments/upcoming_tournaments.messages.ts:4:38
+msgid "Starting in {0}"
+msgstr "Початок через {0}"
+
+#: src/renderer/pages/spectate/spectate_remote_control_block/spectate_remote_control_block.messages.ts:8:19
+msgid "Starting..."
+msgstr "Запуск..."
+
+#: src/renderer/pages/spectate/share_gameplay_block/broadcast_panel.messages.ts:2:17 src/renderer/pages/spectate/spectate_remote_control_block/spectate_remote_control_block.messages.ts:4:17
+msgid "Status"
+msgstr "Статус"
+
+#: src/renderer/pages/spectate/share_gameplay_block/broadcast_panel.messages.ts:7:24
+msgid "Stop Broadcast"
+msgstr "Зупинити трансляцію"
+
+#: src/renderer/pages/spectate/spectate_remote_control_block/spectate_remote_control_block.messages.ts:6:21
+msgid "Stop Server"
+msgstr "Зупинити сервер"
+
+#: src/renderer/pages/spectate/spectate_remote_control_block/spectate_remote_control_block.messages.ts:10:18
+msgid "Stopped"
+msgstr "Зупинено"
+
+#: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:30:17
+msgid "Submit"
+msgstr "Надіслати"
+
+#: src/renderer/pages/home/overview/ranked_day_status/ranked_day_status.messages.ts:13:28 src/renderer/pages/settings/chat_settings/chat_settings.messages.ts:5:20
+msgid "Subscribe"
+msgstr "Підписатися"
+
+#: src/renderer/pages/settings/advanced_app_settings/advanced_app_settings.messages.ts:11:28
+msgid "Successfully cleared temporary files."
+msgstr "Тимчасові файли успішно очищено."
+
+#: src/renderer/pages/settings/help_page/support_box/support_box.messages.ts:10:29
+msgid "Successfully copied logs to clipboard"
+msgstr "Логи успішно скопійовано в буфер обміну"
+
+#: src/renderer/components/footer/footer.messages.ts:2:24
+msgid "Support Slippi"
+msgstr "Підтримати Slippi"
+
+#. {0} accountName: string
+#: src/renderer/app/header/user_menu/user_menu.messages.ts:17:40
+msgid "Switched to {0}"
+msgstr "Переключено на {0}"
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:15:23
+msgid "Symmetric NAT"
+msgstr "Симетричний NAT"
+
+#: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:3:23 src/renderer/pages/console_mirror/saved_connections_list/saved_connection_item.messages.ts:12:23
+msgid "Target Folder"
+msgstr "Цільова папка"
+
+#: src/renderer/pages/replays/replay_file_stats/game_profile_header/game_profile_header.messages.ts:4:21
+msgid "Target Test"
+msgstr "Тест мішеней"
+
+#: src/renderer/components/multi_path_input/multi_path_input.messages.ts:6:38
+msgid "That folder is already included."
+msgstr "Ця папка вже додана."
+
+#: src/renderer/pages/settings/help_page/support_box/support_box.messages.ts:4:5
+msgid "The best way to get support is to first join the Slippi Discord, then read the information in the #support-portal channel before posting your issue in the appropriate support channel for your operating system. Our support volunteers will try their best to assist you with your problem."
+msgstr "Найкращий спосіб отримати підтримку — спершу приєднатися до Discord Slippi, потім прочитати інформацію в каналі #support-portal і лише після цього описати свою проблему в потрібному каналі підтримки для вашої операційної системи. Наші волонтери з підтримки зроблять усе можливе, щоб допомогти вам."
+
+#. {0} codeName: string
+#: src/renderer/pages/settings/dolphin_settings/gecko_codes/manage_codes/manage_codes.messages.ts:4:44
+msgid "The code <{0}> will be deleted. This cannot be undone."
+msgstr "Код <{0}> буде видалено. Цю дію не можна скасувати."
+
+#: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:4:34
+msgid "The folder to save SLP files to."
+msgstr "Папка для збереження файлів SLP."
+
+#: src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:9:40
+msgid "The folder where spectated games should be saved."
+msgstr "Папка, у яку мають зберігатися ігри спостереження."
+
+#: src/renderer/pages/settings/replay_settings/replay_settings.messages.ts:3:35
+msgid "The folder where your SLP replays should be saved."
+msgstr "Папка, у яку мають зберігатися ваші збережені ігри SLP."
+
+#: src/renderer/pages/settings/game_settings/game_settings.messages.ts:3:34
+msgid "The path to an NTSC Melee 1.02 ISO."
+msgstr "Шлях до ISO NTSC Melee 1.02."
+
+#: src/renderer/pages/settings/spectate_settings/spectate_settings.messages.ts:5:47
+msgid "The port to use for the spectate remote control WebSocket."
+msgstr "Порт для WebSocket дистанційного керування спостереженням."
+
+#. {0} defaultPort: number
+#: src/renderer/pages/console_mirror/add_connection_dialog/add_connection_form.messages.ts:27:5
+msgid "The port used for connecting to console. Only change this if connecting to a Console Relay. If unsure, leave it as {0}."
+msgstr "Порт для підключення до консолі. Змінюйте лише під час підключення до ретранслятора консолі. Якщо не впевнені, залиште {0}."
+
+#: src/renderer/pages/spectate/share_gameplay_block/start_broadcast_dialog.messages.ts:3:44
+msgid "The unique viewer code of the spectator."
+msgstr "Унікальний код глядача."
+
+#: src/renderer/components/slippi_online_rules/slippi_online_rules.messages.ts:4:5
+msgid "These are a set of rules to follow when using Slippi. Breaking these rules may result in a suspension or ban depending on severity and frequency. This is not an exhaustive list, we reserve the right to suspend or ban an account for any reason."
+msgstr "Це набір правил, яких слід дотримуватися під час використання Slippi. Порушення цих правил може призвести до призупинення або блокування облікового запису залежно від серйозності та частоти. Це не вичерпний список, ми залишаємо за собою право призупинити або заблокувати обліковий запис з будь-якої причини."
+
+#: src/renderer/pages/quick_start/steps/iso_selection_step/iso_selection_step.messages.ts:3:34
+msgid "This application uses an NTSC 1.02 game backup."
+msgstr "Цей застосунок використовує резервну копію гри NTSC 1.02."
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:32:33
+msgid "This is the optimal result."
+msgstr "Це оптимальний результат."
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:14:31
+msgid "This is the optimal result. Also known as 'easy', 'full cone', or 'open' NAT."
+msgstr "Це оптимальний результат. Також відомий як «easy», «full cone» або «open» NAT."
+
+#. {0} dolphinTypeName: string
+#: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:18:70
+msgid "This will remove all your {0} settings."
+msgstr "Це видалить усі ваші налаштування {0}."
+
+#: src/renderer/pages/spectate/auto_refresh_toggle/auto_refresh_toggle.messages.ts:2:24
+msgid "Time before auto-refresh turns off again. Click to extend by an hour."
+msgstr "Час до повторного вимкнення автооновлення. Натисніть, щоб продовжити на годину."
+
+#: src/renderer/components/login_form/login_form.messages.ts:8:35
+msgid "Toggle password visibility"
+msgstr "Показати/приховати пароль"
+
+#. {0} readableBytes: string
+#: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:13:41
+msgid "Total size: {0}"
+msgstr "Загальний розмір: {0}"
+
+#: src/renderer/pages/home/upcoming_tournaments/tournaments_near_me/tournaments_near_me.messages.ts:2:16 src/renderer/pages/home/upcoming_tournaments/upcoming_tournaments.messages.ts:6:28
+msgid "Tournaments Near Me"
+msgstr "Турніри поруч"
+
+#: src/renderer/components/activate_online_form/activate_online_form.messages.ts:4:26
+msgid "Trailing numbers will be auto-generated"
+msgstr "Цифри наприкінці будуть згенеровані автоматично"
+
+#: src/renderer/lib/dolphin/handle_dolphin_exit_code.messages.ts:7:5
+msgid "Try a different video backend in Dolphin. If the issue persists, install the latest Windows update available and then restart your computer."
+msgstr "Спробуйте інший відеобекенд у Dolphin. Якщо проблема лишається, встановіть останнє доступне оновлення Windows і перезавантажте комп'ютер."
+
+#: src/renderer/pages/home/news_feed/news_feed.messages.ts:5:19
+msgid "Try again"
+msgstr "Спробувати ще раз"
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostics_button.messages.ts:5:21
+msgid "Turn VPN off for best results."
+msgstr "Для найкращого результату вимкніть VPN."
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:27:24
+msgid "UPnP and NAT-PMP."
+msgstr "UPnP і NAT-PMP."
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:25:15
+msgid "UPnP."
+msgstr "UPnP."
+
+#: src/renderer/pages/not_found/not_found_page.messages.ts:2:15
+msgid "Uh oh."
+msgstr "Ой-ой."
+
+#: src/renderer/pages/replays/replay_file_stats/replay_file_stats.messages.ts:2:32
+msgid "Uh oh. We couldn't open that file. It's probably corrupted."
+msgstr "Ой-ой. Не вдалося відкрити цей файл. Імовірно, він пошкоджений."
+
+#: src/renderer/pages/replays/replay_file_stats/game_profile_header/game_profile_header.messages.ts:3:18 src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:13:18 src/renderer/pages/settings/game_settings/game_settings.messages.ts:12:18
+msgid "Unknown"
+msgstr "Невідомо"
+
+#: src/renderer/pages/quick_start/steps/iso_selection_step/iso_selection_step.messages.ts:7:21
+msgid "Unknown ISO"
+msgstr "Невідомий ISO"
+
+#: src/renderer/pages/replays/replay_browser/replay_file/replay_file.messages.ts:2:23
+msgid "Unknown stage"
+msgstr "Невідома арена"
+
+#. {0} status: number
+#: src/renderer/pages/console_mirror/saved_connections_list/saved_connection_item.messages.ts:6:38
+msgid "Unknown status: {0}"
+msgstr "Невідомий статус: {0}"
+
+#: src/renderer/pages/settings/game_settings/game_settings.messages.ts:14:22
+msgid "Unvalidated"
+msgstr "Не перевірено"
+
+#: src/renderer/pages/settings/chat_settings/chat_settings.messages.ts:8:13
+msgid "Up"
+msgstr "Вгору"
+
+#: src/renderer/pages/home/home_page.messages.ts:4:30 src/renderer/pages/home/overview/overview.messages.ts:3:30
+msgid "Upcoming Tournaments"
+msgstr "Майбутні турніри"
+
+#: src/renderer/app/header/play_button/play_button.messages.ts:3:19
+msgid "Updating"
+msgstr "Оновлення"
+
+#: src/renderer/pages/quick_start/steps/iso_selection_step/iso_selection_step.messages.ts:6:20
+msgid "Use anyway"
+msgstr "Все одно використати"
+
+#: src/renderer/components/rosetta_install_dialog/rosetta_install_dialog.messages.ts:11:5
+msgid "Use of Rosetta is subject to Apple's software license agreement. A list of Apple SLAs may be found here:"
+msgstr "Використання Rosetta регулюється ліцензійною угодою на програмне забезпечення Apple. Перелік угод Apple можна знайти тут:"
+
+#: src/renderer/components/login_notice/login_notice.messages.ts:2:28
+msgid "User is not logged in"
+msgstr "Користувач не ввійшов"
+
+#: src/renderer/pages/settings/game_settings/game_settings.messages.ts:11:16
+msgid "Valid"
+msgstr "Дійсний"
+
+#: src/renderer/app/header/user_menu/user_menu.messages.ts:19:22
+msgid "Verify email"
+msgstr "Підтвердити email"
+
+#: src/renderer/app/header/header.messages.ts:20:26 src/renderer/pages/quick_start/steps/verify_email_step/verify_email_step.messages.ts:2:26
+msgid "Verify your email"
+msgstr "Підтвердьте свій email"
+
+#: src/renderer/pages/quick_start/steps/iso_selection_step/iso_selection_step.messages.ts:4:23
+msgid "Verifying ISO..."
+msgstr "Перевірка ISO..."
+
+#: src/renderer/pages/settings/game_settings/game_settings.messages.ts:6:20
+msgid "Verifying..."
+msgstr "Перевірка..."
+
+#. {0} version: string
+#: src/renderer/components/persistent_notification/persistent_notification.messages.ts:4:47
+msgid "Version {0} is now available!"
+msgstr "Доступна версія {0}!"
+
+#. {0} versionString: string
+#: src/renderer/pages/settings/dolphin_settings/dolphin_settings.messages.ts:7:39
+msgid "Version: {0}"
+msgstr "Версія: {0}"
+
+#: src/renderer/pages/home/overview/ranked_day_status/ranked_day_status.messages.ts:11:28
+msgid "View Ranked Profile"
+msgstr "Переглянути рейтинговий профіль"
+
+#: src/renderer/pages/home/news_feed/news_article/news_article.messages.ts:2:24
+msgid "View on Bluesky"
+msgstr "Переглянути у Bluesky"
+
+#: src/renderer/pages/home/news_feed/news_article/news_article.messages.ts:4:23
+msgid "View on Github"
+msgstr "Переглянути на Github"
+
+#: src/renderer/pages/home/news_feed/news_article/news_article.messages.ts:3:23
+msgid "View on Medium"
+msgstr "Переглянути на Medium"
+
+#: src/renderer/app/header/user_menu/user_menu.messages.ts:3:22
+msgid "View profile"
+msgstr "Переглянути профіль"
+
+#: src/renderer/pages/home/overview/carousel/carousel.messages.ts:3:21 src/renderer/pages/home/upcoming_tournaments/upcoming_tournaments.messages.ts:2:21
+msgid "View stream"
+msgstr "Переглянути трансляцію"
+
+#: src/renderer/components/verify_email_form/verify_email_form.messages.ts:2:25
+msgid "Visit your email, click the link in the verification email, and then check verification"
+msgstr "Перейдіть до свого email, натисніть на посилання в листі для підтвердження, а потім перевірте підтвердження"
+
+#: src/renderer/components/location_guard/location_guard.messages.ts:3:22
+msgid "We need access to your approximate location to show you nearby tournaments."
+msgstr "Нам потрібен доступ до вашого приблизного місцезнаходження, щоб показати турніри поблизу."
+
+#: src/renderer/pages/console_mirror/console_mirror.messages.ts:4:26
+msgid "What is Mirroring?"
+msgstr "Що таке дзеркалення?"
+
+#: src/renderer/app/header/header.messages.ts:13:36
+msgid "Would you like to play offline?"
+msgstr "Бажаєте грати офлайн?"
+
+#: src/renderer/components/verify_email_form/verify_email_form.messages.ts:8:21
+msgid "Wrong email? "
+msgstr "Не той email?"
+
+#: src/renderer/app/header/header.messages.ts:10:28
+msgid "You are not logged in"
+msgstr "Ви не ввійшли"
+
+#: src/renderer/initialize_app.messages.ts:3:24 src/renderer/listeners/listeners.messages.ts:2:24
+msgid "You are offline."
+msgstr "Ви офлайн."
+
+#: src/renderer/pages/home/overview/my_ranking/my_ranking.messages.ts:7:36
+msgid "You can re-enable rank display in the settings."
+msgstr "Відображення рейтингу можна знову ввімкнути в налаштуваннях."
+
+#: src/renderer/pages/home/overview/ranked_day_status/ranked_day_status.messages.ts:12:29
+msgid "You have an active subscription! Enjoy ranked play at any time!"
+msgstr "У вас активна підписка! Насолоджуйтеся рейтинговою грою будь-коли!"
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:34:28
+msgid "You may have trouble connecting to other players."
+msgstr "Можуть виникнути проблеми з підключенням до інших гравців."
+
+#: src/renderer/pages/settings/help_page/support_box/network_diagnostics_button/network_diagnostic_result/network_diagnostics_result.messages.ts:17:5
+msgid "You may have trouble connecting to other players. Also known as 'hard', 'strict', or 'symmetric' NAT. If possible, please check your router settings to see if this can be changed to 'easy', 'full cone', 'normal', or 'open' NAT."
+msgstr "Можуть виникнути проблеми з підключенням до інших гравців. Також відомий як «hard», «strict» або «symmetric» NAT. Якщо можливо, перевірте налаштування маршрутизатора: чи можна змінити його на «easy», «full cone», «normal» або «open» NAT."
+
+#: src/renderer/pages/spectate/spectate_page.messages.ts:5:28
+msgid "You must be logged in to use this feature"
+msgstr "Для використання цієї функції потрібно ввійти"
+
+#: src/renderer/app/header/user_menu/user_menu.messages.ts:12:34
+msgid "You will need to log in again next time you want to play."
+msgstr "Наступного разу, коли захочете грати, потрібно буде ввійти знову."
+
+#: src/renderer/pages/quick_start/quick_start.messages.ts:2:25
+msgid "You're all set up"
+msgstr "Усе налаштовано"
+
+#: src/renderer/pages/quick_start/steps/iso_selection_step/iso_selection_step.messages.ts:8:27
+msgid "Your ISO is unsupported. Using this ISO may cause issues and no support will be given."
+msgstr "Ваш ISO не підтримується. Використання цього ISO може спричинити проблеми, підтримка не надаватиметься."
+
+#: src/renderer/pages/console_mirror/saved_connections_list/saved_connection_item.messages.ts:14:5
+msgid "Your Nintendont is out of date and no longer supported. Click to download the latest version from the Slippi website."
+msgstr "Ваш Nintendont застарілий і більше не підтримується. Натисніть, щоб завантажити останню версію з вебсайту Slippi."
+
+#: src/renderer/pages/spectate/spectator_id_block/spectator_id_block.messages.ts:2:26
+msgid "Your Spectator ID"
+msgstr "Ваш ID глядача"
+
+#: src/renderer/components/activate_online_form/activate_online_form.messages.ts:2:37
+msgid "Your connect code is used for players to connect with you directly."
+msgstr "Ваш код підключення потрібен, щоб гравці могли підключатися до вас напряму."
+
+#: src/renderer/components/location_guard/location_guard.messages.ts:5:5
+msgid "Your location data will be sent to a third-party service. Slippi does NOT collect this data. You can turn this feature off again in the settings."
+msgstr "Дані про ваше місцезнаходження буде надіслано стороннім сервісом. Slippi НЕ збирає ці дані. Цю функцію можна знову вимкнути в налаштуваннях."
+
+#: src/renderer/pages/quick_start/steps/iso_selection_step/iso_selection_step.messages.ts:5:28
+msgid "or drag and drop here"
+msgstr "або перетягніть сюди"
+
+#. {0} count: number
+#. {1} total: number
+#: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:8:5
+msgid "{0, number} of {1, plural, one {# replay} other {# replays}} processed."
+msgstr "Оброблено {0, number} із {1, plural, one {# запису} few {# записів} many {# записів} other {# запису}}."
+
+#. {0} count: number
+#: src/renderer/pages/replays/replay_browser/file_selection_toolbar/file_selection_toolbar.messages.ts:2:37
+msgid "{0, plural, one {# file} other {# files}} selected"
+msgstr "Вибрано {0, plural, one {# файл} few {# файли} many {# файлів} other {# файлу}}"
+
+#. {0} count: number
+#: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:2:36
+msgid "{0, plural, one {# file} other {# files}} successfully deleted."
+msgstr "Успішно видалено {0, plural, one {# файл} few {# файли} many {# файлів} other {# файлу}}."
+
+#. {0} count: number
+#: src/renderer/pages/replays/replay_browser/file_selection_toolbar/file_selection_toolbar.messages.ts:9:37
+msgid "{0, plural, one {# file} other {# files}} will be deleted."
+msgstr "Буде видалено {0, plural, one {# файл} few {# файли} many {# файлів} other {# файлу}}."
+
+#. {0} count: number
+#: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:10:43
+msgid "{0, plural, one {# replay} other {# replays}} filtered."
+msgstr "Відфільтровано {0, plural, one {# запис} few {# записи} many {# записів} other {# запису}}."
+
+#. {0} count: number
+#: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:9:40
+msgid "{0, plural, one {# replay} other {# replays}} found."
+msgstr "Знайдено {0, plural, one {# запис} few {# записи} many {# записів} other {# запису}}."
+
+#. {0} count: number
+#: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:12:40
+msgid "{0, plural, one {# replay} other {# replays}} had errors."
+msgstr "Помилки у {0, plural, one {# записі} few {# записах} many {# записах} other {# запису}}."
+
+#. {0} count: number
+#: src/renderer/pages/replays/replay_browser/replay_browser.messages.ts:11:41
+msgid "{0, plural, one {# replay} other {# replays}} hidden."
+msgstr "Приховано {0, plural, one {# запис} few {# записи} many {# записів} other {# запису}}."
