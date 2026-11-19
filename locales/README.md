@@ -15,4 +15,5 @@ In addition to English we support a number of additional languages. The currentl
   * @pingeee (`pingeee` on Discord)
 - `pt` - Portuguese
   * @CaioIcy (`caioicy` on Discord)
-
+- `uk` - Ukrainian
+  * @VolodymyrZaqynay (`pes_piston64` on Discord)
