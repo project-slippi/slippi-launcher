@@ -1,4 +1,4 @@
-export type SupportedLanguage = "en" | "es" | "ja" | "ru" | "pt";
+export type SupportedLanguage = "en" | "es" | "ja" | "ru" | "pt" | "uk";
 
 export const SUPPORTED_LANGUAGES: { value: SupportedLanguage; label: string }[] = [
   { value: "en", label: "English" },
